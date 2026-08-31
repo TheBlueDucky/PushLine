@@ -468,6 +468,11 @@ input:focus{
   transform:scale(.965);
 }
 
+.cell.pushable{
+  box-shadow:
+    inset 0 0 0 2px #ffcf5a66;
+}
+
 .cell.reachable{
   box-shadow:
     inset 0 0 0 2px #ffffff18;
@@ -3952,14 +3957,12 @@ function selectCell(
 
 
   /*
-    Adjacent empty square performs movement.
+    Any adjacent square is a move attempt: empty to
+    step into, enemy to push. executeMove is what
+    explains the ones that are not allowed.
   */
 
-  if(
-    selectedId &&
-    !piece &&
-    !isHole(game,r,c)
-  ){
+  if(selectedId){
 
     const selected=
       findPiece(
@@ -4446,14 +4449,10 @@ function render(){
 
 
       /*
-        Reachable visual.
+        Reachable and pushable neighbours.
       */
 
-      if(
-        selectedId &&
-        !piece &&
-        !isHole(game,r,c)
-      ){
+      if(selectedId){
 
         const selected=
           findPiece(
@@ -4462,18 +4461,33 @@ function render(){
           );
 
 
-        if(selected){
+        const distance=
+          selected
+            ?Math.abs(
+               selected.r-r
+             )+
+             Math.abs(
+               selected.c-c
+             )
+            :99;
 
-          const distance=
-            Math.abs(
-              selected.r-r
-            )+
-            Math.abs(
-              selected.c-c
+
+        if(distance===1){
+
+          if(
+            piece &&
+            piece.color!==selected.piece.color
+          ){
+
+            cell.classList.add(
+              "pushable"
             );
 
 
-          if(distance===1){
+          }else if(
+            !piece &&
+            !isHole(game,r,c)
+          ){
 
             cell.classList.add(
               "reachable"
