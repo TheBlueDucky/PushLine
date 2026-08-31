@@ -5,509 +5,149 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>PUSHLINE</title>
+
 <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
 
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{
-  --bg:#060910;
-  --bg2:#0b111b;
-  --panel:rgba(14,21,32,.9);
-  --border:#2a3a51;
-  --text:#f1f6ff;
-  --muted:#8896ad;
-  --blue:#55abff;
-  --blue2:#176fc0;
-  --red:#ff6078;
-  --red2:#c92e49;
-  --gold:#ffd75a;
-  --green:#5ee38c;
-  --tile1:#1b2b3d;
-  --tile2:#142333;
-}
-body.theme-royal{
-  --bg:#09070e;
-  --bg2:#120b18;
-  --panel:rgba(25,15,31,.92);
-  --border:#453252;
-  --blue:#958dff;
-  --blue2:#5e53db;
-  --tile1:#30213f;
-  --tile2:#24172f;
-}
-body.theme-ice{
-  --bg:#041015;
-  --bg2:#0a1c24;
-  --panel:rgba(8,22,29,.92);
-  --border:#284854;
-  --blue:#6fddff;
-  --blue2:#2b8baa;
-  --tile1:#19343f;
-  --tile2:#112730;
-}
-html,body{
-  margin:0;
-  min-height:100%;
-  color:var(--text);
-  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#060910;color:#eef4ff}
 body{
-  min-height:100vh;
+  overflow-x:hidden;
   background:
-    radial-gradient(circle at 50% -15%,#1c3151 0,transparent 38%),
-    radial-gradient(circle at 10% 80%,#12233b 0,transparent 30%),
-    linear-gradient(180deg,var(--bg2),var(--bg));
+    radial-gradient(circle at 50% -15%,#1c3151,transparent 38%),
+    linear-gradient(180deg,#0b111b,#060910);
 }
 button,input{font:inherit}
 button{cursor:pointer}
-button:disabled{cursor:not-allowed;opacity:.35}
-#app{
-  width:min(1400px,100%);
-  margin:auto;
-  padding:18px 22px 30px;
-}
-header{
-  height:50px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.logo{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-weight:1000;
-  letter-spacing:5px;
-  font-size:24px;
-}
-.logoIcon{
-  width:30px;
-  height:30px;
-  display:grid;
-  place-items:center;
-  border:1px solid #ffffff17;
-  border-radius:8px;
-  color:var(--gold);
-  background:#ffffff06;
-  box-shadow:0 0 25px #55abff15;
-}
-.connection{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  color:var(--muted);
-  font-size:12px;
-}
-.dot{
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background:#68758b;
-}
-.dot.good{
-  background:var(--green);
-  box-shadow:0 0 15px var(--green);
-}
-.dot.bad{
-  background:var(--red);
-  box-shadow:0 0 15px var(--red);
-}
+button:disabled{opacity:.35;cursor:not-allowed}
+#app{width:min(1400px,100%);margin:auto;padding:18px 22px 30px}
+header{height:48px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:25px;font-weight:1000;letter-spacing:5px;display:flex;align-items:center;gap:8px}
+.logoMark{width:30px;height:30px;display:grid;place-items:center;border:1px solid #fff2;border-radius:8px;color:#ffd65a}
+.connection{display:flex;align-items:center;gap:8px;color:#8996aa;font-size:12px}
+.dot{width:9px;height:9px;border-radius:50%;background:#647085}
+.dot.good{background:#5be38a;box-shadow:0 0 14px #5be38a}
+.dot.bad{background:#ff5e74;box-shadow:0 0 14px #ff5e74}
 .screen{display:none}
 .screen.active{display:block}
 .glass{
-  background:
-    linear-gradient(145deg,#ffffff08,#ffffff02),
-    var(--panel);
-  border:1px solid var(--border);
+  background:linear-gradient(145deg,#ffffff08,#ffffff02),rgba(14,21,32,.91);
+  border:1px solid #2a3a51;
   border-radius:20px;
-  box-shadow:
-    0 25px 80px #0008,
-    inset 0 1px 0 #ffffff05;
-  backdrop-filter:blur(15px);
+  box-shadow:0 25px 80px #0008;
+  backdrop-filter:blur(14px);
 }
-.hero{
-  width:min(720px,100%);
-  margin:9vh auto 0;
-  padding:42px;
-  text-align:center;
-}
-.heroTitle{
-  margin:0;
-  font-size:clamp(48px,8vw,84px);
-  line-height:1;
-  letter-spacing:10px;
-  font-weight:1000;
-  text-shadow:0 0 35px #55abff1f;
-}
-.heroTitle span{color:var(--gold)}
-.heroText{
-  max-width:530px;
-  margin:20px auto;
-  color:var(--muted);
-  line-height:1.7;
-}
-.buttons{
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:9px;
-  margin:25px 0;
-}
+.hero{width:min(720px,100%);margin:9vh auto 0;padding:42px;text-align:center}
+.heroTitle{font-size:clamp(50px,8vw,84px);font-weight:1000;letter-spacing:10px;line-height:1;margin:0;text-shadow:0 0 35px #55aaff18}
+.heroTitle span{color:#ffd65a}
+.heroText{max-width:550px;margin:20px auto;color:#8a97aa;line-height:1.7}
+.buttons{display:flex;justify-content:center;flex-wrap:wrap;gap:9px;margin:24px 0}
 .btn{
-  border:1px solid #35465f;
-  background:linear-gradient(180deg,#1c2a3c,#152131);
+  border:1px solid #35465e;
+  background:linear-gradient(180deg,#1d2b3d,#152130);
   color:white;
   border-radius:11px;
   padding:12px 19px;
   font-weight:900;
   transition:.12s;
 }
-.btn:hover{
-  transform:translateY(-2px);
-  background:#24354b;
-}
-.btn.primary{
-  background:linear-gradient(180deg,#398fdf,#2877bb);
-  border-color:#65b5ff;
-}
-.btn.gold{
-  color:#171109;
-  background:linear-gradient(180deg,#ecd058,#bd921f);
-  border-color:#ffe68b;
-}
-.btn.danger{
-  background:linear-gradient(180deg,#682538,#491925);
-  border-color:#923c53;
-}
-.small{
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.6;
-}
-#joinArea{
-  display:none;
-  margin-top:10px;
-}
+.btn:hover{transform:translateY(-2px);background:#25364d}
+.btn.primary{background:linear-gradient(180deg,#3b91df,#2877bb);border-color:#67b7ff}
+.btn.gold{background:linear-gradient(180deg,#eed45e,#bc911f);border-color:#ffe797;color:#181309}
+.btn.danger{background:linear-gradient(180deg,#682538,#481a26);border-color:#923d53}
+.small{color:#8794a9;font-size:12px;line-height:1.6}
 input{
-  width:min(410px,100%);
+  width:min(420px,100%);
   padding:15px;
   border-radius:12px;
   border:1px solid #35465e;
   background:#080d14;
   color:white;
-  outline:none;
   text-align:center;
+  outline:none;
   font-size:22px;
   font-weight:950;
   letter-spacing:7px;
   text-transform:uppercase;
 }
-input:focus{
-  border-color:var(--gold);
-  box-shadow:0 0 0 3px #ffd75a10;
-}
-.waiting{
-  width:min(650px,100%);
-  margin:12vh auto 0;
-  padding:40px;
-  text-align:center;
-}
-.roomCode{
-  margin:18px 0;
-  font-size:50px;
-  font-weight:1000;
-  letter-spacing:12px;
-  color:var(--gold);
-  text-shadow:0 0 30px #ffd75a32;
-}
-.waitDots{
-  display:flex;
-  justify-content:center;
-  gap:8px;
-  margin:23px 0;
-}
-.waitDots i{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:var(--blue);
-  animation:dot 1.2s infinite;
-}
+input:focus{border-color:#ffd65a;box-shadow:0 0 0 3px #ffd65a10}
+#joinArea{display:none;margin-top:10px}
+.waiting{width:min(650px,100%);margin:12vh auto;padding:40px;text-align:center}
+.roomCode{margin:18px 0;color:#ffd65a;font-size:52px;font-weight:1000;letter-spacing:12px;text-shadow:0 0 25px #ffd65a38}
+.waitDots{display:flex;justify-content:center;gap:8px;margin:22px 0}
+.waitDots i{width:7px;height:7px;border-radius:50%;background:#55aaff;animation:dot 1.2s infinite}
 .waitDots i:nth-child(2){animation-delay:.2s}
 .waitDots i:nth-child(3){animation-delay:.4s}
-@keyframes dot{
-  0%,80%,100%{transform:translateY(0);opacity:.25}
-  40%{transform:translateY(-7px);opacity:1}
-}
-#game{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 310px;
-  gap:18px;
-  align-items:start;
-  margin-top:8px;
-}
-.boardArea{
-  display:flex;
-  justify-content:center;
-  min-width:0;
-}
+@keyframes dot{0%,80%,100%{transform:translateY(0);opacity:.25}40%{transform:translateY(-7px);opacity:1}}
+
+#game{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:18px;margin-top:8px;align-items:start}
+.boardArea{display:flex;justify-content:center;min-width:0}
 .boardFrame{
   width:min(78vh,780px,calc(100vw - 390px));
   min-width:430px;
   aspect-ratio:1;
   padding:15px;
   border-radius:25px;
-  background:
-    linear-gradient(145deg,#ffffff08,#ffffff02),
-    rgba(7,12,19,.86);
-  border:1px solid var(--border);
-  box-shadow:
-    0 30px 100px #0009,
-    0 0 55px #55abff06;
+  background:linear-gradient(145deg,#ffffff08,#ffffff02),rgba(7,12,19,.9);
+  border:1px solid #2a3a51;
+  box-shadow:0 30px 100px #0009;
 }
-.boardFrame.shake{
-  animation:shake .23s;
-}
-@keyframes shake{
-  0%{transform:translate(0)}
-  25%{transform:translate(-6px,3px)}
-  50%{transform:translate(6px,-3px)}
-  75%{transform:translate(-3px,-2px)}
-  100%{transform:translate(0)}
-}
-#board{
-  width:100%;
-  height:100%;
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  grid-template-rows:repeat(7,1fr);
-  gap:6px;
-}
+.boardFrame.shake{animation:shake .23s}
+@keyframes shake{0%{transform:translate(0)}25%{transform:translate(-6px,3px)}50%{transform:translate(6px,-3px)}75%{transform:translate(-3px,-2px)}100%{transform:translate(0)}}
+#board{width:100%;height:100%;display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(7,1fr);gap:6px}
 .cell{
   position:relative;
   min-width:0;
   min-height:0;
   border-radius:10px;
   border:1px solid #ffffff08;
-  background:linear-gradient(145deg,var(--tile1),var(--tile2));
+  background:linear-gradient(145deg,#1b2b3d,#142333);
   display:flex;
   align-items:center;
   justify-content:center;
   transition:.1s;
 }
-.cell:hover{
-  background:linear-gradient(145deg,#24384f,#192a3c);
-}
-.cell.hole{
-  background:
-    radial-gradient(circle,#000 0,#020508 45%,#09101a 100%);
-  border-color:#000;
-  box-shadow:inset 0 0 25px #000;
-}
-.cell.selected{
-  border-color:var(--gold);
-  box-shadow:
-    0 0 0 2px #ffd75a40,
-    0 0 28px #ffd75a18;
-  transform:scale(.97);
-}
-.cell.reachable{
-  box-shadow:inset 0 0 0 2px #ffffff12;
-}
-.cell.homeBlue{
-  background:
-    radial-gradient(circle,#55abff14,transparent 70%),
-    linear-gradient(145deg,var(--tile1),var(--tile2));
-}
-.cell.homeRed{
-  background:
-    radial-gradient(circle,#ff607814,transparent 70%),
-    linear-gradient(145deg,var(--tile1),var(--tile2));
-}
-.piece{
-  width:66%;
-  height:66%;
-  border-radius:50%;
-  position:relative;
-  z-index:10;
-  animation:pieceIn .16s ease-out;
-}
-@keyframes pieceIn{
-  from{transform:scale(.55);opacity:0}
-  to{transform:scale(1);opacity:1}
-}
-.piece.blue{
-  background:radial-gradient(circle at 32% 28%,#fff 0 7%,#79c5ff 10%,var(--blue) 45%,var(--blue2));
-  box-shadow:0 0 12px var(--blue),0 0 26px #55abff55,inset 2px 2px 5px #fff8;
-}
-.piece.red{
-  background:radial-gradient(circle at 32% 28%,#fff 0 7%,#ff9cab 10%,var(--red) 45%,var(--red2));
-  box-shadow:0 0 12px var(--red),0 0 26px #ff607855,inset 2px 2px 5px #fff8;
-}
-.piece.selectedPiece{
-  animation:piecePulse 1s infinite;
-}
-@keyframes piecePulse{
-  0%,100%{transform:scale(1)}
-  50%{transform:scale(1.08)}
-}
-.sidebar{
-  display:flex;
-  flex-direction:column;
-  gap:11px;
-}
-.panel{
-  padding:15px;
-}
-.playerRow{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:10px;
-}
-.playerName{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-weight:950;
-}
-.mini{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-}
-.blueDot{background:var(--blue);box-shadow:0 0 9px var(--blue)}
-.redDot{background:var(--red);box-shadow:0 0 9px var(--red)}
-.destroyed{
-  display:flex;
-  gap:5px;
-}
-.destroyed span{
-  width:18px;
-  height:18px;
-  border-radius:50%;
-  border:1px solid #ffffff20;
-  display:grid;
-  place-items:center;
-  color:#6f7d92;
-  font-size:10px;
-}
-.destroyed span.dead{
-  color:var(--red);
-  border-color:#ff607855;
-  background:#ff607818;
-}
-.role{
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  padding:6px 9px;
-  border-radius:999px;
-  border:1px solid #ffffff10;
-  background:#ffffff06;
-  color:var(--muted);
-  font-size:11px;
-}
-#turnStatus{
-  margin-top:10px;
-  font-size:20px;
-  font-weight:1000;
-}
-#turnStatus.ready{
-  text-shadow:0 0 18px #55abff44;
-}
-#turnNumber{
-  margin-top:3px;
-  color:var(--muted);
-  font-size:12px;
-}
-#message{
-  min-height:19px;
-  margin-top:8px;
-  color:var(--gold);
-  font-size:13px;
-}
-#selectedPieceText{
-  color:var(--muted);
-  text-align:center;
-  font-size:12px;
-  margin-top:7px;
-}
-.directionGrid{
-  width:205px;
-  margin:14px auto;
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:7px;
-}
-.dir{
-  height:52px;
-  border-radius:11px;
-  border:1px solid #34445d;
-  background:linear-gradient(180deg,#1d2b3d,#152130);
-  color:white;
-  font-size:20px;
-  font-weight:1000;
-  transition:.1s;
-}
-.dir:hover{
-  transform:translateY(-1px);
-  background:#27384e;
-}
+.cell:hover{background:linear-gradient(145deg,#24384f,#192a3c)}
+.cell.hole{background:radial-gradient(circle,#000,#020509 50%,#0a111a);border-color:#000;box-shadow:inset 0 0 25px #000}
+.cell.selected{border-color:#ffd65a;box-shadow:0 0 0 2px #ffd65a44,0 0 25px #ffd65a18;transform:scale(.97)}
+.cell.reachable{box-shadow:inset 0 0 0 2px #ffffff16}
+.cell.homeBlue{background:radial-gradient(circle,#55aaff16,transparent 70%),linear-gradient(145deg,#1b2b3d,#142333)}
+.cell.homeRed{background:radial-gradient(circle,#ff607816,transparent 70%),linear-gradient(145deg,#1b2b3d,#142333)}
+.piece{width:66%;height:66%;border-radius:50%;position:relative;z-index:10;animation:pieceIn .15s ease-out}
+@keyframes pieceIn{from{transform:scale(.55);opacity:0}to{transform:scale(1);opacity:1}}
+.piece.blue{background:radial-gradient(circle at 32% 28%,#fff 0 7%,#78c4ff 10%,#55aaff 48%,#176fc0);box-shadow:0 0 12px #55aaff,0 0 25px #55aaff55,inset 2px 2px 5px #fff8}
+.piece.red{background:radial-gradient(circle at 32% 28%,#fff 0 7%,#ff9aaa 10%,#ff6078 48%,#c92e49);box-shadow:0 0 12px #ff6078,0 0 25px #ff607855,inset 2px 2px 5px #fff8}
+.piece.selectedPiece{animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.sidebar{display:flex;flex-direction:column;gap:11px}
+.panel{padding:15px}
+.playerRow{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.playerName{display:flex;align-items:center;gap:8px;font-weight:950}
+.mini{width:10px;height:10px;border-radius:50%}
+.blueDot{background:#55aaff;box-shadow:0 0 9px #55aaff}
+.redDot{background:#ff6078;box-shadow:0 0 9px #ff6078}
+.destroyed{display:flex;gap:5px}
+.destroyed span{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;border:1px solid #ffffff20;color:#6f7d92;font-size:10px}
+.destroyed span.dead{color:#ff6078;background:#ff607818;border-color:#ff607855}
+.role{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:999px;border:1px solid #fff1;background:#fff1;color:#8794a9;font-size:11px}
+#turnStatus{font-size:20px;font-weight:1000;margin-top:10px}
+#turnNumber{font-size:12px;color:#8794a9;margin-top:3px}
+#message{min-height:18px;color:#ffd65a;font-size:13px;margin-top:8px}
+#selectedText{text-align:center;color:#8794a9;font-size:12px;margin-top:7px}
+.directionGrid{width:205px;margin:14px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.dir{height:52px;border-radius:11px;border:1px solid #34455e;background:linear-gradient(180deg,#1d2b3d,#152130);color:white;font-size:20px;font-weight:1000}
+.dir:hover{background:#27384f}
 .empty{visibility:hidden}
-.settings{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:9px;
-}
-.themeButtons{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:6px;
-}
-.themeButton{
-  height:35px;
-  border-radius:8px;
-  border:1px solid #34455d;
-  background:#172333;
-  color:white;
-  font-size:11px;
-  font-weight:850;
-}
-.themeButton.active{
-  border-color:var(--gold);
-  box-shadow:0 0 0 1px #ffd75a26;
-}
-.overlay{
-  position:fixed;
-  inset:0;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  background:#02040ccc;
-  backdrop-filter:blur(11px);
-  z-index:100;
-}
+.help{color:#8794a9;font-size:12px;line-height:1.6}
+.themeButtons{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.themeButton{height:34px;border-radius:8px;border:1px solid #34455e;background:#172333;color:white;font-size:11px;font-weight:850}
+.themeButton.active{border-color:#ffd65a}
+.overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:20px;background:#02040ccd;backdrop-filter:blur(10px);z-index:100}
 .overlay.show{display:flex}
-.result{
-  width:min(480px,100%);
-  padding:40px;
-  text-align:center;
-}
-.resultIcon{
-  font-size:44px;
-  color:var(--gold);
-}
-.result h2{
-  font-size:50px;
-  margin:6px 0;
-  font-weight:1000;
-}
-.result p{
-  color:var(--muted);
-  line-height:1.6;
-}
+.result{width:min(470px,100%);padding:40px;text-align:center}
+.resultIcon{font-size:45px;color:#ffd65a}
+.result h2{font-size:52px;margin:7px 0;font-weight:1000}
+.result p{color:#8794a9;line-height:1.6}
 #toast{
   position:fixed;
   left:50%;
@@ -517,75 +157,30 @@ input:focus{
   border-radius:12px;
   background:#111a25f5;
   border:1px solid #35455e;
-  color:white;
   opacity:0;
   pointer-events:none;
   transition:.2s;
   z-index:300;
-  box-shadow:0 15px 40px #0008;
 }
-#toast.show{
-  transform:translate(-50%,0);
-  opacity:1;
-}
-.particle{
-  position:fixed;
-  width:3px;
-  height:3px;
-  border-radius:50%;
-  background:white;
-  opacity:.12;
-  pointer-events:none;
-  z-index:-1;
-  animation:float linear infinite;
-}
-@keyframes float{
-  from{transform:translateY(20vh)}
-  to{transform:translateY(-120vh)}
-}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
 @media(max-width:1050px){
-  #game{
-    grid-template-columns:minmax(0,1fr) 270px;
-  }
-  .boardFrame{
-    width:min(76vh,calc(100vw - 325px));
-  }
+  #game{grid-template-columns:minmax(0,1fr) 270px}
+  .boardFrame{width:min(76vh,calc(100vw - 325px))}
 }
 @media(max-width:850px){
-  #game{
-    grid-template-columns:1fr;
-  }
-  .boardFrame{
-    width:min(92vw,720px);
-    min-width:0;
-  }
+  #game{grid-template-columns:1fr}
+  .boardFrame{width:min(92vw,720px);min-width:0}
 }
 @media(max-width:560px){
   #app{padding:10px}
-  .hero{
-    margin-top:5vh;
-    padding:28px 18px;
-  }
-  .heroTitle{
-    font-size:42px;
-    letter-spacing:7px;
-  }
-  .boardFrame{
-    width:96vw;
-    padding:9px;
-    border-radius:18px;
-  }
+  .hero{padding:28px 18px;margin-top:5vh}
+  .heroTitle{font-size:42px;letter-spacing:7px}
+  .boardFrame{width:96vw;padding:9px;border-radius:18px}
   #board{gap:3px}
   .cell{border-radius:6px}
-  .piece{
-    width:73%;
-    height:73%;
-  }
-  .sidebar{gap:8px}
-  .roomCode{
-    font-size:31px;
-    letter-spacing:7px;
-  }
+  .piece{width:73%;height:73%}
+  .roomCode{font-size:32px;letter-spacing:7px}
 }
 </style>
 
@@ -596,41 +191,30 @@ input:focus{
 <div id="app">
 
 <header>
-
   <div class="logo">
-    <div class="logoIcon">◆</div>
+    <div class="logoMark">◆</div>
     PUSHLINE
   </div>
 
   <div class="connection">
-
-```
-<span id="connectionDot" class="dot"></span>
-
-<span id="connectionText">
-  Offline
-</span>
-```
-
+    <span id="connectionDot" class="dot"></span>
+    <span id="connectionText">Offline</span>
   </div>
-
 </header>
 
-<!-- ================= HOME ================= -->
+<!-- HOME -->
 
 <section id="homeScreen" class="screen active">
 
   <div class="glass hero">
 
-```
 <h1 class="heroTitle">
   PUSH<span>LINE</span>
 </h1>
 
 <p class="heroText">
-  Five pieces.
-  A handful of holes.
-  Push enemy formations into the void.
+  Five pieces. Five holes.
+  Push enemy chains into the void.
   Destroy three enemy pieces to win.
 </p>
 
@@ -652,15 +236,14 @@ input:focus{
 
 </div>
 
-
 <div id="joinArea">
 
   <input
     id="roomInput"
     maxlength="6"
+    placeholder="6-CHAR CODE"
     autocomplete="off"
     spellcheck="false"
-    placeholder="6-CHAR CODE"
   >
 
   <div class="buttons">
@@ -676,24 +259,20 @@ input:focus{
 
 </div>
 
-
 <div class="small">
-  Same HTML file for both players · WebRTC P2P ·
-  no game server required
+  Same HTML file · 6-character room code ·
+  WebRTC P2P
 </div>
-```
-
   </div>
 
 </section>
 
-<!-- ================= WAITING ================= -->
+<!-- WAITING -->
 
 <section id="waitingScreen" class="screen">
 
   <div class="glass waiting">
 
-```
 <div class="small">
   YOUR ROOM CODE
 </div>
@@ -712,19 +291,13 @@ input:focus{
   COPY CODE
 </button>
 
-
 <div class="waitDots">
-  <i></i>
-  <i></i>
-  <i></i>
+  <i></i><i></i><i></i>
 </div>
-
 
 <p id="waitingText">
   Waiting for player 2...
 </p>
-
-<br>
 
 <button
   id="cancelButton"
@@ -732,19 +305,18 @@ input:focus{
 >
   CANCEL
 </button>
-```
 
   </div>
 
 </section>
 
-<!-- ================= GAME ================= -->
+<!-- GAME -->
 
 <section id="gameScreen" class="screen">
 
   <div id="game">
 
-```
+
 <div class="boardArea">
 
   <div
@@ -761,9 +333,6 @@ input:focus{
 
 <aside class="sidebar">
 
-
-  <!-- SCORE -->
-
   <div class="glass panel">
 
     <div class="playerRow">
@@ -779,7 +348,6 @@ input:focus{
       ></div>
 
     </div>
-
 
     <div class="playerRow">
 
@@ -798,14 +366,9 @@ input:focus{
   </div>
 
 
-  <!-- TURN -->
-
   <div class="glass panel">
 
-    <div
-      id="role"
-      class="role"
-    >
+    <div id="role" class="role">
       Connecting...
     </div>
 
@@ -822,18 +385,13 @@ input:focus{
   </div>
 
 
-  <!-- MOVE -->
-
   <div class="glass panel">
 
     <b>YOUR MOVE</b>
 
-    <div
-      id="selectedPieceText"
-    >
+    <div id="selectedText">
       Select one of your pieces
     </div>
-
 
     <div class="directionGrid">
 
@@ -842,43 +400,30 @@ input:focus{
       <button
         class="dir"
         data-direction="up"
-      >
-        ▲
-      </button>
+      >▲</button>
 
       <button class="dir empty"></button>
-
 
       <button
         class="dir"
         data-direction="left"
-      >
-        ◀
-      </button>
+      >◀</button>
 
       <button
         class="dir"
         data-direction="down"
-      >
-        ▼
-      </button>
+      >▼</button>
 
       <button
         class="dir"
         data-direction="right"
-      >
-        ▶
-      </button>
-
+      >▶</button>
 
       <button class="dir empty"></button>
-
       <button class="dir empty"></button>
-
       <button class="dir empty"></button>
 
     </div>
-
 
     <button
       id="slamButton"
@@ -892,16 +437,14 @@ input:focus{
       class="small"
       style="margin-top:7px"
     >
-      Push an enemy chain 2 squares.
-      Once per game.
+      Push an enemy chain two squares.
+      One use per game.
     </div>
 
   </div>
 
 
-  <!-- SETTINGS -->
-
-  <div class="glass panel settings">
+  <div class="glass panel">
 
     <b>THEME</b>
 
@@ -930,10 +473,10 @@ input:focus{
 
     </div>
 
-
     <button
       id="soundButton"
       class="btn"
+      style="width:100%;margin-top:8px"
     >
       🔊 SOUND ON
     </button>
@@ -941,15 +484,17 @@ input:focus{
   </div>
 
 
-  <!-- RULES -->
-
   <div class="glass panel">
 
     <b>HOW TO PLAY</b>
 
-    <div class="small" style="margin-top:8px">
+    <div class="help" style="margin-top:8px">
 
-      Click a piece, then click a direction.
+      Select one of your pieces.
+
+      <br><br>
+
+      Click a direction.
 
       <br><br>
 
@@ -962,23 +507,18 @@ input:focus{
 
       <br><br>
 
-      Push a piece into a black hole and it is
-      destroyed.
+      Push an enemy into a black hole → destroyed.
 
       <br><br>
 
       Destroy <b>3</b> enemy pieces to win.
-
-      <br><br>
-
-      <b>SLAM</b> pushes the chain two squares.
 
     </div>
 
   </div>
 
 </aside>
-```
+
 
   </div>
 
@@ -986,7 +526,7 @@ input:focus{
 
 </div>
 
-<!-- ================= RESULT ================= -->
+<!-- RESULT -->
 
 <div
   id="resultOverlay"
@@ -995,7 +535,7 @@ input:focus{
 
   <div class="glass result">
 
-```
+
 <div
   id="resultIcon"
   class="resultIcon"
@@ -1026,7 +566,7 @@ input:focus{
   </button>
 
 </div>
-```
+
 
   </div>
 
@@ -1037,96 +577,255 @@ input:focus{
 <script>
 "use strict";
 
-/*
-==============================================================
-PUSHLINE
-==============================================================
 
-IMPORTANT:
-
-Both players use THIS EXACT SAME FILE.
-
-Displayed room code:
-    ABC123
-
-Internal PeerJS host ID:
-    pushline-ABC123
-
-HOST:
-    BLUE
-
-GUEST:
-    RED
-
-
-CONNECTION HANDSHAKE:
-
-HOST -> HELLO
-GUEST -> READY
-HOST -> START
-GUEST -> START_ACK
-
-The host does not start until READY arrives.
-This prevents the previous start race.
-==============================================================
-*/
-
-
-/* ============================================================
-   CONSTANTS
-============================================================ */
+/* =========================================================
+   CONFIG
+========================================================= */
 
 const SIZE=7;
-
-const PIECES_PER_PLAYER=5;
-
+const ROOM_LENGTH=6;
 const WIN_DESTROYED=3;
 
-const ROOM_LENGTH=6;
 
-const PREFIX="pushline-";
-
-
-/* ============================================================
-   GLOBAL VARIABLES
-============================================================ */
+/* =========================================================
+   NETWORK GLOBALS
+========================================================= */
 
 let peer=null;
-
 let connection=null;
 
 let isHost=false;
-
 let myColor=null;
 
 let roomCode="";
 
-let game=null;
+let guestConnectionReady=false;
+let hostGameSent=false;
 
+
+/* =========================================================
+   GAME GLOBALS
+========================================================= */
+
+let game=null;
 let selectedPieceId=null;
 
+
+/* =========================================================
+   AUDIO
+========================================================= */
+
+let audioContext=null;
 let soundEnabled=true;
 
-let guestReady=false;
 
-let hostReady=false;
+function audio(){
 
-let gameStarted=false;
+  if(!soundEnabled)
+    return;
+
+  if(!audioContext){
+
+    audioContext=
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+
+  }
+
+  if(
+    audioContext.state==="suspended"
+  ){
+
+    audioContext.resume();
+
+  }
+
+}
 
 
-/* ============================================================
-   DOM
-============================================================ */
+function tone(
+  frequency,
+  duration,
+  type="sine",
+  volume=.04
+){
 
-const $=id=>
-  document.getElementById(id);
+  if(!soundEnabled)
+    return;
+
+  audio();
+
+  if(!audioContext)
+    return;
+
+  const osc=
+    audioContext.createOscillator();
+
+  const gain=
+    audioContext.createGain();
+
+  osc.type=type;
+
+  osc.frequency.value=
+    frequency;
+
+  gain.gain.setValueAtTime(
+    volume,
+    audioContext.currentTime
+  );
+
+  gain.gain.exponentialRampToValueAtTime(
+    .001,
+    audioContext.currentTime+duration
+  );
+
+  osc.connect(gain);
+  gain.connect(audioContext.destination);
+
+  osc.start();
+
+  osc.stop(
+    audioContext.currentTime+duration
+  );
+
+}
 
 
-/* ============================================================
-   STATUS
-============================================================ */
+function soundSelect(){
 
-function setStatus(
+  tone(
+    690,
+    .055,
+    "sine",
+    .025
+  );
+
+}
+
+
+function soundMove(){
+
+  tone(
+    390,
+    .07,
+    "triangle",
+    .03
+  );
+
+}
+
+
+function soundPush(
+  destroyed=0
+){
+
+  tone(
+    110,
+    .17,
+    "sawtooth",
+    .055
+  );
+
+  setTimeout(
+    ()=>{
+      tone(
+        190,
+        .13,
+        "triangle",
+        .04
+      );
+    },
+    70
+  );
+
+  if(destroyed){
+
+    setTimeout(
+      ()=>{
+        tone(
+          65,
+          .25,
+          "sawtooth",
+          .05
+        );
+      },
+      110
+    );
+
+  }
+
+}
+
+
+function soundStart(){
+
+  tone(
+    430,
+    .08,
+    "triangle",
+    .03
+  );
+
+  setTimeout(
+    ()=>{
+      tone(
+        650,
+        .11,
+        "triangle",
+        .04
+      );
+    },
+    90
+  );
+
+}
+
+
+function soundWin(){
+
+  tone(520,.1,"triangle",.04);
+
+  setTimeout(
+    ()=>tone(700,.12,"triangle",.045),
+    100
+  );
+
+  setTimeout(
+    ()=>tone(920,.18,"triangle",.05),
+    220
+  );
+
+}
+
+
+/* =========================================================
+   UI HELPERS
+========================================================= */
+
+const $=
+  id=>document.getElementById(id);
+
+
+function showScreen(id){
+
+  document
+    .querySelectorAll(".screen")
+    .forEach(
+      s=>s.classList.remove(
+        "active"
+      )
+    );
+
+  $(id).classList.add(
+    "active"
+  );
+
+}
+
+
+function status(
   text,
   type=""
 ){
@@ -1147,7 +846,7 @@ function setStatus(
 }
 
 
-function setMessage(text){
+function message(text){
 
   $("message").textContent=
     text||"";
@@ -1155,11 +854,7 @@ function setMessage(text){
 }
 
 
-/* ============================================================
-   TOAST
-============================================================ */
-
-let toastTimer=null;
+let toastTimeout=null;
 
 
 function toast(text){
@@ -1171,36 +866,33 @@ function toast(text){
 
   el.classList.add("show");
 
-
   clearTimeout(
-    toastTimer
+    toastTimeout
   );
 
-
-  toastTimer=
+  toastTimeout=
     setTimeout(
       ()=>{
         el.classList.remove(
           "show"
         );
       },
-      1400
+      1300
     );
 
 }
 
 
-/* ============================================================
+/* =========================================================
    ROOM CODE
-============================================================ */
+========================================================= */
 
-function generateRoomCode(){
+function roomCodeRandom(){
 
   const chars=
     "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
-  let code="";
-
+  let result="";
 
   for(
     let i=0;
@@ -1208,7 +900,7 @@ function generateRoomCode(){
     i++
   ){
 
-    code+=
+    result+=
       chars[
         Math.floor(
           Math.random()*chars.length
@@ -1217,8 +909,7 @@ function generateRoomCode(){
 
   }
 
-
-  return code;
+  return result;
 
 }
 
@@ -1231,49 +922,18 @@ function cleanRoomCode(value){
       /[^A-Z0-9]/g,
       ""
     )
-    .slice(
-      0,
-      ROOM_LENGTH
-    );
+    .slice(0,6);
 
 }
 
 
-/* ============================================================
-   PEER CLEANUP
-============================================================ */
-
-function cleanup(){
-
-  if(connection){
-
-    try{
-      connection.close();
-    }catch(e){}
-
-    connection=null;
-
-  }
-
-
-  if(peer){
-
-    try{
-      peer.destroy();
-    }catch(e){}
-
-    peer=null;
-
-  }
-
-}
-
-
-/* ============================================================
+/* =========================================================
    CREATE PEER
-============================================================ */
+========================================================= */
 
-function openPeer(id){
+function openPeer(
+  id
+){
 
   return new Promise(
     (resolve,reject)=>{
@@ -1282,25 +942,32 @@ function openPeer(id){
         new Peer(
           id,
           {
-            debug:0
+            debug:1
           }
         );
 
 
-      let settled=false;
+      let done=false;
 
 
       p.on(
         "open",
         ()=>{
       
-          if(settled)
+          if(done)
             return;
 
 
-          settled=true;
+          done=true;
 
           peer=p;
+
+
+          console.log(
+            "[PUSHLINE] Peer ready:",
+            p.id
+          );
+
 
           resolve();
 
@@ -1310,18 +977,17 @@ function openPeer(id){
 
       p.on(
         "error",
-        error=>{
+        err=>{
 
           console.error(
-            "PeerJS:",
-            error
+            "[PUSHLINE] Peer error:",
+            err
           );
 
 
-          if(!settled){
+          if(!done){
 
-            settled=true;
-
+            done=true;
 
             try{
               p.destroy();
@@ -1329,7 +995,29 @@ function openPeer(id){
 
 
             reject(
-              error
+              err
+            );
+
+          }
+
+        }
+      );
+
+
+      p.on(
+        "disconnected",
+        ()=>{
+
+          console.warn(
+            "[PUSHLINE] Signaling disconnected."
+          );
+
+
+          if(connection){
+
+            status(
+              "P2P connected",
+              "good"
             );
 
           }
@@ -1343,40 +1031,9 @@ function openPeer(id){
 }
 
 
-/* ============================================================
-   SEND
-============================================================ */
-
-function send(data){
-
-  if(
-    connection &&
-    connection.open
-  ){
-
-    try{
-
-      connection.send(
-        data
-      );
-
-    }catch(error){
-
-      console.error(
-        "Send error:",
-        error
-      );
-
-    }
-
-  }
-
-}
-
-
-/* ============================================================
+/* =========================================================
    CREATE ROOM
-============================================================ */
+========================================================= */
 
 async function createRoom(){
 
@@ -1384,7 +1041,7 @@ async function createRoom(){
     true;
 
 
-  setStatus(
+  status(
     "Creating room..."
   );
 
@@ -1394,31 +1051,53 @@ async function createRoom(){
 
   for(
     let attempt=0;
-    attempt<10;
+    attempt<12;
     attempt++
   ){
 
     const candidate=
-      generateRoomCode();
+      roomCodeRandom();
 
 
     try{
 
+      /*
+        THE IMPORTANT FIX:
+
+        The displayed code IS the actual PeerJS ID.
+
+        No prefix.
+        No translation.
+        No second ID.
+      */
+
       await openPeer(
-        PREFIX+candidate
+        candidate
       );
 
 
-      code=
-        candidate;
-
+      code=candidate;
 
       break;
 
 
     }catch(error){
 
-      cleanup();
+      console.warn(
+        "Trying another room:",
+        error
+      );
+
+
+      if(peer){
+
+        try{
+          peer.destroy();
+        }catch(e){}
+
+        peer=null;
+
+      }
 
     }
 
@@ -1427,14 +1106,14 @@ async function createRoom(){
 
   if(!code){
 
-    $("createButton").disabled=
-      false;
-
-
-    setStatus(
-      "Failed",
+    status(
+      "Could not create room",
       "bad"
     );
+
+
+    $("createButton").disabled=
+      false;
 
 
     alert(
@@ -1463,25 +1142,43 @@ async function createRoom(){
   );
 
 
-  setStatus(
+  status(
     "Waiting for player 2",
     "good"
   );
 
 
+  console.log(
+    "[PUSHLINE] Host room:",
+    code
+  );
+
+
   /*
-    THIS is where the host accepts the guest.
+    Register connection listener immediately.
   */
 
   peer.on(
     "connection",
     incoming=>{
 
+      console.log(
+        "[PUSHLINE] Incoming connection:",
+        incoming.peer
+      );
+
+
       if(connection){
+
+        console.warn(
+          "[PUSHLINE] Already have player."
+        );
+
 
         try{
           incoming.close();
         }catch(e){}
+
 
         return;
 
@@ -1500,9 +1197,9 @@ async function createRoom(){
 }
 
 
-/* ============================================================
+/* =========================================================
    JOIN ROOM
-============================================================ */
+========================================================= */
 
 async function joinRoom(){
 
@@ -1515,10 +1212,6 @@ async function joinRoom(){
   $("roomInput").value=
     code;
 
-
-  /*
-    EXACTLY 6.
-  */
 
   if(code.length!==6){
 
@@ -1536,7 +1229,7 @@ async function joinRoom(){
     true;
 
 
-  setStatus(
+  status(
     "Connecting..."
   );
 
@@ -1544,17 +1237,22 @@ async function joinRoom(){
   try{
 
     /*
-      Guest gets a random PeerJS ID.
+      Guest receives a random peer ID.
 
-      Host has:
-        pushline-ABC123
+      It does NOT matter what it is.
 
-      Guest connects to:
-        pushline-ABC123
+      It connects directly to the host's
+      6-character ID.
     */
 
+    const myId=
+      "guest"+Math.random()
+        .toString(36)
+        .slice(2,12);
+
+
     await openPeer(
-      "guest-"+crypto.randomUUID()
+      myId
     );
 
 
@@ -1565,9 +1263,15 @@ async function joinRoom(){
     roomCode=code;
 
 
+    console.log(
+      "[PUSHLINE] Connecting to host:",
+      code
+    );
+
+
     connection=
       peer.connect(
-        PREFIX+code,
+        code,
         {
           reliable:true,
           serialization:"json"
@@ -1589,7 +1293,7 @@ async function joinRoom(){
       false;
 
 
-    setStatus(
+    status(
       "Connection failed",
       "bad"
     );
@@ -1597,7 +1301,8 @@ async function joinRoom(){
 
     alert(
       "Could not connect.\n\n" +
-      "Check the 6-character room code."
+      "Make sure the host is still waiting " +
+      "and the code is exactly 6 characters."
     );
 
   }
@@ -1605,21 +1310,27 @@ async function joinRoom(){
 }
 
 
-/* ============================================================
+/* =========================================================
    CONNECTION SETUP
-============================================================ */
+========================================================= */
 
 function setupConnection(){
 
-  /*
-    OPEN
-  */
+  console.log(
+    "[PUSHLINE] Setting up connection..."
+  );
+
 
   connection.on(
     "open",
     ()=>{
 
-      setStatus(
+      console.log(
+        "[PUSHLINE] DataConnection OPEN."
+      );
+
+
+      status(
         "P2P connected",
         "good"
       );
@@ -1628,9 +1339,9 @@ function setupConnection(){
       if(isHost){
 
         /*
-          HOST sends explicit HELLO.
+          Host has NOT started yet.
 
-          The game does NOT start yet.
+          Send explicit welcome.
         */
 
         send({
@@ -1639,18 +1350,7 @@ function setupConnection(){
 
 
         $("waitingText").textContent=
-          "Connection established. Waiting for player 2 to confirm...";
-
-      }else{
-
-        /*
-          GUEST waits for HELLO.
-
-          The guest does NOT assume the game has started.
-        */
-
-        $("waitingText").textContent=
-          "Connected. Confirming with host...";
+          "Player 2 connected. Confirming...";
 
       }
 
@@ -1658,13 +1358,15 @@ function setupConnection(){
   );
 
 
-  /*
-    DATA
-  */
-
   connection.on(
     "data",
     data=>{
+
+      console.log(
+        "[PUSHLINE] DATA:",
+        data
+      );
+
 
       handleNetwork(
         data
@@ -1674,15 +1376,16 @@ function setupConnection(){
   );
 
 
-  /*
-    CLOSE
-  */
-
   connection.on(
     "close",
     ()=>{
 
-      setStatus(
+      console.warn(
+        "[PUSHLINE] Connection closed."
+      );
+
+
+      status(
         "Opponent disconnected",
         "bad"
       );
@@ -1700,8 +1403,8 @@ function setupConnection(){
         disableControls();
 
 
-        setMessage(
-          "Your opponent disconnected."
+        message(
+          "Opponent disconnected."
         );
 
       }
@@ -1710,21 +1413,17 @@ function setupConnection(){
   );
 
 
-  /*
-    ERROR
-  */
-
   connection.on(
     "error",
-    error=>{
+    err=>{
 
       console.error(
-        "Data connection:",
-        error
+        "[PUSHLINE] DataConnection error:",
+        err
       );
 
 
-      setStatus(
+      status(
         "Connection error",
         "bad"
       );
@@ -1735,108 +1434,113 @@ function setupConnection(){
 }
 
 
-/* ============================================================
-   NETWORK HANDLER
-============================================================ */
+/* =========================================================
+   SEND
+========================================================= */
+
+function send(data){
+
+  if(
+    !connection ||
+    !connection.open
+  ){
+
+    console.warn(
+      "[PUSHLINE] Tried to send while closed:",
+      data
+    );
+
+
+    return false;
+
+  }
+
+
+  try{
+
+    connection.send(
+      data
+    );
+
+
+    return true;
+
+  }catch(error){
+
+    console.error(
+      "[PUSHLINE] Send failed:",
+      error
+    );
+
+
+    return false;
+
+  }
+
+}
+
+
+/* =========================================================
+   NETWORK ROUTER
+========================================================= */
 
 function handleNetwork(data){
 
   if(
     !data ||
-    typeof data.type!=="string"
+    !data.type
   )
     return;
 
 
   switch(data.type){
 
-
-    /* --------------------------------------------------------
-       HOST -> GUEST
-       HELLO
-    -------------------------------------------------------- */
-
     case "HELLO":
 
+      /*
+        GUEST receives HELLO.
+
+        It explicitly says:
+        YES, I am here.
+      */
+
       if(!isHost){
-
-        /*
-          THIS is the guest's explicit confirmation step.
-
-          The host cannot start until this arrives.
-        */
-
-        guestReady=true;
-
-
-        setStatus(
-          "Connected",
-          "good"
-        );
-
 
         send({
           type:"READY"
         });
 
 
-        /*
-          Still waiting for START.
-        */
-
-        $("role").innerHTML=
-          '<span class="mini redDot"></span> YOU ARE RED';
+        $("waitingText").textContent=
+          "Connected! Waiting for host...";
 
 
-        setMessage(
-          "Waiting for host to start..."
-        );
-
-      }
-
-      break;
-
-
-    /* --------------------------------------------------------
-       GUEST -> HOST
-       READY
-    -------------------------------------------------------- */
-
-    case "READY":
-
-      if(isHost){
-
-        hostReady=true;
-
-
-        setStatus(
-          "Both players connected",
+        status(
+          "Ready",
           "good"
         );
 
-
-        $("waitingText").textContent=
-          "Both players connected! Starting...";
-
-
-        /*
-          Start ONLY NOW.
-        */
-
-        setTimeout(
-          startHostGame,
-          300
-        );
-
       }
 
       break;
 
 
-    /* --------------------------------------------------------
-       HOST -> GUEST
-       START
-    -------------------------------------------------------- */
+    case "READY":
+
+      /*
+        HOST receives READY.
+
+        ONLY NOW is the game allowed to start.
+      */
+
+      if(isHost){
+
+        hostStartConfirmed();
+
+      }
+
+      break;
+
 
     case "START":
 
@@ -1851,26 +1555,6 @@ function handleNetwork(data){
       break;
 
 
-    /* --------------------------------------------------------
-       GUEST -> HOST
-       START ACK
-    -------------------------------------------------------- */
-
-    case "START_ACK":
-
-      if(isHost){
-
-        gameStarted=true;
-
-      }
-
-      break;
-
-
-    /* --------------------------------------------------------
-       GAME STATE
-    -------------------------------------------------------- */
-
     case "STATE":
 
       if(!isHost){
@@ -1884,32 +1568,12 @@ function handleNetwork(data){
       break;
 
 
-    /* --------------------------------------------------------
-       MOVE REQUEST
-    -------------------------------------------------------- */
+    case "MOVE":
 
-    case "MOVE_REQUEST":
+      if(isHost){
 
-      if(
-        isHost &&
-        game &&
-        game.phase==="playing"
-      ){
-
-        /*
-          Guest must only move on RED's turn.
-        */
-
-        if(
-          game.current!=="red"
-        )
-          return;
-
-
-        hostApplyMove(
-          data.pieceId,
-          data.direction,
-          Boolean(data.slam)
+        receiveMove(
+          data
         );
 
       }
@@ -1917,15 +1581,11 @@ function handleNetwork(data){
       break;
 
 
-    /* --------------------------------------------------------
-       REMATCH
-    -------------------------------------------------------- */
-
     case "REMATCH":
 
       if(isHost){
 
-        startHostRematch();
+        startHostGame();
 
       }
 
@@ -1936,23 +1596,28 @@ function handleNetwork(data){
 }
 
 
-/* ============================================================
-   START HOST GAME
-============================================================ */
+/* =========================================================
+   HOST START CONFIRMATION
+========================================================= */
 
-function startHostGame(){
+function hostStartConfirmed(){
 
   if(
-    !isHost ||
-    !connection ||
-    !connection.open
+    hostGameSent
   )
     return;
 
 
-  if(!hostReady)
-    return;
+  hostGameSent=true;
 
+
+  $("waitingText").textContent=
+    "Both players ready! Starting...";
+
+
+  /*
+    Create game exactly once.
+  */
 
   game=
     createGame();
@@ -1960,13 +1625,11 @@ function startHostGame(){
 
   selectedPieceId=null;
 
-  gameStarted=true;
-
 
   /*
-    Send complete initial state.
+    Send game.
 
-    PUSHLINE has no hidden information.
+    This is the ONLY place the initial game starts.
   */
 
   send({
@@ -1984,41 +1647,25 @@ function startHostGame(){
     '<span class="mini blueDot"></span> YOU ARE BLUE';
 
 
-  $("turnStatus").textContent=
-    "YOUR TURN";
-
-
-  setMessage(
-    "Select a piece."
-  );
-
-
   render();
 
 
   updateControls();
 
 
-  toast(
-    "GAME START"
+  message(
+    "Select one of your pieces."
   );
 
 
   soundStart();
 
-
-  /*
-    Guest confirms receipt.
-
-    This is useful for diagnosing connection issues.
-  */
-
 }
 
 
-/* ============================================================
-   START GUEST
-============================================================ */
+/* =========================================================
+   RECEIVE START
+========================================================= */
 
 function receiveStart(data){
 
@@ -2027,7 +1674,9 @@ function receiveStart(data){
 
 
   /*
-    Copy authoritative state.
+    IMPORTANT:
+    Guest doesn't create its own game.
+    It copies the host's authoritative state.
   */
 
   game=
@@ -2036,11 +1685,7 @@ function receiveStart(data){
     );
 
 
-  myColor="red";
-
   selectedPieceId=null;
-
-  gameStarted=true;
 
 
   showScreen(
@@ -2052,14 +1697,9 @@ function receiveStart(data){
     '<span class="mini redDot"></span> YOU ARE RED';
 
 
-  setStatus(
+  status(
     "P2P connected",
     "good"
-  );
-
-
-  setMessage(
-    "Select a piece."
   );
 
 
@@ -2068,10 +1708,6 @@ function receiveStart(data){
 
   updateControls();
 
-
-  /*
-    Explicit acknowledgement.
-  */
 
   send({
     type:"START_ACK"
@@ -2083,9 +1719,9 @@ function receiveStart(data){
 }
 
 
-/* ============================================================
-   CREATE GAME
-============================================================ */
+/* =========================================================
+   GAME CREATION
+========================================================= */
 
 function createGame(){
 
@@ -2101,7 +1737,7 @@ function createGame(){
 
 
   /*
-    Five BLUE pieces.
+    BLUE
   */
 
   const blueSpawns=[
@@ -2114,7 +1750,7 @@ function createGame(){
 
 
   /*
-    Five RED pieces.
+    RED
   */
 
   const redSpawns=[
@@ -2181,9 +1817,9 @@ function createGame(){
 }
 
 
-/* ============================================================
+/* =========================================================
    HOLES
-============================================================ */
+========================================================= */
 
 function createHoles(){
 
@@ -2228,54 +1864,9 @@ function createHoles(){
 }
 
 
-/* ============================================================
-   CLONE
-============================================================ */
-
-function clone(value){
-
-  if(
-    typeof structuredClone==="function"
-  ){
-
-    return structuredClone(
-      value
-    );
-
-  }
-
-
-  return JSON.parse(
-    JSON.stringify(
-      value
-    )
-  );
-
-}
-
-
-/* ============================================================
-   HOLE
-============================================================ */
-
-function isHole(
-  state,
-  r,
-  c
-){
-
-  return state.holes.some(
-    hole=>
-      hole.r===r &&
-      hole.c===c
-  );
-
-}
-
-
-/* ============================================================
-   INSIDE
-============================================================ */
+/* =========================================================
+   BASIC BOARD FUNCTIONS
+========================================================= */
 
 function inside(r,c){
 
@@ -2289,11 +1880,22 @@ function inside(r,c){
 }
 
 
-/* ============================================================
-   DELTA
-============================================================ */
+function isHole(
+  state,
+  r,
+  c
+){
 
-function getDelta(dir){
+  return state.holes.some(
+    h=>
+      h.r===r &&
+      h.c===c
+  );
+
+}
+
+
+function delta(dir){
 
   if(dir==="up")
     return[-1,0];
@@ -2311,10 +1913,6 @@ function getDelta(dir){
 
 }
 
-
-/* ============================================================
-   FIND PIECE
-============================================================ */
 
 function findPiece(
   state,
@@ -2360,9 +1958,9 @@ function findPiece(
 }
 
 
-/* ============================================================
-   NORMAL MOVE + PUSH
-============================================================ */
+/* =========================================================
+   EXECUTE MOVE
+========================================================= */
 
 function executeMove(
   state,
@@ -2378,7 +1976,7 @@ function executeMove(
 
     return{
       ok:false,
-      reason:"The game is over."
+      reason:"Game over."
     };
 
   }
@@ -2390,7 +1988,36 @@ function executeMove(
 
     return{
       ok:false,
-      reason:"It is not your turn."
+      reason:"Not your turn."
+    };
+
+  }
+
+
+  const source=
+    findPiece(
+      state,
+      pieceId
+    );
+
+
+  if(!source){
+
+    return{
+      ok:false,
+      reason:"Piece doesn't exist."
+    };
+
+  }
+
+
+  if(
+    source.piece.color!==color
+  ){
+
+    return{
+      ok:false,
+      reason:"That is not your piece."
     };
 
   }
@@ -2413,72 +2040,40 @@ function executeMove(
   }
 
 
-  const source=
-    findPiece(
-      state,
-      pieceId
-    );
-
-
-  if(!source){
-
-    return{
-      ok:false,
-      reason:"That piece no longer exists."
-    };
-
-  }
-
-
-  if(
-    source.piece.color!==color
-  ){
-
-    return{
-      ok:false,
-      reason:"That is not your piece."
-    };
-
-  }
-
-
   const d=
-    getDelta(
+    delta(
       direction
     );
 
 
-  const targetR=
+  const tr=
     source.r+d[0];
 
-  const targetC=
+  const tc=
     source.c+d[1];
 
 
   if(
-    !inside(
-      targetR,
-      targetC
-    )
+    !inside(tr,tc)
   ){
 
     return{
       ok:false,
-      reason:"The board edge is there."
+      reason:"Board edge."
     };
 
   }
 
 
   /*
-    You cannot voluntarily enter a hole.
+    You cannot move directly into a hole.
   */
 
   if(
     isHole(
       state,
-      targetR,
-      targetC
+      tr,
+      tc
     )
   ){
 
@@ -2491,32 +2086,21 @@ function executeMove(
 
 
   const target=
-    state.board[
-      targetR
-    ][
-      targetC
-    ];
+    state.board[tr][tc];
 
 
   /*
-    Empty square.
+    Empty.
   */
 
   if(!target){
 
-    state.board[
-      targetR
-    ][
-      targetC
-    ]=
+    state.board[tr][tc]=
       source.piece;
 
 
-    state.board[
-      source.r
-    ][
-      source.c
-    ]=null;
+    state.board[source.r][source.c]=
+      null;
 
 
     finishTurn(
@@ -2526,8 +2110,7 @@ function executeMove(
 
     return{
       ok:true,
-      action:"MOVE",
-      pushed:false,
+      kind:"move",
       destroyed:0
     };
 
@@ -2535,7 +2118,7 @@ function executeMove(
 
 
   /*
-    Friendly piece blocks.
+    Friendly blocker.
   */
 
   if(
@@ -2554,7 +2137,7 @@ function executeMove(
     Enemy = push.
   */
 
-  return push(
+  return pushChain(
     state,
     source,
     direction,
@@ -2564,11 +2147,11 @@ function executeMove(
 }
 
 
-/* ============================================================
-   PUSH
-============================================================ */
+/* =========================================================
+   PUSH CHAIN
+========================================================= */
 
-function push(
+function pushChain(
   state,
   source,
   direction,
@@ -2576,7 +2159,7 @@ function push(
 ){
 
   const d=
-    getDelta(
+    delta(
       direction
     );
 
@@ -2592,7 +2175,7 @@ function push(
 
 
   /*
-    Find contiguous enemy chain.
+    Collect contiguous enemy pieces.
   */
 
   while(
@@ -2633,17 +2216,29 @@ function push(
   }
 
 
-  /*
-    Normal push = 1 square.
-    SLAM = 2 squares.
-  */
-
   const amount=
     slam?2:1;
 
 
   /*
-    Check the chain's front path.
+    SLAM may only be used once.
+  */
+
+  if(
+    slam &&
+    state.slamUsed[source.piece.color]
+  ){
+
+    return{
+      ok:false,
+      reason:"You already used SLAM."
+    };
+
+  }
+
+
+  /*
+    Check front path.
   */
 
   for(
@@ -2658,73 +2253,66 @@ function push(
       ];
 
 
-    const checkR=
+    const nr=
       front.r+d[0]*step;
 
 
-    const checkC=
+    const nc=
       front.c+d[1]*step;
 
 
     if(
-      !inside(
-        checkR,
-        checkC
-      )
+      !inside(nr,nc)
     ){
 
       return{
         ok:false,
-        reason:"There is not enough room."
+        reason:"Not enough space."
       };
 
     }
 
 
     /*
-      Hole can only be the final destination.
+      Hole is allowed only at final position.
     */
 
     if(
       step<amount &&
       isHole(
         state,
-        checkR,
-        checkC
+        nr,
+        nc
       )
     ){
 
       return{
         ok:false,
-        reason:"The chain hits a hole too early."
+        reason:"A hole blocks the push."
       };
 
     }
 
 
     const occupant=
-      state.board[
-        checkR
-      ][
-        checkC
-      ];
+      state.board[nr][nc];
 
 
-    const belongsToChain=
+    const isChainPiece=
       chain.some(
-        item=>
-          item.r===checkR &&
-          item.c===checkC
+        x=>
+          x.r===nr &&
+          x.c===nc
       );
 
 
     if(
       occupant &&
-      !belongsToChain &&
+      !isChainPiece &&
       !isHole(
         state,
-        checkR,
-        checkC
+        nr,
+        nc
       )
     ){
 
@@ -2739,7 +2327,7 @@ function push(
 
 
   /*
-    Remove old chain positions.
+    Clear old enemy positions.
   */
 
   for(
@@ -2759,7 +2347,7 @@ function push(
 
 
   /*
-    Put chain in new positions.
+    Move enemy pieces.
   */
 
   for(
@@ -2800,7 +2388,7 @@ function push(
 
 
   /*
-    Pushing player moves into first enemy square.
+    Move pusher into the first enemy position.
   */
 
   state.board[
@@ -2833,68 +2421,41 @@ function push(
 
 
   return{
-
     ok:true,
-
-    action:
-      slam
-        ?"SLAM!"
-        :"PUSH!",
-
-    pushed:true,
-
+    kind:slam?"slam":"push",
     destroyed
-
   };
 
 }
 
 
-/* ============================================================
+/* =========================================================
    FINISH TURN
-============================================================ */
+========================================================= */
 
-function finishTurn(
-  state
-){
-
-  /*
-    RED destroyed 3 -> BLUE wins.
-  */
+function finishTurn(state){
 
   if(
     state.destroyed.red>=WIN_DESTROYED
   ){
 
     state.phase="finished";
-
     state.winner="blue";
-
     return;
 
   }
 
-
-  /*
-    BLUE destroyed 3 -> RED wins.
-  */
 
   if(
     state.destroyed.blue>=WIN_DESTROYED
   ){
 
     state.phase="finished";
-
     state.winner="red";
-
     return;
 
   }
 
-
-  /*
-    Alternate turns.
-  */
 
   state.current=
     state.current==="blue"
@@ -2907,15 +2468,11 @@ function finishTurn(
 }
 
 
-/* ============================================================
-   HOST APPLY MOVE
-============================================================ */
+/* =========================================================
+   RECEIVE MOVE
+========================================================= */
 
-function hostApplyMove(
-  pieceId,
-  direction,
-  slam
-){
+function receiveMove(data){
 
   if(
     !isHost ||
@@ -2924,39 +2481,33 @@ function hostApplyMove(
     return;
 
 
-  /*
-    Save position of currently selected
-    piece for animation.
-  */
+  if(
+    game.current!=="red"
+  )
+    return;
+
 
   const before=
-    clone(
-      game
-    );
+    clone(game);
 
-
-  /*
-    Execute authoritative move.
-  */
 
   const result=
     executeMove(
       game,
       "red",
-      pieceId,
-      direction,
-      slam
+      data.pieceId,
+      data.direction,
+      Boolean(data.slam)
     );
 
 
-  /*
-    Invalid guest move.
-
-    Send current state back, allowing guest controls
-    to recover.
-  */
-
   if(!result.ok){
+
+    /*
+      Send unchanged authoritative state.
+    */
+
+    game=before;
 
     sendState();
 
@@ -2965,35 +2516,15 @@ function hostApplyMove(
   }
 
 
-  /*
-    Broadcast new authoritative board.
-  */
-
   sendState();
 
 
-  /*
-    Animate local host board if host did a SLAM/PUSH
-    or if the move was made by the guest.
-  */
+  if(
+    result.kind==="push" ||
+    result.kind==="slam"
+  ){
 
-  if(result.pushed){
-
-    $("boardFrame").classList.add(
-      "shake"
-    );
-
-
-    setTimeout(
-      ()=>{
-        $("boardFrame")
-          .classList.remove(
-            "shake"
-          );
-      },
-      240
-    );
-
+    shakeBoard();
 
     soundPush(
       result.destroyed
@@ -3006,10 +2537,86 @@ function hostApplyMove(
   }
 
 
+  render();
+
+
+  if(
+    game.phase==="finished"
+  ){
+
+    showResult(
+      game.winner
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   HOST OWN MOVE
+========================================================= */
+
+function hostOwnMove(
+  pieceId,
+  direction,
+  slam=false
+){
+
+  const before=
+    clone(game);
+
+
+  const result=
+    executeMove(
+      game,
+      "blue",
+      pieceId,
+      direction,
+      slam
+    );
+
+
+  if(!result.ok){
+
+    game=before;
+
+
+    toast(
+      result.reason
+    );
+
+
+    return;
+
+  }
+
+
   selectedPieceId=null;
 
 
+  sendState();
+
+
   render();
+
+
+  if(
+    result.kind==="push" ||
+    result.kind==="slam"
+  ){
+
+    shakeBoard();
+
+    soundPush(
+      result.destroyed
+    );
+
+  }else{
+
+    soundMove();
+
+  }
 
 
   updateControls();
@@ -3023,28 +2630,69 @@ function hostApplyMove(
       game.winner
     );
 
+  }
+
+}
+
+
+/* =========================================================
+   GUEST OWN MOVE
+========================================================= */
+
+function guestOwnMove(
+  pieceId,
+  direction,
+  slam=false
+){
+
+  if(
+    !connection ||
+    !connection.open
+  ){
+
+    toast(
+      "Not connected."
+    );
+
 
     return;
 
   }
 
 
-  setMessage(
-    game.current===myColor
-      ?"Your turn."
-      :"Opponent's turn."
-  );
+  disableControls();
+
+
+  send({
+
+    type:"MOVE",
+
+    pieceId,
+
+    direction,
+
+    slam:Boolean(slam)
+
+  });
+
+
+  $("turnStatus").textContent=
+    "WAITING FOR HOST...";
 
 }
 
 
-/* ============================================================
-   SEND STATE
-============================================================ */
+/* =========================================================
+   STATE
+========================================================= */
 
 function sendState(){
 
-  if(!game)
+  if(
+    !game ||
+    !connection ||
+    !connection.open
+  )
     return;
 
 
@@ -3059,19 +2707,13 @@ function sendState(){
 }
 
 
-/* ============================================================
-   RECEIVE STATE
-============================================================ */
-
 function receiveState(data){
 
   if(isHost)
     return;
 
 
-  if(
-    !data.state
-  )
+  if(!data.state)
     return;
 
 
@@ -3081,15 +2723,10 @@ function receiveState(data){
     );
 
 
-  /*
-    Guest state from the host is authoritative.
-  */
-
   selectedPieceId=null;
 
 
   render();
-
 
   updateControls();
 
@@ -3102,33 +2739,14 @@ function receiveState(data){
       game.winner
     );
 
-    return;
-
-  }
-
-
-  $("turnStatus").textContent=
-    game.current===myColor
-      ?"YOUR TURN"
-      :"OPPONENT'S TURN";
-
-
-  if(
-    game.current===myColor
-  ){
-
-    setMessage(
-      "Select one of your pieces."
-    );
-
   }
 
 }
 
 
-/* ============================================================
-   SELECT PIECE
-============================================================ */
+/* =========================================================
+   PIECE SELECTION
+========================================================= */
 
 function selectPiece(
   r,
@@ -3161,60 +2779,108 @@ function selectPiece(
 
 
   if(
-    !piece
+    piece &&
+    piece.color===myColor
   ){
 
-    selectedPieceId=null;
+    selectedPieceId=
+      piece.id;
+
+
+    soundSelect();
+
+
+    message(
+      "Choose a direction."
+    );
 
 
     render();
 
     updateControls();
 
+
     return;
 
   }
 
+
+  /*
+    Clicking adjacent empty cell performs move.
+  */
 
   if(
-    piece.color!==myColor
+    selectedPieceId &&
+    !piece &&
+    !isHole(game,r,c)
   ){
 
-    toast(
-      "That's your opponent's piece."
-    );
+    const selected=
+      findPiece(
+        game,
+        selectedPieceId
+      );
 
 
-    return;
+    if(selected){
+
+      const dr=
+        r-selected.r;
+
+
+      const dc=
+        c-selected.c;
+
+
+      if(
+        Math.abs(dr)+
+        Math.abs(dc)===1
+      ){
+
+        let direction;
+
+
+        if(dr===-1)
+          direction="up";
+
+        else if(dr===1)
+          direction="down";
+
+        else if(dc===-1)
+          direction="left";
+
+        else
+          direction="right";
+
+
+        attemptMove(
+          direction
+        );
+
+
+        return;
+
+      }
+
+    }
 
   }
 
 
-  selectedPieceId=
-    piece.id;
-
-
-  soundSelect();
-
-
-  setMessage(
-    "Choose a direction."
-  );
-
+  selectedPieceId=null;
 
   render();
-
 
   updateControls();
 
 }
 
 
-/* ============================================================
-   ATTEMPT DIRECTION
-============================================================ */
+/* =========================================================
+   ATTEMPT MOVE
+========================================================= */
 
-function attemptDirection(
+function attemptMove(
   direction
 ){
 
@@ -3234,12 +2900,6 @@ function attemptDirection(
 
   if(
     !game ||
-    game.phase!=="playing"
-  )
-    return;
-
-
-  if(
     game.current!==myColor
   ){
 
@@ -3253,14 +2913,6 @@ function attemptDirection(
   }
 
 
-  /*
-    HOST:
-      execute immediately.
-
-    GUEST:
-      send request.
-  */
-
   if(isHost){
 
     hostOwnMove(
@@ -3271,25 +2923,10 @@ function attemptDirection(
 
   }else{
 
-    disableControls();
-
-
-    send({
-
-      type:"MOVE_REQUEST",
-
-      pieceId:
-        selectedPieceId,
-
+    guestOwnMove(
+      selectedPieceId,
       direction,
-
-      slam:false
-
-    });
-
-
-    setMessage(
-      "Sending move..."
+      false
     );
 
   }
@@ -3297,109 +2934,33 @@ function attemptDirection(
 }
 
 
-/* ============================================================
-   HOST'S OWN MOVE
-============================================================ */
+/* =========================================================
+   SLAM
+========================================================= */
 
-function hostOwnMove(
-  pieceId,
-  direction,
-  slam
-){
+function useSlam(){
 
-  const before=
-    clone(
-      game
-    );
-
-
-  const result=
-    executeMove(
-      game,
-      "blue",
-      pieceId,
-      direction,
-      slam
-    );
-
-
-  if(!result.ok){
-
-    game=before;
-
+  if(
+    !selectedPieceId
+  ){
 
     toast(
-      result.reason
-    );
-
-
-    setMessage(
-      result.reason
+      "Select a piece first."
     );
 
 
     return;
 
   }
-
-
-  selectedPieceId=null;
-
-
-  /*
-    Push effects.
-  */
-
-  if(result.pushed){
-
-    $("boardFrame")
-      .classList.add(
-        "shake"
-      );
-
-
-    setTimeout(
-      ()=>{
-        $("boardFrame")
-          .classList.remove(
-            "shake"
-          );
-      },
-      240
-    );
-
-
-    soundPush(
-      result.destroyed
-    );
-
-
-  }else{
-
-    soundMove();
-
-  }
-
-
-  /*
-    Send authoritative state to RED.
-  */
-
-  sendState();
-
-
-  render();
-
-
-  updateControls();
 
 
   if(
-    game.phase==="finished"
+    !game ||
+    game.current!==myColor
   ){
 
-    showResult(
-      game.winner
+    toast(
+      "Wait for your turn."
     );
 
 
@@ -3408,18 +2969,138 @@ function hostOwnMove(
   }
 
 
-  setMessage(
-    game.current===myColor
-      ?"Your turn."
-      :"Opponent's turn."
-  );
+  if(
+    game.slamUsed[myColor]
+  ){
+
+    toast(
+      "SLAM already used."
+    );
+
+
+    return;
+
+  }
+
+
+  const source=
+    findPiece(
+      game,
+      selectedPieceId
+    );
+
+
+  if(!source)
+    return;
+
+
+  const available=[];
+
+
+  for(
+    const direction of [
+      "up",
+      "down",
+      "left",
+      "right"
+    ]
+  ){
+
+    const d=
+      delta(
+        direction
+      );
+
+
+    const r=
+      source.r+d[0];
+
+
+    const c=
+      source.c+d[1];
+
+
+    if(
+      inside(r,c) &&
+      game.board[r][c] &&
+      game.board[r][c].color!==myColor
+    ){
+
+      available.push(
+        direction
+      );
+
+    }
+
+  }
+
+
+  let direction=
+    available.length===1
+      ?available[0]
+      :prompt(
+        "SLAM direction:\n\nup / down / left / right"
+      );
+
+
+  if(!direction)
+    return;
+
+
+  direction=
+    direction
+      .trim()
+      .toLowerCase();
+
+
+  if(
+    ![
+      "up",
+      "down",
+      "left",
+      "right"
+    ].includes(
+      direction
+    )
+  ){
+
+    toast(
+      "Invalid direction."
+    );
+
+
+    return;
+
+  }
+
+
+  shakeBoard();
+
+
+  if(isHost){
+
+    hostOwnMove(
+      selectedPieceId,
+      direction,
+      true
+    );
+
+  }else{
+
+    guestOwnMove(
+      selectedPieceId,
+      direction,
+      true
+    );
+
+  }
 
 }
 
 
-/* ============================================================
+/* =========================================================
    RENDER
-============================================================ */
+========================================================= */
 
 function render(){
 
@@ -3503,8 +3184,7 @@ function render(){
 
       if(
         piece &&
-        piece.id===
-        selectedPieceId
+        piece.id===selectedPieceId
       ){
 
         cell.classList.add(
@@ -3515,12 +3195,12 @@ function render(){
 
 
       /*
-        Adjacent empty movement indicator.
+        Reachable visual.
       */
 
       if(
         selectedPieceId &&
-        piece===null &&
+        !piece &&
         !isHole(game,r,c)
       ){
 
@@ -3533,7 +3213,7 @@ function render(){
 
         if(selected){
 
-          const d=
+          const dist=
             Math.abs(
               selected.r-r
             )+
@@ -3542,7 +3222,7 @@ function render(){
             );
 
 
-          if(d===1){
+          if(dist===1){
 
             cell.classList.add(
               "reachable"
@@ -3555,10 +3235,6 @@ function render(){
       }
 
 
-      /*
-        Click cell.
-      */
-
       cell.onclick=()=>{
 
         selectPiece(
@@ -3569,10 +3245,6 @@ function render(){
       };
 
 
-      /*
-        Piece visual.
-      */
-
       if(piece){
 
         const visual=
@@ -3582,7 +3254,8 @@ function render(){
 
 
         visual.className=
-          "piece "+piece.color;
+          "piece "+
+          piece.color;
 
 
         if(
@@ -3618,9 +3291,9 @@ function render(){
 }
 
 
-/* ============================================================
+/* =========================================================
    HUD
-============================================================ */
+========================================================= */
 
 function updateHUD(){
 
@@ -3644,14 +3317,14 @@ function updateHUD(){
     "Turn "+game.turn;
 
 
-  const myTurn=
+  const mine=
     game.current===myColor;
 
 
   $("turnStatus").textContent=
     game.phase==="finished"
       ?"GAME OVER"
-      :myTurn
+      :mine
         ?"YOUR TURN"
         :"OPPONENT'S TURN";
 
@@ -3659,40 +3332,26 @@ function updateHUD(){
   $("turnStatus")
     .classList.toggle(
       "ready",
-      myTurn &&
-      game.phase==="playing"
+      mine
     );
 
 
   $("slamButton").disabled=
     !(
+      mine &&
       game.phase==="playing" &&
-      game.current===myColor &&
       selectedPieceId &&
       !game.slamUsed[myColor]
     );
 
 
-  if(
+  $("selectedText").textContent=
     selectedPieceId
-  ){
-
-    $("selectedPieceText").textContent=
-      "Piece selected • choose direction";
-
-  }else{
-
-    $("selectedPieceText").textContent=
-      "Select one of your pieces";
-
-  }
+      ?"Piece selected • choose direction"
+      :"Select one of your pieces";
 
 }
 
-
-/* ============================================================
-   DESTROYED UI
-============================================================ */
 
 function renderDestroyed(
   container,
@@ -3708,7 +3367,7 @@ function renderDestroyed(
     i++
   ){
 
-    const span=
+    const item=
       document.createElement(
         "span"
       );
@@ -3716,21 +3375,19 @@ function renderDestroyed(
 
     if(i<amount){
 
-      span.textContent="✕";
+      item.textContent="✕";
 
-      span.classList.add(
-        "dead"
-      );
+      item.className="dead";
 
     }else{
 
-      span.textContent="○";
+      item.textContent="○";
 
     }
 
 
     container.appendChild(
-      span
+      item
     );
 
   }
@@ -3738,9 +3395,9 @@ function renderDestroyed(
 }
 
 
-/* ============================================================
-   CONTROLS
-============================================================ */
+/* =========================================================
+   CONTROL STATE
+========================================================= */
 
 function updateControls(){
 
@@ -3763,8 +3420,7 @@ function updateControls(){
       ".dir[data-direction]"
     )
     .forEach(
-      b=>
-        b.disabled=false
+      b=>b.disabled=false
     );
 
 
@@ -3781,8 +3437,7 @@ function disableControls(){
       ".dir[data-direction]"
     )
     .forEach(
-      b=>
-        b.disabled=true
+      b=>b.disabled=true
     );
 
 
@@ -3791,210 +3446,44 @@ function disableControls(){
 }
 
 
-/* ============================================================
-   SLAM
-============================================================ */
+/* =========================================================
+   BOARD EFFECT
+========================================================= */
 
-function useSlam(){
+function shakeBoard(){
 
-  if(
-    !selectedPieceId
-  ){
-
-    toast(
-      "Select a piece first."
-    );
+  const frame=
+    $("boardFrame");
 
 
-    return;
-
-  }
-
-
-  if(
-    !game ||
-    game.current!==myColor
-  ){
-
-    toast(
-      "Wait for your turn."
-    );
+  frame.classList.remove(
+    "shake"
+  );
 
 
-    return;
-
-  }
+  void frame.offsetWidth;
 
 
-  if(
-    game.slamUsed[myColor]
-  ){
-
-    toast(
-      "SLAM already used."
-    );
-
-
-    return;
-
-  }
-
-
-  /*
-    Find directions where an enemy is directly
-    adjacent.
-
-    If exactly one exists, use it automatically.
-  */
-
-  const possible=[];
-
-
-  for(
-    const direction of [
-      "up",
-      "down",
-      "left",
-      "right"
-    ]
-  ){
-
-    const source=
-      findPiece(
-        game,
-        selectedPieceId
-      );
-
-
-    if(!source)
-      return;
-
-
-    const d=
-      getDelta(
-        direction
-      );
-
-
-    const r=
-      source.r+d[0];
-
-    const c=
-      source.c+d[1];
-
-
-    if(
-      inside(r,c) &&
-      game.board[r][c] &&
-      game.board[r][c].color!==myColor
-    ){
-
-      possible.push(
-        direction
-      );
-
-    }
-
-  }
-
-
-  let direction=
-    possible.length===1
-      ?possible[0]
-      :prompt(
-        "SLAM direction:\n\nup\n down\n left\n right"
-      );
-
-
-  if(
-    !direction
-  )
-    return;
-
-
-  direction=
-    direction
-      .trim()
-      .toLowerCase();
-
-
-  if(
-    ![
-      "up",
-      "down",
-      "left",
-      "right"
-    ].includes(
-      direction
-    )
-  ){
-
-    toast(
-      "Invalid direction."
-    );
-
-
-    return;
-
-  }
-
-
-  $("boardFrame")
-    .classList.add(
-      "shake"
-    );
+  frame.classList.add(
+    "shake"
+  );
 
 
   setTimeout(
     ()=>{
-      $("boardFrame")
-        .classList.remove(
-          "shake"
-        );
+      frame.classList.remove(
+        "shake"
+      );
     },
-    240
+    250
   );
-
-
-  if(isHost){
-
-    hostOwnMove(
-      selectedPieceId,
-      direction,
-      true
-    );
-
-  }else{
-
-    disableControls();
-
-
-    send({
-
-      type:"MOVE_REQUEST",
-
-      pieceId:
-        selectedPieceId,
-
-      direction,
-
-      slam:true
-
-    });
-
-
-    setMessage(
-      "Sending SLAM..."
-    );
-
-  }
 
 }
 
 
-/* ============================================================
+/* =========================================================
    RESULT
-============================================================ */
+========================================================= */
 
 function showResult(
   winner
@@ -4008,8 +3497,8 @@ function showResult(
 
   $("resultReason").textContent=
     winner===myColor
-      ?"You destroyed 3 enemy pieces."
-      :"Your opponent destroyed 3 of your pieces.";
+      ?"You destroyed three enemy pieces."
+      :"Your opponent destroyed three of your pieces.";
 
 
   $("resultIcon").textContent=
@@ -4029,357 +3518,9 @@ function showResult(
 }
 
 
-/* ============================================================
-   REMATCH
-============================================================ */
-
-function startHostRematch(){
-
-  game=
-    createGame();
-
-
-  selectedPieceId=null;
-
-
-  $("resultOverlay")
-    .classList.remove(
-      "show"
-    );
-
-
-  sendState();
-
-
-  render();
-
-
-  updateControls();
-
-
-  $("turnStatus").textContent=
-    "YOUR TURN";
-
-
-  setMessage(
-    "New game!"
-  );
-
-
-  soundStart();
-
-}
-
-
-$("rematchButton").onclick=()=>{
-
-  $("resultOverlay")
-    .classList.remove(
-      "show"
-    );
-
-
-  if(isHost){
-
-    startHostRematch();
-
-  }else{
-
-    $("rematchButton").disabled=
-      true;
-
-
-    $("rematchButton").textContent=
-      "WAITING FOR HOST";
-
-
-    send({
-      type:"REMATCH"
-    });
-
-  }
-
-};
-
-
-$("homeButton").onclick=()=>{
-
-  cleanup();
-
-  location.reload();
-
-};
-
-
-/* ============================================================
-   AUDIO
-============================================================ */
-
-let audioContext=null;
-
-
-function ensureAudio(){
-
-  if(!soundEnabled)
-    return;
-
-
-  if(!audioContext){
-
-    audioContext=
-      new (
-        window.AudioContext ||
-        window.webkitAudioContext
-      )();
-
-  }
-
-
-  if(
-    audioContext.state==="suspended"
-  ){
-
-    audioContext.resume();
-
-  }
-
-}
-
-
-function tone(
-  frequency,
-  duration,
-  type="sine",
-  volume=.04
-){
-
-  if(!soundEnabled)
-    return;
-
-
-  ensureAudio();
-
-
-  if(!audioContext)
-    return;
-
-
-  const oscillator=
-    audioContext.createOscillator();
-
-
-  const gain=
-    audioContext.createGain();
-
-
-  oscillator.type=
-    type;
-
-
-  oscillator.frequency.value=
-    frequency;
-
-
-  gain.gain.setValueAtTime(
-    volume,
-    audioContext.currentTime
-  );
-
-
-  gain.gain.exponentialRampToValueAtTime(
-    .001,
-    audioContext.currentTime+
-    duration
-  );
-
-
-  oscillator.connect(
-    gain
-  );
-
-
-  gain.connect(
-    audioContext.destination
-  );
-
-
-  oscillator.start();
-
-
-  oscillator.stop(
-    audioContext.currentTime+
-    duration
-  );
-
-}
-
-
-function soundSelect(){
-
-  tone(
-    700,
-    .05,
-    "sine",
-    .025
-  );
-
-}
-
-
-function soundMove(){
-
-  tone(
-    390,
-    .07,
-    "triangle",
-    .03
-  );
-
-}
-
-
-function soundPush(
-  destroyed=0
-){
-
-  tone(
-    110,
-    .17,
-    "sawtooth",
-    .055
-  );
-
-
-  setTimeout(
-    ()=>{
-      tone(
-        190,
-        .12,
-        "triangle",
-        .04
-      );
-    },
-    80
-  );
-
-
-  if(destroyed>0){
-
-    setTimeout(
-      ()=>{
-        tone(
-          70,
-          .28,
-          "sawtooth",
-          .05
-        );
-      },
-      130
-    );
-
-  }
-
-}
-
-
-function soundStart(){
-
-  tone(
-    430,
-    .08,
-    "triangle",
-    .03
-  );
-
-
-  setTimeout(
-    ()=>{
-      tone(
-        650,
-        .1,
-        "triangle",
-        .035
-      );
-    },
-    90
-  );
-
-}
-
-
-function soundWin(){
-
-  tone(
-    520,
-    .1,
-    "triangle",
-    .04
-  );
-
-
-  setTimeout(
-    ()=>{
-      tone(
-        700,
-        .12,
-        "triangle",
-        .045
-      );
-    },
-    100
-  );
-
-
-  setTimeout(
-    ()=>{
-      tone(
-        920,
-        .18,
-        "triangle",
-        .05
-      );
-    },
-    220
-  );
-
-}
-
-
-/* ============================================================
-   SOUND BUTTON
-============================================================ */
-
-$("soundButton").onclick=()=>{
-
-  soundEnabled=
-    !soundEnabled;
-
-
-  $("soundButton").textContent=
-    soundEnabled
-      ?"🔊 SOUND ON"
-      :"🔇 SOUND OFF";
-
-
-  if(soundEnabled){
-
-    ensureAudio();
-
-    tone(
-      600,
-      .07,
-      "sine",
-      .025
-    );
-
-  }
-
-};
-
-
-/* ============================================================
+/* =========================================================
    THEME
-============================================================ */
+========================================================= */
 
 document
   .querySelectorAll(
@@ -4394,12 +3535,9 @@ document
           button.dataset.theme;
 
 
-        if(
-          theme==="neon"
-        ){
+        if(theme==="neon"){
 
-          document.body.className=
-            "";
+          document.body.className="";
 
         }else{
 
@@ -4428,7 +3566,7 @@ document
         );
 
 
-        ensureAudio();
+        audio();
 
 
         tone(
@@ -4444,52 +3582,41 @@ document
   );
 
 
-const savedTheme=
-  localStorage.getItem(
-    "pushline-theme"
-  );
+/* =========================================================
+   SOUND BUTTON
+========================================================= */
+
+$("soundButton").onclick=()=>{
+
+  soundEnabled=
+    !soundEnabled;
 
 
-if(
-  ["neon","royal","ice"]
-    .includes(
-      savedTheme
-    )
-){
+  $("soundButton").textContent=
+    soundEnabled
+      ?"🔊 SOUND ON"
+      :"🔇 SOUND OFF";
 
-  if(
-    savedTheme==="neon"
-  ){
 
-    document.body.className="";
+  if(soundEnabled){
 
-  }else{
+    audio();
 
-    document.body.className=
-      "theme-"+savedTheme;
+    tone(
+      600,
+      .07,
+      "sine",
+      .025
+    );
 
   }
 
-
-  document
-    .querySelectorAll(
-      ".themeButton"
-    )
-    .forEach(
-      button=>
-        button.classList.toggle(
-          "active",
-          button.dataset.theme===
-          savedTheme
-        )
-    );
-
-}
+};
 
 
-/* ============================================================
-   HOME BUTTONS
-============================================================ */
+/* =========================================================
+   HOME UI
+========================================================= */
 
 $("createButton").onclick=
   createRoom;
@@ -4536,18 +3663,22 @@ $("roomInput").addEventListener(
 $("roomInput").addEventListener(
   "keydown",
   e=>{
+
     if(
       e.key==="Enter"
     ){
+
       joinRoom();
+
     }
+
   }
 );
 
 
-/* ============================================================
+/* =========================================================
    COPY
-============================================================ */
+========================================================= */
 
 $("copyButton").onclick=
   async()=>{
@@ -4587,9 +3718,9 @@ $("copyButton").onclick=
   };
 
 
-/* ============================================================
+/* =========================================================
    CANCEL
-============================================================ */
+========================================================= */
 
 $("cancelButton").onclick=()=>{
 
@@ -4600,9 +3731,9 @@ $("cancelButton").onclick=()=>{
 };
 
 
-/* ============================================================
-   GAME CONTROLS
-============================================================ */
+/* =========================================================
+   DIRECTION BUTTONS
+========================================================= */
 
 document
   .querySelectorAll(
@@ -4613,7 +3744,7 @@ document
 
       button.onclick=()=>{
 
-        attemptDirection(
+        attemptMove(
           button.dataset.direction
         );
 
@@ -4623,21 +3754,117 @@ document
   );
 
 
+/* =========================================================
+   SLAM
+========================================================= */
+
 $("slamButton").onclick=
   useSlam;
 
 
-/* ============================================================
+/* =========================================================
+   REMATCH
+========================================================= */
+
+$("rematchButton").onclick=()=>{
+
+  $("resultOverlay")
+    .classList.remove(
+      "show"
+    );
+
+
+  if(isHost){
+
+    startHostGame();
+
+  }else{
+
+    $("rematchButton").disabled=
+      true;
+
+
+    $("rematchButton").textContent=
+      "WAITING FOR HOST";
+
+
+    send({
+      type:"REMATCH"
+    });
+
+  }
+
+};
+
+
+$("homeButton").onclick=()=>{
+
+  cleanup();
+
+  location.reload();
+
+};
+
+
+/* =========================================================
+   REMATCH HOST
+========================================================= */
+
+function startHostGame(){
+
+  if(!isHost)
+    return;
+
+
+  hostGameSent=false;
+
+
+  game=
+    createGame();
+
+
+  selectedPieceId=null;
+
+
+  send({
+    type:"START",
+    state:game
+  });
+
+
+  showScreen(
+    "gameScreen"
+  );
+
+
+  $("role").innerHTML=
+    '<span class="mini blueDot"></span> YOU ARE BLUE';
+
+
+  $("resultOverlay")
+    .classList.remove(
+      "show"
+    );
+
+
+  render();
+
+
+  updateControls();
+
+
+  soundStart();
+
+}
+
+
+/* =========================================================
    KEYBOARD
-============================================================ */
+========================================================= */
 
 document.addEventListener(
   "keydown",
-  event=>{
-
-    /*
-      Don't use gameplay hotkeys while entering code.
-    */
+  e=>{
 
     if(
       document.activeElement===
@@ -4647,21 +3874,18 @@ document.addEventListener(
 
 
     if(
-      event.key.toLowerCase()==="e"
+      e.key.toLowerCase()==="e"
     ){
 
-      if(!event.repeat){
-
+      if(!e.repeat)
         useSlam();
-
-      }
 
       return;
 
     }
 
 
-    const directions={
+    const map={
 
       ArrowUp:"up",
       ArrowDown:"down",
@@ -4684,78 +3908,93 @@ document.addEventListener(
 
 
     if(
-      directions[event.key]
+      map[e.key]
     ){
 
-      event.preventDefault();
+      e.preventDefault();
 
 
-      attemptDirection(
-        directions[event.key]
+      attemptMove(
+        map[e.key]
       );
 
     }
 
-  });
+  }
+);
 
 
-/* ============================================================
-   BACKGROUND PARTICLES
-============================================================ */
+/* =========================================================
+   CLEANUP
+========================================================= */
 
-(function(){
+function cleanup(){
 
-  for(
-    let i=0;
-    i<35;
-    i++
-  ){
+  if(connection){
 
-    const p=
-      document.createElement(
-        "div"
-      );
+    try{
+      connection.close();
+    }catch(e){}
 
-
-    p.className=
-      "particle";
-
-
-    p.style.left=
-      Math.random()*100+"%";
-
-
-    p.style.top=
-      Math.random()*100+"%";
-
-
-    p.style.animationDuration=
-      (
-        12+
-        Math.random()*18
-      )+"s";
-
-
-    p.style.animationDelay=
-      (
-        -Math.random()*20
-      )+"s";
-
-
-    document.body.appendChild(
-      p
-    );
+    connection=null;
 
   }
 
-})();
+
+  if(peer){
+
+    try{
+      peer.destroy();
+    }catch(e){}
+
+    peer=null;
+
+  }
+
+}
 
 
-/* ============================================================
-   INITIAL
-============================================================ */
+/* =========================================================
+   SAVED THEME
+========================================================= */
 
-setStatus(
+const savedTheme=
+  localStorage.getItem(
+    "pushline-theme"
+  );
+
+
+if(
+  ["royal","ice"].includes(
+    savedTheme
+  )
+){
+
+  document.body.className=
+    "theme-"+savedTheme;
+
+
+  document
+    .querySelectorAll(
+      ".themeButton"
+    )
+    .forEach(
+      b=>
+        b.classList.toggle(
+          "active",
+          b.dataset.theme===
+          savedTheme
+        )
+    );
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+status(
   "Offline"
 );
 
