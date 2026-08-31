@@ -9,34 +9,116 @@
 <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
 
 :root{
-  --bg:#080b11;
-  --panel:#101721;
-  --panel2:#151f2d;
-  --border:#2a394f;
-  --text:#eef4ff;
-  --muted:#8492a9;
-  --blue:#55aaff;
-  --red:#ff5e74;
-  --gold:#ffd65a;
-  --green:#5de38b;
+  --bg:#06080d;
+  --bg2:#0b1019;
+  --panel:rgba(15,21,32,.88);
+  --panel2:#131c2b;
+  --border:#2a3950;
+  --text:#f3f7ff;
+  --muted:#8795ad;
+
+  --blue:#52a7ff;
+  --blue2:#1976d2;
+
+  --red:#ff5e76;
+  --red2:#d72d49;
+
+  --gold:#ffd45a;
+  --gold2:#efae21;
+
+  --green:#59e08b;
+
+  --boardLight:#1a293b;
+  --boardDark:#142030;
+  --hole:#020408;
+
+  --glow:rgba(82,167,255,.22);
 }
+
+/* =========================================================
+   THEMES
+========================================================= */
+
+body.theme-neon{
+  --bg:#05070c;
+  --bg2:#0a0e18;
+  --panel:rgba(9,14,24,.9);
+  --panel2:#111a2a;
+  --boardLight:#18283d;
+  --boardDark:#101c2c;
+}
+
+body.theme-royal{
+  --bg:#09070d;
+  --bg2:#120b18;
+  --panel:rgba(25,14,31,.9);
+  --panel2:#211329;
+  --boardLight:#30203d;
+  --boardDark:#24152f;
+  --blue:#8d86ff;
+  --blue2:#5b50d9;
+  --red:#ff6e9b;
+  --red2:#d84370;
+  --gold:#ffd86d;
+}
+
+body.theme-ice{
+  --bg:#051016;
+  --bg2:#0b1b24;
+  --panel:rgba(8,22,29,.9);
+  --panel2:#102731;
+  --boardLight:#17323d;
+  --boardDark:#112731;
+  --blue:#69d8ff;
+  --blue2:#2387ac;
+  --red:#ff7993;
+  --red2:#c83d59;
+  --gold:#d4f6ff;
+}
+
+/* =========================================================
+   GLOBAL
+========================================================= */
 
 html,body{
   margin:0;
   min-height:100%;
-  background:
-    radial-gradient(circle at 50% -15%,#1b2c48 0,#080b11 55%);
   color:var(--text);
-  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
 
 body{
   min-height:100vh;
-  display:flex;
-  justify-content:center;
+  overflow-x:hidden;
+  background:
+    radial-gradient(
+      circle at 50% -15%,
+      #203a60 0%,
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 15% 80%,
+      #14253f 0%,
+      transparent 35%
+    ),
+    linear-gradient(
+      180deg,
+      var(--bg2),
+      var(--bg)
+    );
 }
 
 button,input{
@@ -49,58 +131,111 @@ button{
 
 button:disabled{
   cursor:not-allowed;
-  opacity:.38;
+}
+
+#particles{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:-1;
+}
+
+.particle{
+  position:absolute;
+  width:3px;
+  height:3px;
+  border-radius:50%;
+  background:white;
+  opacity:.15;
+  animation:
+    floatParticle linear infinite;
+}
+
+@keyframes floatParticle{
+  from{
+    transform:translateY(20vh);
+  }
+  to{
+    transform:translateY(-120vh);
+  }
 }
 
 #app{
-  width:min(1120px,100%);
-  padding:18px;
+  width:min(1400px,100%);
+  min-height:100vh;
+  padding:18px 22px 30px;
+  margin:auto;
 }
 
-/* ================= HEADER ================= */
+/* =========================================================
+   HEADER
+========================================================= */
 
 header{
-  height:48px;
+  height:50px;
   display:flex;
-  align-items:center;
   justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
 }
 
 .logo{
-  font-size:26px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:24px;
   font-weight:1000;
-  letter-spacing:6px;
+  letter-spacing:5px;
 }
 
-.logo span{
+.logoMark{
+  width:29px;
+  height:29px;
+  display:grid;
+  place-items:center;
+  border:1px solid #ffffff22;
+  border-radius:8px;
+  background:linear-gradient(
+    145deg,
+    #ffffff12,
+    #ffffff05
+  );
+  box-shadow:
+    0 0 25px var(--glow);
   color:var(--gold);
+  font-size:15px;
 }
 
 .connection{
   display:flex;
   align-items:center;
   gap:8px;
-  font-size:13px;
   color:var(--muted);
+  font-size:12px;
 }
 
 .dot{
   width:9px;
   height:9px;
   border-radius:50%;
-  background:#68758a;
+  background:#647085;
+  transition:.2s;
 }
 
 .dot.good{
   background:var(--green);
-  box-shadow:0 0 12px var(--green);
+  box-shadow:0 0 15px var(--green);
 }
 
 .dot.bad{
   background:var(--red);
+  box-shadow:0 0 12px var(--red);
 }
 
-/* ================= SCREENS ================= */
+/* =========================================================
+   SCREENS
+========================================================= */
 
 .screen{
   display:none;
@@ -110,245 +245,529 @@ header{
   display:block;
 }
 
-/* ================= CARDS ================= */
+/* =========================================================
+   GLASS
+========================================================= */
 
-.card{
-  background:linear-gradient(145deg,#111a26,#0d131c);
+.glass{
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.045),
+      rgba(255,255,255,.015)
+    ),
+    var(--panel);
+
   border:1px solid var(--border);
-  border-radius:18px;
-  padding:24px;
-  box-shadow:0 25px 80px #0009;
+  box-shadow:
+    0 25px 80px rgba(0,0,0,.38),
+    inset 0 1px 0 rgba(255,255,255,.025);
+
+  backdrop-filter:blur(16px);
 }
 
+/* =========================================================
+   HOME
+========================================================= */
+
 .hero{
-  width:min(650px,100%);
-  margin:10vh auto 0;
+  width:min(730px,100%);
+  margin:8vh auto 0;
+  padding:42px;
+  border-radius:26px;
   text-align:center;
 }
 
-.hero h1{
-  font-size:65px;
-  letter-spacing:11px;
+.heroLogo{
+  font-size:clamp(46px,8vw,82px);
   font-weight:1000;
+  letter-spacing:11px;
+  line-height:1;
   margin:0;
+  text-shadow:
+    0 0 35px var(--glow);
 }
 
-.hero h1 span{
+.heroLogo span{
   color:var(--gold);
 }
 
-.hero p{
+.tagline{
+  max-width:520px;
+  margin:20px auto 0;
   color:var(--muted);
-  line-height:1.6;
+  line-height:1.7;
+  font-size:15px;
 }
 
-.smallText{
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.55;
-}
-
-/* ================= BUTTONS ================= */
-
-.buttons{
+.mainButtons{
   display:flex;
   justify-content:center;
+  gap:10px;
   flex-wrap:wrap;
-  gap:9px;
-  margin:22px 0;
+  margin:30px 0 18px;
 }
 
 .btn{
-  border:1px solid #35465f;
-  background:#182433;
-  color:white;
-  border-radius:10px;
-  padding:12px 19px;
-  font-weight:850;
-  transition:.12s;
+  border:1px solid #35455e;
+  background:
+    linear-gradient(
+      180deg,
+      #1c293b,
+      #152030
+    );
+  color:#fff;
+  border-radius:11px;
+  padding:12px 20px;
+  font-weight:900;
+  transition:
+    transform .12s,
+    background .12s,
+    border-color .12s,
+    box-shadow .12s;
 }
 
 .btn:hover{
-  background:#24344c;
-  transform:translateY(-1px);
+  transform:translateY(-2px);
+  border-color:#546b8b;
+  box-shadow:0 8px 25px #0004;
+}
+
+.btn:active{
+  transform:translateY(0);
 }
 
 .btn.primary{
-  background:#347fc8;
-  border-color:#55aaff;
+  background:
+    linear-gradient(
+      180deg,
+      #388fe2,
+      #2477bf
+    );
+  border-color:#64b3ff;
+  box-shadow:
+    0 7px 25px #2477bf33;
 }
 
-.btn.primary:hover{
-  background:#4291df;
+.btn.gold{
+  background:
+    linear-gradient(
+      180deg,
+      #e5b936,
+      #bd8c19
+    );
+  border-color:#ffe17a;
+  color:#17120a;
 }
 
 .btn.danger{
-  background:#4d202b;
-  border-color:#783545;
+  background:
+    linear-gradient(
+      180deg,
+      #662334,
+      #481926
+    );
+  border-color:#924055;
 }
 
 input{
   width:100%;
   max-width:400px;
+  padding:15px;
+  border-radius:12px;
+  border:1px solid #35455e;
   background:#080d14;
-  color:white;
-  border:1px solid #34455e;
-  border-radius:10px;
-  padding:14px;
+  color:#fff;
   text-align:center;
-  outline:none;
   font-size:22px;
   font-weight:950;
   letter-spacing:7px;
+  outline:none;
   text-transform:uppercase;
 }
 
 input:focus{
   border-color:var(--gold);
+  box-shadow:0 0 0 3px #ffd45a12;
 }
 
-/* ================= WAITING ================= */
+#joinArea{
+  display:none;
+  margin-top:10px;
+}
+
+/* =========================================================
+   WAITING
+========================================================= */
+
+.waitingCard{
+  max-width:650px;
+  margin:12vh auto 0;
+  padding:40px;
+  text-align:center;
+  border-radius:24px;
+}
 
 .roomCode{
-  color:var(--gold);
-  font-size:42px;
+  font-size:48px;
   font-weight:1000;
-  letter-spacing:10px;
-  margin:15px 0 20px;
+  letter-spacing:12px;
+  color:var(--gold);
+  text-shadow:0 0 30px #ffd45a35;
+  margin:20px 0;
 }
 
-/* ================= GAME ================= */
+.waitDots{
+  display:flex;
+  justify-content:center;
+  gap:7px;
+  margin:20px 0;
+}
+
+.waitDots i{
+  width:7px;
+  height:7px;
+  background:var(--blue);
+  border-radius:50%;
+  animation:waitingDot 1.2s infinite;
+}
+
+.waitDots i:nth-child(2){
+  animation-delay:.2s;
+}
+
+.waitDots i:nth-child(3){
+  animation-delay:.4s;
+}
+
+@keyframes waitingDot{
+  0%,80%,100%{
+    transform:translateY(0);
+    opacity:.3;
+  }
+  40%{
+    transform:translateY(-7px);
+    opacity:1;
+  }
+}
+
+/* =========================================================
+   GAME LAYOUT
+========================================================= */
 
 #game{
   display:grid;
-  grid-template-columns:minmax(0,700px) 300px;
-  gap:16px;
-  margin-top:15px;
+  grid-template-columns:minmax(0,1fr) 310px;
+  gap:18px;
   align-items:start;
+  margin-top:8px;
 }
 
-.boardPanel{
-  background:#0c121a;
+.boardArea{
+  min-width:0;
+  display:flex;
+  justify-content:center;
+}
+
+.boardShell{
+  width:min(82vh,780px,calc(100vw - 390px));
+  min-width:420px;
+  aspect-ratio:1;
+  padding:15px;
+  border-radius:25px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.06),
+      rgba(255,255,255,.012)
+    ),
+    rgba(8,13,20,.84);
+
   border:1px solid var(--border);
-  border-radius:18px;
-  padding:14px;
+
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.48),
+    0 0 60px rgba(82,167,255,.04);
+
+  position:relative;
+}
+
+.boardShell.shake{
+  animation:shake .22s;
+}
+
+@keyframes shake{
+  0%{transform:translate(0)}
+  25%{transform:translate(-5px,3px)}
+  50%{transform:translate(5px,-3px)}
+  75%{transform:translate(-3px,-2px)}
+  100%{transform:translate(0)}
 }
 
 #board{
-  width:min(100%,650px);
-  aspect-ratio:1;
-  margin:auto;
+  width:100%;
+  height:100%;
 
   display:grid;
   grid-template-columns:repeat(7,1fr);
   grid-template-rows:repeat(7,1fr);
-  gap:5px;
+
+  gap:6px;
 }
 
 .cell{
   position:relative;
   min-width:0;
   min-height:0;
-  border-radius:9px;
-  background:#172434;
-  border:1px solid #213047;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:10px;
+
+  background:
+    linear-gradient(
+      145deg,
+      var(--boardLight),
+      var(--boardDark)
+    );
+
+  border:1px solid #ffffff08;
+
   transition:
-    transform .08s ease,
-    background .1s ease,
-    border-color .1s ease;
+    background .12s,
+    border-color .12s,
+    transform .1s;
 }
 
 .cell:hover{
-  background:#1c2c40;
+  background:
+    linear-gradient(
+      145deg,
+      #21334a,
+      #172638
+    );
 }
 
 .cell.hole{
-  background:#05080c;
-  border-color:#090d13;
-  box-shadow:inset 0 0 20px #000;
+  background:
+    radial-gradient(
+      circle,
+      #020305 0%,
+      #000 55%,
+      #090e16 100%
+    );
+
+  border-color:#000;
+
+  box-shadow:
+    inset 0 0 24px #000,
+    0 0 0 1px #ffffff03;
 }
 
-.cell.hole::after{
-  content:"";
-  position:absolute;
-  inset:20%;
-  border-radius:50%;
-  background:#020305;
-  box-shadow:0 0 15px #000 inset;
+.cell.holeDanger{
+  animation:holePulse .5s;
+}
+
+@keyframes holePulse{
+  0%{
+    box-shadow:
+      inset 0 0 24px #000;
+  }
+  50%{
+    box-shadow:
+      inset 0 0 28px #000,
+      0 0 22px #ff5e7644;
+  }
+  100%{
+    box-shadow:
+      inset 0 0 24px #000;
+  }
 }
 
 .cell.selected{
   border-color:var(--gold);
   box-shadow:
-    0 0 0 2px #ffd65a55,
-    0 0 18px #ffd65a25;
+    0 0 0 2px #ffd45a44,
+    0 0 25px #ffd45a1e;
+  transform:scale(.97);
 }
 
 .cell.reachable{
-  outline:2px solid #ffffff20;
+  box-shadow:
+    inset 0 0 0 2px #ffffff12;
 }
 
+.homeBlue{
+  background:
+    radial-gradient(
+      circle,
+      #55aaff13,
+      transparent 70%
+    ),
+    linear-gradient(
+      145deg,
+      var(--boardLight),
+      var(--boardDark)
+    );
+}
+
+.homeRed{
+  background:
+    radial-gradient(
+      circle,
+      #ff5e7613,
+      transparent 70%
+    ),
+    linear-gradient(
+      145deg,
+      var(--boardLight),
+      var(--boardDark)
+    );
+}
+
+/* =========================================================
+   PIECES
+========================================================= */
+
 .piece{
-  position:absolute;
-  inset:16%;
+  width:66%;
+  height:66%;
   border-radius:50%;
-  z-index:5;
+  position:relative;
+  z-index:10;
+
+  animation:pieceAppear .18s ease-out;
+
   transition:
-    transform .11s ease,
-    box-shadow .11s ease;
+    transform .13s ease,
+    filter .13s ease;
+}
+
+@keyframes pieceAppear{
+  from{
+    transform:scale(.6);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
 }
 
 .piece.blue{
-  background:var(--blue);
+  background:
+    radial-gradient(
+      circle at 34% 28%,
+      #fff 0 7%,
+      #7ac3ff 8% 18%,
+      var(--blue) 44%,
+      var(--blue2) 100%
+    );
+
   box-shadow:
-    0 0 10px #55aaff,
-    0 0 24px #55aaff55;
+    0 0 12px #55aaff,
+    0 0 26px #55aaff55,
+    inset 2px 2px 5px #ffffff77;
 }
 
 .piece.red{
-  background:var(--red);
+  background:
+    radial-gradient(
+      circle at 34% 28%,
+      #fff 0 7%,
+      #ff9bad 8% 18%,
+      var(--red) 44%,
+      var(--red2) 100%
+    );
+
   box-shadow:
-    0 0 10px #ff5e74,
-    0 0 24px #ff5e7455;
+    0 0 12px #ff5e76,
+    0 0 26px #ff5e7655,
+    inset 2px 2px 5px #ffffff77;
 }
 
-.piece::after{
-  content:"";
+.piece.selectedPiece{
+  animation:
+    selectedPulse 1s infinite;
+}
+
+@keyframes selectedPulse{
+  0%,100%{
+    transform:scale(1);
+  }
+  50%{
+    transform:scale(1.07);
+  }
+}
+
+.piece.pushing{
+  animation:
+    pushPiece .24s ease-out;
+}
+
+@keyframes pushPiece{
+  0%{transform:scale(1)}
+  45%{transform:scale(1.12)}
+  100%{transform:scale(1)}
+}
+
+.piece.dying{
+  animation:
+    fallIntoHole .45s ease-in forwards;
+}
+
+@keyframes fallIntoHole{
+  0%{
+    transform:scale(1);
+    opacity:1;
+  }
+  40%{
+    transform:scale(.75);
+    opacity:.9;
+  }
+  100%{
+    transform:scale(.05);
+    opacity:0;
+  }
+}
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+.hitParticle{
   position:absolute;
-  inset:28%;
-  background:white;
+  width:6px;
+  height:6px;
   border-radius:50%;
-  opacity:.75;
+  pointer-events:none;
+  z-index:30;
+  animation:
+    particleOut .45s ease-out forwards;
 }
 
-.ghostPiece{
-  position:absolute;
-  inset:9%;
-  border-radius:50%;
-  border:2px solid #ffffff15;
+@keyframes particleOut{
+  from{
+    transform:translate(0,0) scale(1);
+    opacity:1;
+  }
+  to{
+    transform:
+      translate(
+        var(--dx),
+        var(--dy)
+      )
+      scale(0);
+    opacity:0;
+  }
 }
 
-.turnMarker{
-  position:absolute;
-  left:5px;
-  top:5px;
-  font-size:10px;
-  color:white;
-  background:#0008;
-  border-radius:4px;
-  padding:2px 4px;
-  z-index:20;
-}
-
-.legend{
-  margin-top:12px;
-  display:flex;
-  justify-content:space-around;
-  color:var(--muted);
-  font-size:11px;
-}
-
-/* ================= SIDEBAR ================= */
+/* =========================================================
+   SIDEBAR
+========================================================= */
 
 .sidebar{
   display:flex;
@@ -357,10 +776,12 @@ input:focus{
 }
 
 .panel{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:15px;
-  padding:14px;
+  border-radius:16px;
+  padding:15px;
+}
+
+.playerCard{
+  padding:16px;
 }
 
 .playerRow{
@@ -370,14 +791,14 @@ input:focus{
   margin-bottom:10px;
 }
 
-.name{
+.playerName{
   display:flex;
   align-items:center;
-  gap:8px;
-  font-weight:900;
+  gap:9px;
+  font-weight:950;
 }
 
-.miniDot{
+.mini{
   width:10px;
   height:10px;
   border-radius:50%;
@@ -385,60 +806,121 @@ input:focus{
 
 .blueDot{
   background:var(--blue);
+  box-shadow:0 0 9px #55aaff;
 }
 
 .redDot{
   background:var(--red);
+  box-shadow:0 0 9px #ff5e76;
 }
 
-.lives{
-  color:#ff5e74;
-  letter-spacing:3px;
+.destroyed{
+  display:flex;
+  gap:5px;
 }
 
-#role{
+.destroyed span{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  border:1px solid #ffffff2a;
+  display:grid;
+  place-items:center;
+  font-size:10px;
+  color:#77849a;
+}
+
+.destroyed span.dead{
+  background:#ff5e7618;
+  color:var(--red);
+  border-color:#ff5e7655;
+}
+
+.roleBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  border-radius:999px;
+  padding:6px 9px;
+  background:#ffffff07;
+  border:1px solid #ffffff0c;
+  font-size:11px;
   color:var(--muted);
-  font-size:13px;
 }
 
 #turnStatus{
-  font-size:18px;
-  font-weight:950;
-  margin-top:4px;
+  margin-top:11px;
+  font-size:20px;
+  font-weight:1000;
 }
 
 #turnNumber{
+  margin-top:4px;
   color:var(--muted);
   font-size:12px;
 }
 
+.turnReady{
+  animation:turnGlow 1.1s infinite;
+}
+
+@keyframes turnGlow{
+  0%,100%{
+    text-shadow:none;
+  }
+  50%{
+    text-shadow:0 0 18px var(--glow);
+  }
+}
+
 #message{
-  min-height:19px;
-  margin-top:6px;
+  min-height:20px;
   color:var(--gold);
   font-size:13px;
+  margin-top:8px;
+}
+
+.controlsTitle{
+  font-weight:950;
 }
 
 .directionGrid{
-  width:190px;
-  margin:12px auto 5px;
+  width:205px;
+  margin:14px auto;
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:6px;
+  gap:7px;
 }
 
 .dirButton{
-  height:48px;
-  border-radius:9px;
-  border:1px solid #314159;
-  background:#182434;
-  color:white;
+  height:52px;
+  border-radius:11px;
+  border:1px solid #33445d;
+  background:
+    linear-gradient(
+      180deg,
+      #1d2b3d,
+      #162131
+    );
+  color:#fff;
   font-size:20px;
-  font-weight:950;
+  font-weight:1000;
+  transition:
+    transform .1s,
+    background .1s;
 }
 
 .dirButton:hover{
   background:#27384f;
+  transform:translateY(-1px);
+}
+
+.dirButton:active{
+  transform:scale(.96);
+}
+
+.dirButton:disabled{
+  opacity:.25;
 }
 
 .empty{
@@ -447,30 +929,94 @@ input:focus{
 
 .selectedPieceText{
   text-align:center;
+  margin-top:7px;
   color:var(--muted);
   font-size:12px;
 }
 
-.slam{
+.slamButton{
   width:100%;
-  margin-top:9px;
+  margin-top:3px;
 }
 
-.help{
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.55;
+.slamButton.ready{
+  animation:slamGlow 1.3s infinite;
 }
 
-kbd{
-  padding:2px 5px;
-  background:#1d2a3b;
-  border:1px solid #34445e;
-  border-radius:4px;
+@keyframes slamGlow{
+  0%,100%{
+    box-shadow:none;
+  }
+  50%{
+    box-shadow:0 0 23px #ffd45a22;
+  }
+}
+
+.themeRow{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+  margin-top:10px;
+}
+
+.themeButton{
+  height:34px;
+  border-radius:8px;
+  border:1px solid #34455d;
+  background:#182333;
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+}
+
+.themeButton.active{
+  border-color:var(--gold);
+  box-shadow:0 0 0 1px #ffd45a33;
+}
+
+.soundRow{
+  display:flex;
+  gap:6px;
+  margin-top:8px;
+}
+
+.soundButton{
+  flex:1;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+#toast{
+  position:fixed;
+  left:50%;
+  bottom:24px;
+  transform:
+    translate(-50%,20px);
+  padding:11px 17px;
+  border-radius:12px;
+  background:#101823eF;
+  border:1px solid #35455d;
   color:white;
+  font-size:13px;
+  font-weight:800;
+  opacity:0;
+  pointer-events:none;
+  transition:.2s;
+  z-index:200;
+  box-shadow:0 15px 40px #0007;
 }
 
-/* ================= OVERLAY ================= */
+#toast.show{
+  opacity:1;
+  transform:
+    translate(-50%,0);
+}
+
+/* =========================================================
+   RESULT
+========================================================= */
 
 .overlay{
   position:fixed;
@@ -479,8 +1025,8 @@ kbd{
   align-items:center;
   justify-content:center;
   padding:20px;
-  background:#02040dcc;
-  backdrop-filter:blur(8px);
+  background:#02040cbb;
+  backdrop-filter:blur(11px);
   z-index:100;
 }
 
@@ -489,25 +1035,56 @@ kbd{
 }
 
 .resultCard{
-  width:min(450px,100%);
+  width:min(480px,100%);
+  padding:38px;
+  border-radius:24px;
   text-align:center;
 }
 
+.resultIcon{
+  font-size:42px;
+}
+
 .resultCard h2{
-  font-size:48px;
-  margin:5px 0 10px;
+  margin:8px 0;
+  font-size:52px;
+  font-weight:1000;
 }
 
 .resultCard p{
   color:var(--muted);
+  line-height:1.6;
 }
 
-/* ================= RESPONSIVE ================= */
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
-@media(max-width:860px){
+@media(max-width:1050px){
+
+  #game{
+    grid-template-columns:minmax(0,1fr) 270px;
+  }
+
+  .boardShell{
+    width:min(78vh,calc(100vw - 330px));
+  }
+
+}
+
+@media(max-width:850px){
 
   #game{
     grid-template-columns:1fr;
+  }
+
+  .boardArea{
+    width:100%;
+  }
+
+  .boardShell{
+    width:min(92vw,700px);
+    min-width:0;
   }
 
   .sidebar{
@@ -515,37 +1092,69 @@ kbd{
     grid-template-columns:1fr 1fr;
   }
 
-  .rules{
+  .rulesPanel,
+  .settingsPanel{
     grid-column:1/-1;
   }
+
 }
 
 @media(max-width:560px){
 
   #app{
-    padding:9px;
+    padding:10px;
+  }
+
+  header{
+    margin-bottom:8px;
   }
 
   .hero{
-    margin-top:7vh;
+    margin-top:5vh;
+    padding:28px 18px;
   }
 
-  .hero h1{
-    font-size:42px;
+  .heroLogo{
+    font-size:40px;
     letter-spacing:7px;
+  }
+
+  .boardShell{
+    width:96vw;
+    padding:9px;
+    border-radius:18px;
+  }
+
+  #board{
+    gap:3px;
+  }
+
+  .cell{
+    border-radius:6px;
+  }
+
+  .piece{
+    width:72%;
+    height:72%;
   }
 
   .sidebar{
     display:flex;
   }
 
-  .card{
-    padding:18px;
+  .directionGrid{
+    width:190px;
+  }
+
+  .waitingCard{
+    padding:28px 18px;
   }
 
   .roomCode{
-    font-size:32px;
+    font-size:31px;
+    letter-spacing:7px;
   }
+
 }
 </style>
 
@@ -553,12 +1162,15 @@ kbd{
 
 <body>
 
+<div id="particles"></div>
+
 <div id="app">
 
 <header>
 
   <div class="logo">
-    PUSH<span>LINE</span>
+    <div class="logoMark">◆</div>
+    PUSHLINE
   </div>
 
   <div class="connection">
@@ -587,23 +1199,26 @@ kbd{
   class="screen active"
 >
 
-  <div class="card hero">
+  <div class="glass hero">
 
 ```
-<h1>
+<h1 class="heroLogo">
   PUSH<span>LINE</span>
 </h1>
 
-<p>
-  Push enemy formations.
+<p class="tagline">
+
+  A tiny board.
   <br>
-  Knock their pieces into holes.
+  Five pieces.
   <br>
-  Destroy <b>3</b> enemy pieces to win.
+  One question:
+  <b>Can you push them into the void?</b>
+
 </p>
 
 
-<div class="buttons">
+<div class="mainButtons">
 
   <button
     id="createButton"
@@ -627,9 +1242,9 @@ kbd{
   <input
     id="roomInput"
     maxlength="6"
-    placeholder="6-CHAR CODE"
     autocomplete="off"
     spellcheck="false"
+    placeholder="6-CHAR CODE"
   >
 
   <div class="buttons">
@@ -647,10 +1262,8 @@ kbd{
 
 
 <div class="smallText">
-
-  2 players · same HTML file · WebRTC P2P
-  · no separate game server
-
+  2 players · WebRTC P2P · same HTML file
+  · no accounts
 </div>
 ```
 
@@ -667,16 +1280,12 @@ kbd{
   class="screen"
 >
 
-  <div class="card hero">
+  <div class="glass waitingCard">
 
 ```
-<h2>
-  ROOM CREATED
-</h2>
-
-<p>
-  Give this exact 6-character code to your friend:
-</p>
+<div class="smallText">
+  ROOM CODE
+</div>
 
 <div
   id="roomCode"
@@ -692,11 +1301,18 @@ kbd{
   COPY CODE
 </button>
 
+
+<div class="waitDots">
+  <i></i>
+  <i></i>
+  <i></i>
+</div>
+
+
 <p id="waitingText">
   Waiting for player 2...
 </p>
 
-<br>
 
 <button
   id="cancelButton"
@@ -724,40 +1340,46 @@ kbd{
 ```
 <!-- BOARD -->
 
-<div class="boardPanel">
+<div class="boardArea">
 
-  <div id="board"></div>
+  <div
+    id="boardShell"
+    class="boardShell"
+  >
 
-  <div class="legend">
-    <span>● BLUE</span>
-    <span>● RED</span>
-    <span>■ HOLE</span>
+    <div id="board"></div>
+
   </div>
 
 </div>
 
 
-<!-- SIDE -->
+<!-- SIDEBAR -->
 
-<div class="sidebar">
+<aside class="sidebar">
 
 
-  <!-- PLAYERS -->
+  <!-- PLAYER STATUS -->
 
-  <div class="panel">
+  <div class="glass panel playerCard">
 
     <div class="playerRow">
 
-      <div class="name">
-        <span class="miniDot blueDot"></span>
+      <div class="playerName">
+
+        <span class="mini blueDot"></span>
+
         BLUE
+
       </div>
 
       <div
         id="blueDestroyed"
-        class="lives"
+        class="destroyed"
       >
-        ○○○
+        <span>○</span>
+        <span>○</span>
+        <span>○</span>
       </div>
 
     </div>
@@ -765,16 +1387,21 @@ kbd{
 
     <div class="playerRow">
 
-      <div class="name">
-        <span class="miniDot redDot"></span>
+      <div class="playerName">
+
+        <span class="mini redDot"></span>
+
         RED
+
       </div>
 
       <div
         id="redDestroyed"
-        class="lives"
+        class="destroyed"
       >
-        ○○○
+        <span>○</span>
+        <span>○</span>
+        <span>○</span>
       </div>
 
     </div>
@@ -782,11 +1409,14 @@ kbd{
   </div>
 
 
-  <!-- STATUS -->
+  <!-- TURN -->
 
-  <div class="panel">
+  <div class="glass panel">
 
-    <div id="role">
+    <div
+      id="role"
+      class="roleBadge"
+    >
       Connecting...
     </div>
 
@@ -805,14 +1435,15 @@ kbd{
 
   <!-- CONTROLS -->
 
-  <div class="panel">
+  <div class="glass panel">
 
-    <b>CONTROLS</b>
+    <div class="controlsTitle">
+      YOUR MOVE
+    </div>
 
     <div
       id="selectedPieceText"
       class="selectedPieceText"
-      style="margin-top:7px"
     >
       Select one of your pieces
     </div>
@@ -842,9 +1473,8 @@ kbd{
       <button
         class="dirButton"
         data-direction="down"
-        style="font-size:0"
       >
-        ×
+        ▼
       </button>
 
       <button
@@ -859,9 +1489,9 @@ kbd{
 
       <button
         class="dirButton"
-        data-direction="down"
+        data-direction="down2"
+        style="display:none"
       >
-        ▼
       </button>
 
       <button class="dirButton empty"></button>
@@ -871,7 +1501,7 @@ kbd{
 
     <button
       id="slamButton"
-      class="btn slam"
+      class="btn gold slamButton"
     >
       SLAM
     </button>
@@ -880,8 +1510,54 @@ kbd{
       class="smallText"
       style="margin-top:7px"
     >
-      SLAM pushes the selected enemy chain
-      <b>2 squares</b>. Once per game.
+      SLAM pushes the entire enemy chain
+      two squares. Once per game.
+    </div>
+
+  </div>
+
+
+  <!-- SETTINGS -->
+
+  <div class="glass panel settingsPanel">
+
+    <b>THEME</b>
+
+    <div class="themeRow">
+
+      <button
+        class="themeButton active"
+        data-theme="neon"
+      >
+        NEON
+      </button>
+
+      <button
+        class="themeButton"
+        data-theme="royal"
+      >
+        ROYAL
+      </button>
+
+      <button
+        class="themeButton"
+        data-theme="ice"
+      >
+        ICE
+      </button>
+
+    </div>
+
+
+    <div class="soundRow">
+
+      <button
+        id="soundButton"
+        class="btn soundButton"
+      >
+        🔊 SOUND ON
+      </button>
+
     </div>
 
   </div>
@@ -889,33 +1565,30 @@ kbd{
 
   <!-- RULES -->
 
-  <div class="panel rules">
+  <div class="glass panel rulesPanel">
 
     <b>HOW TO PLAY</b>
 
-    <div
-      class="help"
-      style="margin-top:8px"
-    >
+    <div class="help" style="margin-top:8px">
 
       Select one of your pieces.
 
       <br><br>
 
-      Choose a direction.
+      Click a direction.
 
       <br><br>
 
-      If the square is empty, your piece moves there.
+      Empty square → move there.
 
       <br><br>
 
-      If an enemy is there, you <b>push</b> the
-      entire touching enemy chain one square.
+      Enemy → <b>PUSH</b> the connected enemy
+      chain one square.
 
       <br><br>
 
-      A piece pushed into a <b>hole</b> is destroyed.
+      A piece pushed into a black hole is destroyed.
 
       <br><br>
 
@@ -923,22 +1596,19 @@ kbd{
 
       <br><br>
 
-      Press <kbd>E</kbd> or the
-      <b>SLAM</b> button once per game to
-      push a chain <b>2 squares</b>.
+      <b>SLAM</b> pushes the chain two squares
+      and can only be used once.
 
     </div>
 
   </div>
 
-</div>
+</aside>
 ```
 
   </div>
 
 </section>
-
-</div>
 
 <!-- =====================================================
      RESULT
@@ -949,18 +1619,22 @@ kbd{
   class="overlay"
 >
 
-  <div class="card resultCard">
+  <div class="glass resultCard">
 
 ```
-<div class="smallText">
-  GAME OVER
+<div
+  id="resultIcon"
+  class="resultIcon"
+>
+  ◆
 </div>
 
 <h2 id="resultTitle">
   YOU WIN
 </h2>
 
-<p id="resultReason"></p>
+<p id="resultReason">
+</p>
 
 <div class="buttons">
 
@@ -985,30 +1659,33 @@ kbd{
 
 </div>
 
+<div id="toast"></div>
+
 <script>
 "use strict";
 
 
 /* =========================================================
    PUSHLINE
-   ---------------------------------------------------------
-   SINGLE HTML FILE
-   IDENTICAL FOR BOTH PLAYERS
+   =========================================================
+
+   Same HTML for BOTH players.
 
    ROOM CODE:
-      Exactly 6 characters for both users.
+      exactly 6 characters.
 
-   INTERNAL PEER ID:
+   INTERNAL PEER:
       pushline-XXXXXX
 
    BLUE:
-      Host
+      host
 
    RED:
-      Guest
+      guest
 
-   NETWORK:
-      PeerJS WebRTC DataConnection
+   P2P:
+      PeerJS WebRTC
+
 ========================================================= */
 
 
@@ -1018,9 +1695,9 @@ kbd{
 
 const BOARD_SIZE=7;
 
-const PIECES_PER_PLAYER=5;
+const PIECES=5;
 
-const WIN_DESTROYED=3;
+const DESTROY_TO_WIN=3;
 
 const ROOM_LENGTH=6;
 
@@ -1045,32 +1722,271 @@ let game=null;
 
 let selectedPiece=null;
 
-let slamUsed=false;
-
-let joinedGame=false;
+let soundEnabled=true;
 
 
 /* =========================================================
-   DOM
+   AUDIO
+========================================================= */
+
+let audioContext=null;
+
+
+function audio(){
+
+  if(!soundEnabled)
+    return;
+
+
+  if(!audioContext){
+
+    audioContext=
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+
+  }
+
+
+  if(audioContext.state==="suspended"){
+
+    audioContext.resume();
+
+  }
+
+}
+
+
+function tone(
+  frequency,
+  duration,
+  type="sine",
+  volume=.045
+){
+
+  if(!soundEnabled)
+    return;
+
+
+  audio();
+
+
+  if(!audioContext)
+    return;
+
+
+  const oscillator=
+    audioContext.createOscillator();
+
+
+  const gain=
+    audioContext.createGain();
+
+
+  oscillator.type=type;
+
+  oscillator.frequency.value=
+    frequency;
+
+
+  gain.gain.setValueAtTime(
+    volume,
+    audioContext.currentTime
+  );
+
+
+  gain.gain.exponentialRampToValueAtTime(
+    .001,
+    audioContext.currentTime+
+    duration
+  );
+
+
+  oscillator.connect(gain);
+
+  gain.connect(
+    audioContext.destination
+  );
+
+
+  oscillator.start();
+
+  oscillator.stop(
+    audioContext.currentTime+
+    duration
+  );
+
+}
+
+
+function soundMove(){
+
+  tone(
+    420,
+    .08,
+    "triangle",
+    .035
+  );
+
+}
+
+
+function soundSelect(){
+
+  tone(
+    650,
+    .055,
+    "sine",
+    .025
+  );
+
+}
+
+
+function soundPush(){
+
+  tone(
+    125,
+    .18,
+    "sawtooth",
+    .06
+  );
+
+  setTimeout(
+    ()=>tone(
+      210,
+      .13,
+      "triangle",
+      .04
+    ),
+    70
+  );
+
+}
+
+
+function soundHole(){
+
+  tone(
+    90,
+    .28,
+    "sawtooth",
+    .055
+  );
+
+}
+
+
+function soundWin(){
+
+  tone(
+    520,
+    .12,
+    "triangle",
+    .045
+  );
+
+  setTimeout(
+    ()=>tone(
+      700,
+      .13,
+      "triangle",
+      .045
+    ),
+    110
+  );
+
+  setTimeout(
+    ()=>tone(
+      950,
+      .18,
+      "triangle",
+      .05
+    ),
+    230
+  );
+
+}
+
+
+/* =========================================================
+   PARTICLE BACKGROUND
+========================================================= */
+
+(function createBackgroundParticles(){
+
+  const container=
+    document.getElementById(
+      "particles"
+    );
+
+
+  for(
+    let i=0;
+    i<45;
+    i++
+  ){
+
+    const p=
+      document.createElement("div");
+
+
+    p.className="particle";
+
+
+    p.style.left=
+      Math.random()*100+"%";
+
+
+    p.style.top=
+      Math.random()*100+"%";
+
+
+    p.style.animationDuration=
+      (
+        12+
+        Math.random()*22
+      )+"s";
+
+
+    p.style.animationDelay=
+      (
+        -Math.random()*25
+      )+"s";
+
+
+    container.appendChild(
+      p
+    );
+
+  }
+
+})();
+
+
+/* =========================================================
+   HELPERS
 ========================================================= */
 
 const $=id=>
   document.getElementById(id);
 
 
-/* =========================================================
-   UI
-========================================================= */
-
-function showScreen(id){
+function screen(id){
 
   document
     .querySelectorAll(".screen")
-    .forEach(s=>
-      s.classList.remove("active")
+    .forEach(
+      x=>x.classList.remove(
+        "active"
+      )
     );
 
-  $(id).classList.add("active");
+
+  $(id).classList.add(
+    "active"
+  );
 
 }
 
@@ -1080,10 +1996,13 @@ function setStatus(
   type=""
 ){
 
-  $("connectionText").textContent=text;
+  $("connectionText").textContent=
+    text;
+
 
   $("connectionDot").className=
     "dot";
+
 
   if(type){
 
@@ -1095,7 +2014,7 @@ function setStatus(
 }
 
 
-function setMessage(text){
+function message(text){
 
   $("message").textContent=
     text||"";
@@ -1103,16 +2022,52 @@ function setMessage(text){
 }
 
 
+let toastTimer=null;
+
+
+function toast(text){
+
+  const box=
+    $("toast");
+
+
+  box.textContent=
+    text;
+
+
+  box.classList.add(
+    "show"
+  );
+
+
+  clearTimeout(
+    toastTimer
+  );
+
+
+  toastTimer=
+    setTimeout(
+      ()=>box.classList.remove(
+        "show"
+      ),
+      1500
+    );
+
+}
+
+
 /* =========================================================
-   ROOM CODE
+   ROOM CODES
 ========================================================= */
 
-function randomRoomCode(){
+function generateCode(){
 
   const chars=
     "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
-  let code="";
+
+  let result="";
+
 
   for(
     let i=0;
@@ -1120,7 +2075,7 @@ function randomRoomCode(){
     i++
   ){
 
-    code+=
+    result+=
       chars[
         Math.floor(
           Math.random()*chars.length
@@ -1129,17 +2084,24 @@ function randomRoomCode(){
 
   }
 
-  return code;
+
+  return result;
 
 }
 
 
-function cleanRoomCode(value){
+function cleanCode(value){
 
   return value
     .toUpperCase()
-    .replace(/[^A-Z0-9]/g,"")
-    .slice(0,ROOM_LENGTH);
+    .replace(
+      /[^A-Z0-9]/g,
+      ""
+    )
+    .slice(
+      0,
+      ROOM_LENGTH
+    );
 
 }
 
@@ -1148,7 +2110,7 @@ function cleanRoomCode(value){
    PEER CLEANUP
 ========================================================= */
 
-function cleanupPeer(){
+function cleanup(){
 
   if(connection){
 
@@ -1178,12 +2140,12 @@ function cleanupPeer(){
    CREATE PEER
 ========================================================= */
 
-function createPeer(id){
+function openPeer(id){
 
   return new Promise(
     (resolve,reject)=>{
 
-      const newPeer=
+      const p=
         new Peer(
           id,
           {
@@ -1195,17 +2157,19 @@ function createPeer(id){
       let finished=false;
 
 
-      newPeer.on(
+      p.on(
         "open",
         ()=>{
-      
+
           if(finished)
             return;
 
 
           finished=true;
 
-          peer=newPeer;
+
+          peer=p;
+
 
           resolve();
 
@@ -1213,12 +2177,12 @@ function createPeer(id){
       );
 
 
-      newPeer.on(
+      p.on(
         "error",
         error=>{
 
           console.error(
-            "PeerJS error:",
+            "PeerJS",
             error
           );
 
@@ -1229,7 +2193,7 @@ function createPeer(id){
 
 
             try{
-              newPeer.destroy();
+              p.destroy();
             }catch(e){}
 
 
@@ -1240,66 +2204,8 @@ function createPeer(id){
         }
       );
 
-
-      newPeer.on(
-        "disconnected",
-        ()=>{
-
-          /*
-            Existing P2P connections can remain alive
-            even if the signaling connection drops.
-          */
-
-          if(connection){
-
-            setStatus(
-              "P2P connected",
-              "good"
-            );
-
-          }else{
-
-            setStatus(
-              "Signaling disconnected",
-              "bad"
-            );
-
-          }
-
-        }
-      );
-
     }
   );
-
-}
-
-
-/* =========================================================
-   SEND
-========================================================= */
-
-function send(data){
-
-  if(
-    connection &&
-    connection.open
-  ){
-
-    try{
-
-      connection.send(data);
-
-    }catch(error){
-
-      console.error(
-        "Send error:",
-        error
-      );
-
-    }
-
-  }
 
 }
 
@@ -1312,12 +2218,13 @@ async function createRoom(){
 
   $("createButton").disabled=true;
 
+
   setStatus(
     "Creating room..."
   );
 
 
-  let createdCode=null;
+  let chosen=null;
 
 
   for(
@@ -1326,41 +2233,37 @@ async function createRoom(){
     attempt++
   ){
 
-    const candidate=
-      randomRoomCode();
+    const code=
+      generateCode();
 
 
     try{
 
-      await createPeer(
-        PEER_PREFIX+candidate
+      await openPeer(
+        PEER_PREFIX+code
       );
 
 
-      createdCode=
-        candidate;
+      chosen=
+        code;
+
 
       break;
 
 
-    }catch(error){
+    }catch(e){
 
-      console.warn(
-        "Room creation retry",
-        error
-      );
-
-
-      cleanupPeer();
+      cleanup();
 
     }
 
   }
 
 
-  if(!createdCode){
+  if(!chosen){
 
     $("createButton").disabled=false;
+
 
     setStatus(
       "Failed",
@@ -1369,8 +2272,7 @@ async function createRoom(){
 
 
     alert(
-      "Could not create a room.\n\n" +
-      "Refresh the page and try again."
+      "Could not create room. Refresh and try again."
     );
 
 
@@ -1384,14 +2286,14 @@ async function createRoom(){
   myColor="blue";
 
   roomCode=
-    createdCode;
+    chosen;
 
 
   $("roomCode").textContent=
-    createdCode;
+    chosen;
 
 
-  showScreen(
+  screen(
     "waitingScreen"
   );
 
@@ -1401,10 +2303,6 @@ async function createRoom(){
     "good"
   );
 
-
-  /*
-    HOST waits for exactly one guest.
-  */
 
   peer.on(
     "connection",
@@ -1425,9 +2323,7 @@ async function createRoom(){
         incoming;
 
 
-      setupConnection(
-        true
-      );
+      setupConnection();
 
     }
   );
@@ -1442,7 +2338,7 @@ async function createRoom(){
 async function joinRoom(){
 
   const code=
-    cleanRoomCode(
+    cleanCode(
       $("roomInput").value
     );
 
@@ -1451,11 +2347,12 @@ async function joinRoom(){
     code;
 
 
-  if(code.length!==ROOM_LENGTH){
+  if(code.length!==6){
 
     alert(
-      "The room code must be exactly 6 characters."
+      "Enter exactly 6 characters."
     );
+
 
     return;
 
@@ -1463,6 +2360,7 @@ async function joinRoom(){
 
 
   $("joinButton").disabled=true;
+
 
   setStatus(
     "Connecting..."
@@ -1475,7 +2373,7 @@ async function joinRoom(){
       "guest-"+crypto.randomUUID();
 
 
-    await createPeer(
+    await openPeer(
       guestId
     );
 
@@ -1484,17 +2382,6 @@ async function joinRoom(){
 
     myColor="red";
 
-    roomCode=
-      code;
-
-
-    /*
-      The user only enters:
-          ABC123
-
-      Actual peer target:
-          pushline-ABC123
-    */
 
     connection=
       peer.connect(
@@ -1506,14 +2393,14 @@ async function joinRoom(){
       );
 
 
-    setupConnection(
-      false
-    );
+    setupConnection();
 
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      error
+    );
 
 
     $("joinButton").disabled=false;
@@ -1526,9 +2413,8 @@ async function joinRoom(){
 
 
     alert(
-      "Could not connect.\n\n" +
-      "Check the 6-character code and make sure " +
-      "the host still has the room open."
+      "Connection failed.\n\n" +
+      "Make sure the host is still in the room."
     );
 
   }
@@ -1540,7 +2426,7 @@ async function joinRoom(){
    CONNECTION
 ========================================================= */
 
-function setupConnection(hostSide){
+function setupConnection(){
 
   connection.on(
     "open",
@@ -1552,18 +2438,14 @@ function setupConnection(hostSide){
       );
 
 
-      joinedGame=true;
-
-
-      if(hostSide){
+      if(isHost){
 
         $("waitingText").textContent=
-          "Player 2 connected! Starting game...";
-
+          "Player 2 connected!";
 
         setTimeout(
           startHostGame,
-          350
+          400
         );
 
       }
@@ -1576,7 +2458,7 @@ function setupConnection(hostSide){
     "data",
     data=>{
 
-      handleNetwork(
+      receive(
         data
       );
 
@@ -1602,9 +2484,11 @@ function setupConnection(hostSide){
         $("turnStatus").textContent=
           "OPPONENT LEFT";
 
+
         disableControls();
 
-        setMessage(
+
+        message(
           "Your opponent disconnected."
         );
 
@@ -1619,7 +2503,7 @@ function setupConnection(hostSide){
     error=>{
 
       console.error(
-        "Data connection error:",
+        "Connection error",
         error
       );
 
@@ -1636,14 +2520,30 @@ function setupConnection(hostSide){
 
 
 /* =========================================================
+   SEND
+========================================================= */
+
+function send(data){
+
+  if(
+    connection &&
+    connection.open
+  ){
+
+    connection.send(
+      data
+    );
+
+  }
+
+}
+
+
+/* =========================================================
    START HOST GAME
 ========================================================= */
 
 function startHostGame(){
-
-  if(!isHost)
-    return;
-
 
   game=
     createGame();
@@ -1651,27 +2551,17 @@ function startHostGame(){
 
   selectedPiece=null;
 
-  slamUsed=false;
-
 
   showScreen(
     "gameScreen"
   );
 
 
-  $("role").textContent=
-    "YOU ARE BLUE";
+  $("role").innerHTML=
+    '<span class="mini blueDot"></span> YOU ARE BLUE';
 
 
-  $("turnStatus").textContent=
-    "YOUR TURN";
-
-
-  /*
-    Host sends the complete authoritative state.
-  */
-
-  sendGameState();
+  sendState();
 
 
   render();
@@ -1679,95 +2569,91 @@ function startHostGame(){
 
   updateControls();
 
+
+  toast(
+    "GAME START"
+  );
+
+
+  soundMove();
+
 }
 
 
 /* =========================================================
-   NEW GAME
+   CREATE GAME
 ========================================================= */
 
 function createGame(){
 
   /*
-    7x7 board.
-    false = normal square.
-    true = hole.
+    Exactly 5 pieces per player.
 
-    Five starting pieces per side.
+    Holes are never on starting row.
+
+    Pieces begin in horizontal formations
+    so pushing chains becomes immediately useful.
   */
-
-  const holes=
-    generateHoles();
 
 
   const board=
     Array.from(
-      {
-        length:BOARD_SIZE
-      },
+      {length:BOARD_SIZE},
       ()=>Array(
         BOARD_SIZE
       ).fill(null)
     );
 
 
-  /*
-    BLUE starts on row 0.
-  */
+  const holes=
+    createHoles();
 
-  const blueSpawns=[
-    {r:0,c:1},
-    {r:0,c:2},
-    {r:0,c:3},
-    {r:0,c:4},
-    {r:0,c:5}
+
+  const blue=[
+    [0,1],
+    [0,2],
+    [0,3],
+    [0,4],
+    [0,5]
   ];
 
 
-  /*
-    RED starts on row 6.
-  */
-
-  const redSpawns=[
-    {r:6,c:1},
-    {r:6,c:2},
-    {r:6,c:3},
-    {r:6,c:4},
-    {r:6,c:5}
+  const red=[
+    [6,1],
+    [6,2],
+    [6,3],
+    [6,4],
+    [6,5]
   ];
 
 
   for(
-    const p of blueSpawns
+    const [r,c]
+    of blue
   ){
 
-    board[p.r][p.c]={
+    board[r][c]={
       color:"blue",
-      id:
-        crypto.randomUUID()
+      id:crypto.randomUUID()
     };
 
   }
 
 
   for(
-    const p of redSpawns
+    const [r,c]
+    of red
   ){
 
-    board[p.r][p.c]={
+    board[r][c]={
       color:"red",
-      id:
-        crypto.randomUUID()
+      id:crypto.randomUUID()
     };
 
   }
 
 
-  /*
-    Guarantee no hole is placed on spawn rows.
-  */
-
-  return {
+  return{
 
     phase:"playing",
 
@@ -1795,77 +2681,59 @@ function createGame(){
 
 
 /* =========================================================
-   HOLE GENERATOR
+   HOLES
 ========================================================= */
 
-function generateHoles(){
-
-  const possible=[];
-
+function createHoles(){
 
   /*
-    Only interior squares.
+    Fixed patterns chosen to produce interesting
+    pushing lanes instead of random frustrating layouts.
 
-    Never use the starting rows.
+    Layout is one of 3 patterns.
+
+    The pattern itself is randomized every match.
   */
 
-  for(
-    let r=1;
-    r<BOARD_SIZE-1;
-    r++
-  ){
-
-    for(
-      let c=0;
-      c<BOARD_SIZE;
-      c++
-    ){
-
-      possible.push({
-        r,
-        c
-      });
-
-    }
-
-  }
-
-
-  /*
-    Shuffle.
-  */
-
-  for(
-    let i=possible.length-1;
-    i>0;
-    i--
-  ){
-
-    const j=
-      Math.floor(
-        Math.random()*(i+1)
-      );
-
+  const patterns=[
 
     [
-      possible[i],
-      possible[j]
-    ]=[
-      possible[j],
-      possible[i]
+      {r:2,c:1},
+      {r:2,c:5},
+      {r:3,c:3},
+      {r:4,c:1},
+      {r:4,c:5}
+    ],
+
+    [
+      {r:2,c:2},
+      {r:2,c:4},
+      {r:3,c:1},
+      {r:4,c:3},
+      {r:4,c:5}
+    ],
+
+    [
+      {r:1,c:3},
+      {r:2,c:5},
+      {r:3,c:1},
+      {r:4,c:5},
+      {r:5,c:3}
+    ]
+
+  ];
+
+
+  const chosen=
+    patterns[
+      Math.floor(
+        Math.random()*
+        patterns.length
+      )
     ];
 
-  }
 
-
-  /*
-    Only 5 holes.
-  */
-
-  return possible.slice(
-    0,
-    5
-  );
+  return chosen;
 
 }
 
@@ -1890,7 +2758,7 @@ function isHole(
 
 
 /* =========================================================
-   BOARD BOUNDS
+   INSIDE
 ========================================================= */
 
 function inside(r,c){
@@ -1906,103 +2774,41 @@ function inside(r,c){
 
 
 /* =========================================================
-   PIECE SEARCH
+   DIRECTION
 ========================================================= */
 
-function getPieceAt(
-  state,
-  r,
-  c
-){
-
-  if(!inside(r,c))
-    return null;
-
-
-  return state.board[r][c];
-
-}
-
-
-/* =========================================================
-   MOVE VALIDATION
-========================================================= */
-
-function validDirection(dir){
-
-  return [
-    "up",
-    "down",
-    "left",
-    "right"
-  ].includes(dir);
-
-}
-
-
-/* =========================================================
-   GET DELTA
-========================================================= */
-
-function delta(dir){
+function getDelta(dir){
 
   switch(dir){
 
     case "up":
-      return [-1,0];
+      return[-1,0];
 
     case "down":
-      return [1,0];
+      return[1,0];
 
     case "left":
-      return [0,-1];
+      return[0,-1];
 
     case "right":
-      return [0,1];
+      return[0,1];
+
+    default:
+      return[0,0];
 
   }
-
-
-  return [0,0];
 
 }
 
 
 /* =========================================================
-   NORMAL MOVE
+   FIND PIECE
 ========================================================= */
 
-function performMove(
+function findPiece(
   state,
-  pieceId,
-  dir,
-  distance=1
+  id
 ){
-
-  if(
-    state.phase!=="playing"
-  )
-    return {
-      ok:false,
-      reason:"Game is over."
-    };
-
-
-  if(
-    state.current===undefined
-  )
-    return {
-      ok:false,
-      reason:"Invalid turn."
-    };
-
-
-  /*
-    Find selected piece.
-  */
-
-  let source=null;
-
 
   for(
     let r=0;
@@ -2022,12 +2828,13 @@ function performMove(
 
       if(
         piece &&
-        piece.id===pieceId
+        piece.id===id
       ){
 
-        source={
+        return{
           r,
-          c
+          c,
+          piece
         };
 
       }
@@ -2037,60 +2844,80 @@ function performMove(
   }
 
 
+  return null;
+
+}
+
+
+/* =========================================================
+   MAKE MOVE
+========================================================= */
+
+function executeMove(
+  state,
+  playerColor,
+  pieceId,
+  direction,
+  slam
+){
+
+  if(
+    state.phase!=="playing"
+  ){
+
+    return{
+      ok:false,
+      reason:"Game is over."
+    };
+
+  }
+
+
+  if(
+    state.current!==playerColor
+  ){
+
+    return{
+      ok:false,
+      reason:"Not your turn."
+    };
+
+  }
+
+
+  const source=
+    findPiece(
+      state,
+      pieceId
+    );
+
+
   if(!source){
 
     return{
       ok:false,
-      reason:"Piece not found."
-    };
-
-  }
-
-
-  const piece=
-    state.board[
-      source.r
-    ][
-      source.c
-    ];
-
-
-  if(
-    piece.color!==state.current
-  ){
-
-    return{
-      ok:false,
-      reason:"That is not your piece."
+      reason:"Piece no longer exists."
     };
 
   }
 
 
   if(
-    !validDirection(dir)
+    source.piece.color!==playerColor
   ){
 
     return{
       ok:false,
-      reason:"Invalid direction."
+      reason:"That's not your piece."
     };
 
   }
-
-
-  distance=
-    Math.max(
-      1,
-      Math.min(
-        1,
-        Number(distance)||1
-      )
-    );
 
 
   const d=
-    delta(dir);
+    getDelta(
+      direction
+    );
 
 
   const targetR=
@@ -2110,18 +2937,14 @@ function performMove(
 
     return{
       ok:false,
-      reason:"You cannot move outside the board."
+      reason:"You cannot move there."
     };
 
   }
 
 
   /*
-    A hole is empty for normal movement,
-    but a piece cannot move INTO it by itself.
-
-    Holes are only for destroying pieces
-    when they are PUSHED.
+    You cannot voluntarily enter a hole.
   */
 
   if(
@@ -2149,85 +2972,89 @@ function performMove(
 
 
   /*
-    Empty square:
-    simple movement.
+    EMPTY:
+    simple move.
   */
 
   if(!target){
 
-    state.board[targetR][targetC]=piece;
+    state.board[
+      targetR
+    ][
+      targetC
+    ]=
+      source.piece;
 
-    state.board[source.r][source.c]=null;
 
-    finishTurn(state);
+    state.board[
+      source.r
+    ][
+      source.c
+    ]=null;
+
+
+    finishTurn(
+      state
+    );
+
 
     return{
       ok:true,
-      action:"move"
+      type:"move",
+      moved:source.piece
     };
 
   }
 
 
   /*
-    Friendly piece:
-    cannot move there.
+    FRIENDLY:
+    blocked.
   */
 
   if(
-    target.color===piece.color
+    target.color===playerColor
   ){
 
     return{
       ok:false,
-      reason:"You cannot move into your own piece."
+      reason:"Your own piece is blocking you."
     };
 
   }
 
 
   /*
-    Enemy piece:
+    ENEMY:
     PUSH.
   */
 
-  return performPush(
+  return pushChain(
     state,
     source,
-    dir,
-    piece.color
+    direction,
+    slam
   );
 
 }
 
 
 /* =========================================================
-   PUSH
+   PUSH CHAIN
 ========================================================= */
 
-function performPush(
+function pushChain(
   state,
   source,
-  dir,
-  pushingColor,
-  slam=false
+  direction,
+  slam
 ){
 
   const d=
-    delta(dir);
+    getDelta(
+      direction
+    );
 
-
-  /*
-    Build contiguous enemy chain.
-
-    Example:
-
-      BLUE RED RED EMPTY
-
-    pushing right causes:
-
-      EMPTY BLUE RED RED
-  */
 
   const chain=[];
 
@@ -2239,6 +3066,10 @@ function performPush(
     source.c+d[1];
 
 
+  /*
+    Find connected enemy chain.
+  */
+
   while(
     inside(r,c)
   ){
@@ -2249,7 +3080,7 @@ function performPush(
 
     if(
       !piece ||
-      piece.color===pushingColor
+      piece.color===source.piece.color
     )
       break;
 
@@ -2277,573 +3108,14 @@ function performPush(
   }
 
 
-  /*
-    Determine final cells.
-
-    For a normal push:
-      chain moves 1.
-
-    For SLAM:
-      chain attempts to move 2.
-
-    A chain can be destroyed only if its
-    final piece is pushed into a hole.
-  */
-
-  const pushDistance=
-    slam
-      ?2
-      :1;
-
-
-  /*
-    We need to test each step of the chain.
-
-    The easiest safe method:
-    calculate destinations from the back
-    toward the front.
-  */
-
-  const steps=[];
-
-
-  for(
-    let i=0;
-    i<chain.length;
-    i++
-  ){
-
-    const item=chain[i];
-
-
-    steps.push({
-
-      fromR:item.r,
-
-      fromC:item.c,
-
-      piece:item.piece,
-
-      toR:
-        item.r+
-        d[0]*pushDistance,
-
-      toC:
-        item.c+
-        d[1]*pushDistance
-
-    });
-
-  }
-
-
-  /*
-    Validate destinations.
-
-    The front of the chain may:
-      - enter an empty normal square
-      - enter a hole and die
-      - hit board edge => invalid
-
-    Internal chain pieces move into positions
-    vacated by another chain piece.
-  */
-
-  const front=
-    steps[steps.length-1];
-
-
-  if(
-    !inside(
-      front.toR,
-      front.toC
-    )
-  ){
-
-    return{
-      ok:false,
-      reason:
-        "There is not enough space to push the chain."
-    };
-
-  }
-
-
-  /*
-    Check all two-square paths aren't blocked
-    by unrelated pieces.
-
-    For SLAM, movement happens one square at
-    a time; the chain must be able to travel
-    through both spaces.
-  */
-
-  for(
-    let step=1;
-    step<=pushDistance;
-    step++
-  ){
-
-    const frontCheck=
-      chain[chain.length-1];
-
-
-    const checkR=
-      frontCheck.r+
-      d[0]*step;
-
-    const checkC=
-      frontCheck.c+
-      d[1]*step;
-
-
-    if(
-      !inside(
-        checkR,
-        checkC
-      )
-    ){
-
-      return{
-        ok:false,
-        reason:
-          "The chain hits the edge."
-      };
-
-    }
-
-
-    /*
-      A hole is allowed as the final destination,
-      but not an intermediate square in SLAM.
-    */
-
-    if(
-      step<pushDistance &&
-      isHole(
-        state,
-        checkR,
-        checkC
-      )
-    ){
-
-      return{
-        ok:false,
-        reason:
-          "The chain would hit a hole too early."
-      };
-
-    }
-
-
-    const occupant=
-      state.board[
-        checkR
-      ][
-        checkC
-      ];
-
-
-    /*
-      If the destination is outside the moving chain,
-      it must be empty.
-    */
-
-    const belongsToChain=
-      chain.some(
-        item=>
-          item.r===checkR &&
-          item.c===checkC
-      );
-
-
-    if(
-      occupant &&
-      !belongsToChain &&
-      !(
-        step===pushDistance &&
-        isHole(
-          state,
-          checkR,
-          checkC
-        )
-      )
-    ){
-
-      return{
-        ok:false,
-        reason:
-          "The chain is blocked."
-      };
-
-    }
-
-  }
-
-
-  /*
-    Move chain from BACK to FRONT
-    to avoid overwriting pieces.
-  */
-
-  for(
-    let i=chain.length-1;
-    i>=0;
-    i--
-  ){
-
-    const item=
-      chain[i];
-
-
-    /*
-      Clear original first.
-    */
-
-    state.board[
-      item.r
-    ][
-      item.c
-    ]=null;
-
-  }
-
-
-  /*
-    Put chain into destinations.
-
-    A piece entering a hole is destroyed.
-  */
-
-  for(
-    let i=0;
-    i<chain.length;
-    i++
-  ){
-
-    const item=
-      chain[i];
-
-
-    const destinationR=
-      item.r+
-      d[0]*pushDistance;
-
-
-    const destinationC=
-      item.c+
-      d[1]*pushDistance;
-
-
-    if(
-      isHole(
-        state,
-        destinationR,
-        destinationC
-      )
-    ){
-
-      state.destroyed[
-        item.piece.color
-      ]++;
-
-    }else{
-
-      state.board[
-        destinationR
-      ][
-        destinationC
-      ]=
-        item.piece;
-
-    }
-
-  }
-
-
-  /*
-    Move the pushing piece into the square
-    previously occupied by the first enemy.
-  */
-
-  state.board[
-    source.r
-  ][
-    source.c
-  ]=null;
-
-
-  state.board[
-    source.r+d[0]
-  ][
-    source.c+d[1]
-  ]=
-    {
-      color:pushingColor,
-      id:state.board[
-        source.r
-      ][
-        source.c
-      ]?.id
-    };
-
-
-  /*
-    The above cannot retrieve the original piece ID
-    because source was cleared.
-
-    Fix it using sourcePiece argument stored below.
-  */
-
-  return{
-    ok:true,
-    action:slam?"slam":"push"
-  };
-
-}
-
-
-/* =========================================================
-   MOVE SAFE WRAPPER
-   ---------------------------------------------------------
-   We keep the original pushing piece object so its ID
-   never disappears during a push.
-========================================================= */
-
-function performMoveSafe(
-  state,
-  pieceId,
-  dir,
-  slam=false
-){
-
-  /*
-    Find piece.
-  */
-
-  let source=null;
-
-
-  for(
-    let r=0;
-    r<BOARD_SIZE;
-    r++
-  ){
-
-    for(
-      let c=0;
-      c<BOARD_SIZE;
-      c++
-    ){
-
-      const p=
-        state.board[r][c];
-
-
-      if(
-        p &&
-        p.id===pieceId
-      ){
-
-        source={
-          r,
-          c,
-          piece:p
-        };
-
-      }
-
-    }
-
-  }
-
-
-  if(!source){
-
-    return{
-      ok:false,
-      reason:"Piece not found."
-    };
-
-  }
-
-
-  if(
-    source.piece.color!==state.current
-  ){
-
-    return{
-      ok:false,
-      reason:"That piece is not yours."
-    };
-
-  }
-
-
-  const d=
-    delta(dir);
-
-
-  const tr=
-    source.r+d[0];
-
-  const tc=
-    source.c+d[1];
-
-
-  if(!inside(tr,tc)){
-
-    return{
-      ok:false,
-      reason:"That direction hits the edge."
-    };
-
-  }
-
-
-  /*
-    Direct movement into a hole is not allowed.
-  */
-
-  if(
-    isHole(
-      state,
-      tr,
-      tc
-    )
-  ){
-
-    return{
-      ok:false,
-      reason:"You cannot move directly into a hole."
-    };
-
-  }
-
-
-  const target=
-    state.board[tr][tc];
-
-
-  /*
-    Empty = normal move.
-  */
-
-  if(!target){
-
-    state.board[tr][tc]=source.piece;
-
-    state.board[source.r][source.c]=null;
-
-    return finishTurn(state);
-
-  }
-
-
-  /*
-    Friendly = invalid.
-  */
-
-  if(
-    target.color===source.piece.color
-  ){
-
-    return{
-      ok:false,
-      reason:"Your own piece is blocking you."
-    };
-
-  }
-
-
-  /*
-    Enemy = push.
-  */
-
-  return pushSafe(
-    state,
-    source,
-    dir,
-    slam
-  );
-
-}
-
-
-/* =========================================================
-   SAFE PUSH
-========================================================= */
-
-function pushSafe(
-  state,
-  source,
-  dir,
-  slam
-){
-
-  const d=
-    delta(dir);
-
-
-  const chain=[];
-
-
-  let r=
-    source.r+d[0];
-
-  let c=
-    source.c+d[1];
-
-
-  /*
-    Collect contiguous enemy chain.
-  */
-
-  while(
-    inside(r,c)
-  ){
-
-    const p=
-      state.board[r][c];
-
-
-    if(
-      !p ||
-      p.color===source.piece.color
-    )
-      break;
-
-
-    chain.push({
-      r,
-      c,
-      piece:p
-    });
-
-
-    r+=d[0];
-    c+=d[1];
-
-  }
-
-
-  if(!chain.length){
-
-    return{
-      ok:false,
-      reason:"Nothing to push."
-    };
-
-  }
-
-
   const amount=
     slam?2:1;
 
 
   /*
-    Validate each intermediate/final location
-    using front-to-back movement.
+    The front piece must have space.
+
+    The square after it may be a hole.
   */
 
   for(
@@ -2858,74 +3130,73 @@ function pushSafe(
       ];
 
 
-    const nr=
-      front.r+
-      d[0]*step;
+    const checkR=
+      front.r+d[0]*step;
 
 
-    const nc=
-      front.c+
-      d[1]*step;
+    const checkC=
+      front.c+d[1]*step;
 
 
-    if(!inside(nr,nc)){
+    if(
+      !inside(
+        checkR,
+        checkC
+      )
+    ){
 
       return{
         ok:false,
-        reason:"The chain hits the edge."
+        reason:"The chain hits the board edge."
       };
 
     }
 
 
     /*
-      Hole is only allowed as the FINAL location.
+      Only the final step may be a hole.
     */
 
     if(
       step<amount &&
       isHole(
         state,
-        nr,
-        nc
+        checkR,
+        checkC
       )
     ){
 
       return{
         ok:false,
-        reason:"A hole blocks the push."
+        reason:"The hole blocks the push."
       };
 
     }
 
 
     const occupant=
-      state.board[nr][nc];
+      state.board[
+        checkR
+      ][
+        checkC
+      ];
 
 
-    /*
-      If destination belongs to the chain,
-      it is being vacated.
-    */
-
-    const inChain=
+    const partOfChain=
       chain.some(
         x=>
-          x.r===nr &&
-          x.c===nc
+          x.r===checkR &&
+          x.c===checkC
       );
 
 
     if(
       occupant &&
-      !inChain &&
-      !(
-        step===amount &&
-        isHole(
-          state,
-          nr,
-          nc
-        )
+      !partOfChain &&
+      !isHole(
+        state,
+        checkR,
+        checkC
       )
     ){
 
@@ -2940,7 +3211,7 @@ function pushSafe(
 
 
   /*
-    Clear old cells.
+    CLEAR ENEMY CHAIN.
   */
 
   for(
@@ -2956,8 +3227,11 @@ function pushSafe(
   }
 
 
+  const destroyedNow=[];
+
+
   /*
-    Move enemy chain.
+    Move every enemy piece.
   */
 
   for(
@@ -2965,13 +3239,11 @@ function pushSafe(
   ){
 
     const nr=
-      item.r+
-      d[0]*amount;
+      item.r+d[0]*amount;
 
 
     const nc=
-      item.c+
-      d[1]*amount;
+      item.c+d[1]*amount;
 
 
     if(
@@ -2986,6 +3258,11 @@ function pushSafe(
         item.piece.color
       ]++;
 
+
+      destroyedNow.push(
+        item
+      );
+
     }else{
 
       state.board[nr][nc]=
@@ -2997,7 +3274,7 @@ function pushSafe(
 
 
   /*
-    Move pushing piece into the first enemy square.
+    Pusher's piece enters first enemy position.
   */
 
   state.board[
@@ -3015,10 +3292,39 @@ function pushSafe(
     source.piece;
 
 
-  return finishTurn(
-    state,
-    slam?"SLAM!":"PUSH!"
+  /*
+    SLAM consumed.
+  */
+
+  if(slam){
+
+    state.slamUsed[
+      source.piece.color
+    ]=true;
+
+  }
+
+
+  finishTurn(
+    state
   );
+
+
+  return{
+
+    ok:true,
+
+    type:
+      slam
+        ?"slam"
+        :"push",
+
+    destroyedNow,
+
+    chainLength:
+      chain.length
+
+  };
 
 }
 
@@ -3028,51 +3334,36 @@ function pushSafe(
 ========================================================= */
 
 function finishTurn(
-  state,
-  actionText=""
+  state
 ){
 
-  /*
-    Check win before changing turn.
-  */
-
   if(
-    state.destroyed.red>=WIN_DESTROYED
-  ){
-
-    state.phase="finished";
-
-    state.winner="blue";
-
-    return{
-      ok:true,
-      winner:"blue",
-      action:actionText||"MOVE"
-    };
-
-  }
-
-
-  if(
-    state.destroyed.blue>=WIN_DESTROYED
+    state.destroyed.blue>=
+    DESTROY_TO_WIN
   ){
 
     state.phase="finished";
 
     state.winner="red";
 
-    return{
-      ok:true,
-      winner:"red",
-      action:actionText||"MOVE"
-    };
+    return;
 
   }
 
 
-  /*
-    Change turn.
-  */
+  if(
+    state.destroyed.red>=
+    DESTROY_TO_WIN
+  ){
+
+    state.phase="finished";
+
+    state.winner="blue";
+
+    return;
+
+  }
+
 
   state.current=
     state.current==="blue"
@@ -3082,63 +3373,68 @@ function finishTurn(
 
   state.turn++;
 
-
-  return{
-    ok:true,
-    action:
-      actionText||"MOVE"
-  };
-
 }
 
 
 /* =========================================================
-   APPLY HOST MOVE
+   HOST MOVE
 ========================================================= */
 
 function hostMove(
   pieceId,
-  dir,
+  direction,
   slam=false
 ){
 
   if(
     !isHost ||
-    !game ||
-    game.phase!=="playing"
+    !game
   )
     return;
 
 
   /*
-    Only host can modify authoritative state.
+    Red request:
+      validate that red actually owns it.
   */
 
+  const before=
+    cloneGame(
+      game
+    );
+
+
   const result=
-    performMoveSafe(
+    executeMove(
       game,
+      myColor,
       pieceId,
-      dir,
+      direction,
       slam
     );
 
 
   if(!result.ok){
 
-    setMessage(
+    /*
+      Restore in case anything ever mutated
+      before validation returned.
+    */
+
+    game=before;
+
+
+    message(
       result.reason
     );
 
+
+    toast(
+      result.reason
+    );
+
+
     return;
-
-  }
-
-
-  if(slam){
-
-    game.slamUsed[
-      myColor
-    ]=true;
 
   }
 
@@ -3146,25 +3442,30 @@ function hostMove(
   selectedPiece=null;
 
 
-  /*
-    Broadcast complete board state.
-  */
+  sendState();
 
-  sendGameState();
+
+  animateMoveResult(
+    before,
+    game,
+    result
+  );
 
 
   render();
 
 
   if(
-    result.winner
+    game.phase==="finished"
   ){
 
     showResult(
-      result.winner
+      game.winner
     );
 
-    disableControls();
+
+    soundWin();
+
 
     return;
 
@@ -3174,19 +3475,135 @@ function hostMove(
   updateControls();
 
 
-  setMessage(
-    result.action||
-    "MOVE"
-  );
+  /*
+    Give the active player a clear indication.
+  */
+
+  if(
+    game.current===myColor
+  ){
+
+    message(
+      "Your turn."
+    );
+
+  }else{
+
+    message(
+      "Opponent's turn."
+    );
+
+  }
 
 }
 
 
 /* =========================================================
-   SEND STATE
+   GUEST MOVE REQUEST
 ========================================================= */
 
-function sendGameState(){
+function guestMove(
+  pieceId,
+  direction,
+  slam=false
+){
+
+  if(
+    !connection ||
+    !connection.open
+  ){
+
+    toast(
+      "Not connected."
+    );
+
+
+    return;
+
+  }
+
+
+  /*
+    Do not let guest send a piece that isn't
+    currently present for them.
+  */
+
+  const local=
+    findPiece(
+      game,
+      pieceId
+    );
+
+
+  if(
+    !local ||
+    local.piece.color!=="red"
+  ){
+
+    toast(
+      "Select one of your pieces."
+    );
+
+
+    return;
+
+  }
+
+
+  disableControls();
+
+
+  send({
+
+    type:"MOVE_REQUEST",
+
+    pieceId,
+
+    direction,
+
+    slam:Boolean(slam)
+
+  });
+
+
+  $("turnStatus").textContent=
+    "WAITING FOR HOST...";
+
+}
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+function cloneGame(state){
+
+  /*
+    structuredClone is supported in modern GitHub Pages browsers.
+    JSON fallback keeps compatibility.
+  */
+
+  if(
+    typeof structuredClone==="function"
+  ){
+
+    return structuredClone(
+      state
+    );
+
+  }
+
+
+  return JSON.parse(
+    JSON.stringify(
+      state
+    )
+  );
+
+}
+
+
+function sendState(){
 
   if(!game)
     return;
@@ -3203,22 +3620,11 @@ function sendGameState(){
 }
 
 
-/* =========================================================
-   RECEIVE STATE
-========================================================= */
-
 function receiveState(data){
 
   if(isHost)
     return;
 
-
-  /*
-    Guest uses host's authoritative state.
-
-    It includes everything because PUSHLINE
-    has no hidden information.
-  */
 
   game=
     data.state;
@@ -3227,17 +3633,13 @@ function receiveState(data){
   selectedPiece=null;
 
 
-  slamUsed=
-    game.slamUsed.red;
-
-
   showScreen(
     "gameScreen"
   );
 
 
-  $("role").textContent=
-    "YOU ARE RED";
+  $("role").innerHTML=
+    '<span class="mini redDot"></span> YOU ARE RED';
 
 
   render();
@@ -3260,14 +3662,14 @@ function receiveState(data){
 
 
 /* =========================================================
-   NETWORK ROUTER
+   NETWORK
 ========================================================= */
 
-function handleNetwork(data){
+function receive(data){
 
   if(
     !data ||
-    typeof data.type!=="string"
+    !data.type
   )
     return;
 
@@ -3288,19 +3690,8 @@ function handleNetwork(data){
       if(
         isHost &&
         game &&
-        game.phase==="playing"
+        game.current==="red"
       ){
-
-        /*
-          Verify the request belongs to RED's
-          turn before applying.
-        */
-
-        if(
-          game.current!=="red"
-        )
-          return;
-
 
         hostMove(
           data.pieceId,
@@ -3317,261 +3708,11 @@ function handleNetwork(data){
 
       if(isHost){
 
-        /*
-          Guest confirms it wants another game.
-        */
-
-        startHostGame();
+        startHostRematch();
 
       }
 
       break;
-
-  }
-
-}
-
-
-/* =========================================================
-   CLICK PIECE
-========================================================= */
-
-function selectPiece(
-  r,
-  c
-){
-
-  if(
-    !game ||
-    game.phase!=="playing"
-  )
-    return;
-
-
-  if(
-    game.current!==myColor
-  ){
-
-    setMessage(
-      "It's not your turn."
-    );
-
-    return;
-
-  }
-
-
-  const piece=
-    game.board[r][c];
-
-
-  if(
-    !piece ||
-    piece.color!==myColor
-  ){
-
-    setMessage(
-      "Select one of your pieces."
-    );
-
-    return;
-
-  }
-
-
-  selectedPiece={
-    r,
-    c,
-    id:piece.id
-  };
-
-
-  setMessage(
-    "Choose a direction."
-  );
-
-
-  render();
-
-
-  updateControls();
-
-}
-
-
-/* =========================================================
-   ATTEMPT MOVE
-========================================================= */
-
-function attemptDirection(
-  direction
-){
-
-  if(
-    !selectedPiece
-  ){
-
-    setMessage(
-      "Select one of your pieces first."
-    );
-
-    return;
-
-  }
-
-
-  if(
-    !game ||
-    game.current!==myColor
-  ){
-
-    setMessage(
-      "Wait for your turn."
-    );
-
-    return;
-
-  }
-
-
-  if(
-    isHost
-  ){
-
-    hostMove(
-      selectedPiece.id,
-      direction,
-      false
-    );
-
-  }else{
-
-    /*
-      Optimistic UI is intentionally NOT used.
-
-      This board is tiny and turn based, so the
-      authoritative host state arrives almost instantly
-      and prevents client desync.
-    */
-
-    disableControls();
-
-
-    send({
-
-      type:"MOVE_REQUEST",
-
-      pieceId:selectedPiece.id,
-
-      direction
-
-    });
-
-  }
-
-}
-
-
-/* =========================================================
-   SLAM
-========================================================= */
-
-function performSlam(){
-
-  if(
-    !selectedPiece
-  ){
-
-    setMessage(
-      "Select one of your pieces first."
-    );
-
-    return;
-
-  }
-
-
-  if(
-    !game ||
-    game.current!==myColor
-  ){
-
-    setMessage(
-      "Wait for your turn."
-    );
-
-    return;
-
-  }
-
-
-  if(
-    game.slamUsed[myColor]
-  ){
-
-    setMessage(
-      "You already used SLAM."
-    );
-
-    return;
-
-  }
-
-
-  const direction=
-    prompt(
-      "SLAM direction:\n\n" +
-      "type: up, down, left, or right"
-    );
-
-
-  if(!direction)
-    return;
-
-
-  const clean=
-    direction
-      .trim()
-      .toLowerCase();
-
-
-  if(
-    !validDirection(clean)
-  ){
-
-    setMessage(
-      "Invalid direction."
-    );
-
-    return;
-
-  }
-
-
-  if(isHost){
-
-    hostMove(
-      selectedPiece.id,
-      clean,
-      true
-    );
-
-  }else{
-
-    disableControls();
-
-
-    send({
-
-      type:"MOVE_REQUEST",
-
-      pieceId:selectedPiece.id,
-
-      direction:clean,
-
-      slam:true
-
-    });
 
   }
 
@@ -3608,11 +3749,12 @@ function render(){
     ){
 
       const cell=
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
 
-      cell.className=
-        "cell";
+      cell.className="cell";
 
 
       if(
@@ -3631,9 +3773,37 @@ function render(){
 
 
       if(
+        r===0 &&
+        c>=1 &&
+        c<=5
+      ){
+
+        cell.classList.add(
+          "homeBlue"
+        );
+
+      }
+
+
+      if(
+        r===6 &&
+        c>=1 &&
+        c<=5
+      ){
+
+        cell.classList.add(
+          "homeRed"
+        );
+
+      }
+
+
+      if(
         selectedPiece &&
-        selectedPiece.r===r &&
-        selectedPiece.c===c
+        selectedPiece.id &&
+        game.board[r][c] &&
+        game.board[r][c].id===
+          selectedPiece.id
       ){
 
         cell.classList.add(
@@ -3644,21 +3814,19 @@ function render(){
 
 
       /*
-        Show current player's likely reachable
-        destination hints.
+        Reachable hint.
       */
 
       if(
         selectedPiece &&
-        game.current===myColor &&
-        !game.board[r][c] &&
-        !isHole(game,r,c)
+        game.current===myColor
       ){
 
         const dr=
           Math.abs(
             selectedPiece.r-r
           );
+
 
         const dc=
           Math.abs(
@@ -3667,7 +3835,9 @@ function render(){
 
 
         if(
-          dr+dc===1
+          dr+dc===1 &&
+          !game.board[r][c] &&
+          !isHole(game,r,c)
         ){
 
           cell.classList.add(
@@ -3681,17 +3851,13 @@ function render(){
 
       cell.onclick=()=>{
 
-        selectPiece(
+        selectCell(
           r,
           c
         );
 
       };
 
-
-      /*
-        Render piece.
-      */
 
       const piece=
         game.board[r][c];
@@ -3700,11 +3866,25 @@ function render(){
       if(piece){
 
         const visual=
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
 
 
         visual.className=
           "piece "+piece.color;
+
+
+        if(
+          selectedPiece &&
+          selectedPiece.id===piece.id
+        ){
+
+          visual.classList.add(
+            "selectedPiece"
+          );
+
+        }
 
 
         cell.appendChild(
@@ -3729,6 +3909,710 @@ function render(){
 
 
 /* =========================================================
+   SELECT
+========================================================= */
+
+function selectCell(
+  r,
+  c
+){
+
+  if(
+    !game ||
+    game.phase!=="playing"
+  )
+    return;
+
+
+  if(
+    game.current!==myColor
+  ){
+
+    toast(
+      "Wait for your turn."
+    );
+
+
+    return;
+
+  }
+
+
+  const piece=
+    game.board[r][c];
+
+
+  /*
+    Clicking own piece = select it.
+  */
+
+  if(
+    piece &&
+    piece.color===myColor
+  ){
+
+    selectedPiece={
+      r,
+      c,
+      id:piece.id
+    };
+
+
+    soundSelect();
+
+
+    message(
+      "Choose a direction."
+    );
+
+
+    render();
+
+
+    updateControls();
+
+
+    return;
+
+  }
+
+
+  /*
+    Clicking adjacent empty square:
+    convenient movement.
+  */
+
+  if(
+    selectedPiece &&
+    !piece &&
+    !isHole(game,r,c)
+  ){
+
+    const dr=
+      r-selectedPiece.r;
+
+
+    const dc=
+      c-selectedPiece.c;
+
+
+    if(
+      Math.abs(dr)+Math.abs(dc)===1
+    ){
+
+      let direction;
+
+
+      if(dr===-1)
+        direction="up";
+
+      if(dr===1)
+        direction="down";
+
+      if(dc===-1)
+        direction="left";
+
+      if(dc===1)
+        direction="right";
+
+
+      attemptMove(
+        direction
+      );
+
+
+      return;
+
+    }
+
+  }
+
+
+  /*
+    Clicking somewhere else deselects.
+  */
+
+  selectedPiece=null;
+
+  message("Select one of your pieces.");
+
+  render();
+
+  updateControls();
+
+}
+
+
+/* =========================================================
+   ATTEMPT MOVE
+========================================================= */
+
+function attemptMove(
+  direction
+){
+
+  if(
+    !selectedPiece
+  ){
+
+    toast(
+      "Select a piece first."
+    );
+
+
+    return;
+
+  }
+
+
+  if(
+    !game ||
+    game.current!==myColor
+  ){
+
+    toast(
+      "Wait for your turn."
+    );
+
+
+    return;
+
+  }
+
+
+  const id=
+    selectedPiece.id;
+
+
+  /*
+    Host executes immediately.
+
+    Guest sends request.
+  */
+
+  if(isHost){
+
+    hostMove(
+      id,
+      direction,
+      false
+    );
+
+  }else{
+
+    guestMove(
+      id,
+      direction,
+      false
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   SLAM
+========================================================= */
+
+function useSlam(){
+
+  if(
+    !selectedPiece
+  ){
+
+    toast(
+      "Select a piece first."
+    );
+
+
+    return;
+
+  }
+
+
+  if(
+    !game ||
+    game.current!==myColor
+  ){
+
+    toast(
+      "Wait for your turn."
+    );
+
+
+    return;
+
+  }
+
+
+  if(
+    game.slamUsed[myColor]
+  ){
+
+    toast(
+      "SLAM has already been used."
+    );
+
+
+    return;
+
+  }
+
+
+  /*
+    A direction picker using four native buttons
+    is unnecessary; use the selected piece's adjacent
+    enemy direction if there is exactly one.
+
+    Otherwise ask.
+  */
+
+  const directions=
+    [
+      "up",
+      "down",
+      "left",
+      "right"
+    ];
+
+
+  const available=
+    directions.filter(
+      direction=>{
+      
+        const d=
+          getDelta(direction);
+
+
+        const r=
+          selectedPiece.r+d[0];
+
+        const c=
+          selectedPiece.c+d[1];
+
+
+        return(
+          inside(r,c) &&
+          game.board[r][c] &&
+          game.board[r][c].color!==myColor
+        );
+
+      }
+    );
+
+
+  let direction=
+    available.length===1
+      ?available[0]
+      :null;
+
+
+  if(!direction){
+
+    direction=
+      prompt(
+        "SLAM direction:\n\n" +
+        "up / down / left / right"
+      );
+
+
+    if(!direction)
+      return;
+
+
+    direction=
+      direction
+        .trim()
+        .toLowerCase();
+
+  }
+
+
+  if(
+    ![
+      "up",
+      "down",
+      "left",
+      "right"
+    ].includes(direction)
+  ){
+
+    toast(
+      "Invalid direction."
+    );
+
+
+    return;
+
+  }
+
+
+  $("boardShell")
+    .classList.add(
+      "shake"
+    );
+
+
+  setTimeout(
+    ()=>
+      $("boardShell")
+        .classList.remove(
+          "shake"
+        ),
+    240
+  );
+
+
+  soundPush();
+
+
+  if(isHost){
+
+    hostMove(
+      selectedPiece.id,
+      direction,
+      true
+    );
+
+  }else{
+
+    guestMove(
+      selectedPiece.id,
+      direction,
+      true
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   ANIMATE RESULT
+========================================================= */
+
+function animateMoveResult(
+  before,
+  after,
+  result
+){
+
+  if(
+    result.type==="push" ||
+    result.type==="slam"
+  ){
+
+    createBoardParticles(
+      result.type==="slam"
+        ?18
+        :10
+    );
+
+
+    soundPush();
+
+
+    if(
+      result.destroyedNow &&
+      result.destroyedNow.length
+    ){
+
+      result.destroyedNow
+        .forEach(
+          item=>{
+
+            pulseHole(
+              item.r+
+                getDeltaFromBefore(
+                  before,
+                  after,
+                  item
+                )[0],
+              item.c+
+                getDeltaFromBefore(
+                  before,
+                  after,
+                  item
+                )[1]
+            );
+
+            soundHole();
+
+          }
+        );
+
+    }
+
+  }else{
+
+    soundMove();
+
+  }
+
+}
+
+
+/* =========================================================
+   DELTA ANIMATION HELPER
+========================================================= */
+
+function getDeltaFromBefore(
+  before,
+  after,
+  item
+){
+
+  /*
+    Find the destination where the destroyed piece
+    would have been.
+
+    For effects this only needs a reasonable hole
+    position, so use its direction relative to before.
+  */
+
+  const dirs=[
+    [-1,0],
+    [1,0],
+    [0,-1],
+    [0,1]
+  ];
+
+
+  for(
+    const [dr,dc]
+    of dirs
+  ){
+
+    const r=
+      item.r+dr;
+
+    const c=
+      item.c+dc;
+
+
+    if(
+      r>=0 &&
+      r<BOARD_SIZE &&
+      c>=0 &&
+      c<BOARD_SIZE
+    ){
+
+      if(
+        after.holes.some(
+          h=>h.r===r&&h.c===c
+        )
+      ){
+
+        return[
+          dr,
+          dc
+        ];
+
+      }
+
+    }
+
+  }
+
+
+  return[0,0];
+
+}
+
+
+/* =========================================================
+   PARTICLE EFFECT
+========================================================= */
+
+function createBoardParticles(
+  count
+){
+
+  const shell=
+    $("boardShell");
+
+
+  const rect=
+    shell.getBoundingClientRect();
+
+
+  for(
+    let i=0;
+    i<count;
+    i++
+  ){
+
+    const p=
+      document.createElement(
+        "div"
+      );
+
+
+    p.className=
+      "hitParticle";
+
+
+    p.style.left=
+      (
+        20+
+        Math.random()*60
+      )+"%";
+
+
+    p.style.top=
+      (
+        20+
+        Math.random()*60
+      )+"%";
+
+
+    p.style.setProperty(
+      "--dx",
+      (
+        Math.random()*100-
+        50
+      )+"px"
+    );
+
+
+    p.style.setProperty(
+      "--dy",
+      (
+        Math.random()*100-
+        50
+      )+"px"
+    );
+
+
+    p.style.background=
+      Math.random()>.5
+        ?"var(--gold)"
+        :"var(--blue)";
+
+
+    shell.appendChild(
+      p
+    );
+
+
+    setTimeout(
+      ()=>p.remove(),
+      500
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   HOLE PULSE
+========================================================= */
+
+function pulseHole(
+  r,
+  c
+){
+
+  const index=
+    r*BOARD_SIZE+c;
+
+
+  const cell=
+    $("board").children[index];
+
+
+  if(!cell)
+    return;
+
+
+  cell.classList.add(
+    "holeDanger"
+  );
+
+
+  createCellParticles(
+    cell
+  );
+
+
+  setTimeout(
+    ()=>cell.classList.remove(
+      "holeDanger"
+    ),
+    500
+  );
+
+}
+
+
+function createCellParticles(
+  cell
+){
+
+  for(
+    let i=0;
+    i<8;
+    i++
+  ){
+
+    const p=
+      document.createElement(
+        "div"
+      );
+
+
+    p.className=
+      "hitParticle";
+
+
+    p.style.left=
+      "50%";
+
+
+    p.style.top=
+      "50%";
+
+
+    p.style.setProperty(
+      "--dx",
+      (
+        Math.random()*70-
+        35
+      )+"px"
+    );
+
+
+    p.style.setProperty(
+      "--dy",
+      (
+        Math.random()*70-
+        35
+      )+"px"
+    );
+
+
+    p.style.background=
+      "var(--red)";
+
+
+    cell.appendChild(
+      p
+    );
+
+
+    setTimeout(
+      ()=>p.remove(),
+      500
+    );
+
+  }
+
+}
+
+
+/* =========================================================
    HUD
 ========================================================= */
 
@@ -3738,42 +4622,39 @@ function updateHUD(){
     return;
 
 
-  $("blueDestroyed").textContent=
-    destroyedDisplay(
-      game.destroyed.blue
-    );
+  renderDestroyed(
+    $("blueDestroyed"),
+    game.destroyed.blue
+  );
 
 
-  $("redDestroyed").textContent=
-    destroyedDisplay(
-      game.destroyed.red
-    );
+  renderDestroyed(
+    $("redDestroyed"),
+    game.destroyed.red
+  );
 
 
   $("turnNumber").textContent=
     "Turn "+game.turn;
 
 
-  if(
+  const yours=
+    game.current===myColor;
+
+
+  $("turnStatus").textContent=
     game.phase==="finished"
-  ){
+      ?"GAME OVER"
+      :yours
+        ?"YOUR TURN"
+        :"OPPONENT'S TURN";
 
-    $("turnStatus").textContent=
-      "GAME OVER";
 
-  }else if(
-    game.current===myColor
-  ){
-
-    $("turnStatus").textContent=
-      "YOUR TURN";
-
-  }else{
-
-    $("turnStatus").textContent=
-      "OPPONENT'S TURN";
-
-  }
+  $("turnStatus").classList.toggle(
+    "turnReady",
+    yours &&
+    game.phase==="playing"
+  );
 
 
   $("slamButton").textContent=
@@ -3781,33 +4662,59 @@ function updateHUD(){
       ?"SLAM USED"
       :"SLAM";
 
+
+  $("slamButton").classList.toggle(
+    "ready",
+    !game.slamUsed[myColor] &&
+    game.current===myColor
+  );
+
 }
 
 
-/* =========================================================
-   DESTROYED DISPLAY
-========================================================= */
+function renderDestroyed(
+  container,
+  amount
+){
 
-function destroyedDisplay(count){
-
-  let result="";
+  container.innerHTML="";
 
 
   for(
     let i=0;
-    i<WIN_DESTROYED;
+    i<DESTROY_TO_WIN;
     i++
   ){
 
-    result+=
-      i<count
-        ?"✕"
-        :"○";
+    const span=
+      document.createElement(
+        "span"
+      );
+
+
+    if(i<amount){
+
+      span.classList.add(
+        "dead"
+      );
+
+
+      span.textContent=
+        "✕";
+
+    }else{
+
+      span.textContent=
+        "○";
+
+    }
+
+
+    container.appendChild(
+      span
+    );
 
   }
-
-
-  return result;
 
 }
 
@@ -3828,54 +4735,33 @@ function updateControls(){
 
   }else{
 
-    /*
-      Guest awaiting authoritative result also
-      gets disabled after a request.
-    */
+    const ready=
+      Boolean(
+        selectedPiece
+      );
 
-    if(
-      !selectedPiece
-    ){
 
-      /*
-        Direction buttons are disabled until
-        a piece is selected.
-      */
+    document
+      .querySelectorAll(
+        ".dirButton[data-direction]"
+      )
+      .forEach(
+        button=>
+          button.disabled=!ready
+      );
 
-      document
-        .querySelectorAll(
-          ".dirButton[data-direction]"
-        )
-        .forEach(
-          b=>b.disabled=true
-        );
 
-    }else{
-
-      enableDirectionButtons();
-
-    }
+    $("slamButton").disabled=
+      !ready ||
+      game.slamUsed[myColor];
 
   }
-
-
-  $("slamButton").disabled=
-    !(
-      game &&
-      game.phase==="playing" &&
-      game.current===myColor &&
-      selectedPiece &&
-      !game.slamUsed[myColor]
-    );
 
 
   if(selectedPiece){
 
     $("selectedPieceText").textContent=
-      "Selected: "+
-      (myColor==="blue"
-        ?"BLUE"
-        :"RED");
+      "Piece selected • choose direction";
 
   }else{
 
@@ -3887,19 +4773,6 @@ function updateControls(){
 }
 
 
-function enableDirectionButtons(){
-
-  document
-    .querySelectorAll(
-      ".dirButton[data-direction]"
-    )
-    .forEach(
-      b=>b.disabled=false
-    );
-
-}
-
-
 function disableControls(){
 
   document
@@ -3907,11 +4780,13 @@ function disableControls(){
       ".dirButton[data-direction]"
     )
     .forEach(
-      b=>b.disabled=true
+      button=>
+        button.disabled=true
     );
 
 
-  $("slamButton").disabled=true;
+  $("slamButton").disabled=
+    true;
 
 }
 
@@ -3924,20 +4799,22 @@ function showResult(
   winner
 ){
 
-  const won=
-    winner===myColor;
-
-
   $("resultTitle").textContent=
-    won
+    winner===myColor
       ?"YOU WIN"
       :"YOU LOSE";
 
 
   $("resultReason").textContent=
-    won
+    winner===myColor
       ?"You destroyed 3 enemy pieces."
       :"Your opponent destroyed 3 of your pieces.";
+
+
+  $("resultIcon").textContent=
+    winner===myColor
+      ?"◆"
+      :"×";
 
 
   $("resultOverlay")
@@ -3945,11 +4822,137 @@ function showResult(
       "show"
     );
 
+
+  soundWin();
+
 }
 
 
 /* =========================================================
-   BUTTON EVENTS
+   THEME
+========================================================= */
+
+document
+  .querySelectorAll(
+    ".themeButton"
+  )
+  .forEach(
+    button=>{
+
+      button.onclick=()=>{
+
+        const theme=
+          button.dataset.theme;
+
+
+        document.body.className=
+          "theme-"+theme;
+
+
+        document
+          .querySelectorAll(
+            ".themeButton"
+          )
+          .forEach(
+            b=>
+              b.classList.remove(
+                "active"
+              )
+          );
+
+
+        button.classList.add(
+          "active"
+        );
+
+
+        localStorage.setItem(
+          "pushline-theme",
+          theme
+        );
+
+
+        audio();
+
+
+        tone(
+          550,
+          .06,
+          "sine",
+          .025
+        );
+
+      };
+
+    }
+  );
+
+
+const savedTheme=
+  localStorage.getItem(
+    "pushline-theme"
+  );
+
+
+if(
+  ["neon","royal","ice"]
+    .includes(savedTheme)
+){
+
+  document.body.className=
+    "theme-"+savedTheme;
+
+
+  document
+    .querySelectorAll(
+      ".themeButton"
+    )
+    .forEach(
+      b=>
+        b.classList.toggle(
+          "active",
+          b.dataset.theme===
+          savedTheme
+        )
+    );
+
+}
+
+
+/* =========================================================
+   SOUND
+========================================================= */
+
+$("soundButton").onclick=()=>{
+
+  soundEnabled=
+    !soundEnabled;
+
+
+  $("soundButton").textContent=
+    soundEnabled
+      ?"🔊 SOUND ON"
+      :"🔇 SOUND OFF";
+
+
+  if(soundEnabled){
+
+    audio();
+
+    tone(
+      600,
+      .08,
+      "sine",
+      .03
+    );
+
+  }
+
+};
+
+
+/* =========================================================
+   BUTTONS
 ========================================================= */
 
 $("createButton").onclick=
@@ -3958,18 +4961,19 @@ $("createButton").onclick=
 
 $("joinToggle").onclick=()=>{
 
+  const area=
+    $("joinArea");
+
+
+  area.style.display=
+    area.style.display==="block"
+      ?"none"
+      :"block";
+
+
   if(
-    $("joinArea").style.display==="block"
+    area.style.display==="block"
   ){
-
-    $("joinArea").style.display=
-      "none";
-
-  }else{
-
-    $("joinArea").style.display=
-      "block";
-
 
     $("roomInput").focus();
 
@@ -3987,7 +4991,7 @@ $("roomInput").addEventListener(
   ()=>{
 
     $("roomInput").value=
-      cleanRoomCode(
+      cleanCode(
         $("roomInput").value
       );
 
@@ -3999,7 +5003,9 @@ $("roomInput").addEventListener(
   "keydown",
   e=>{
 
-    if(e.key==="Enter"){
+    if(
+      e.key==="Enter"
+    ){
 
       joinRoom();
 
@@ -4024,7 +5030,7 @@ $("copyButton").onclick=
 
 
       $("copyButton").textContent=
-        "COPIED!";
+        "COPIED";
 
 
       setTimeout(
@@ -4049,7 +5055,7 @@ $("copyButton").onclick=
 
 $("cancelButton").onclick=()=>{
 
-  cleanupPeer();
+  cleanup();
 
   location.reload();
 
@@ -4057,7 +5063,26 @@ $("cancelButton").onclick=()=>{
 
 
 $("slamButton").onclick=
-  performSlam;
+  useSlam;
+
+
+document
+  .querySelectorAll(
+    ".dirButton[data-direction]"
+  )
+  .forEach(
+    button=>{
+
+      button.onclick=()=>{
+
+        attemptMove(
+          button.dataset.direction
+        );
+
+      };
+
+    }
+  );
 
 
 $("rematchButton").onclick=()=>{
@@ -4070,12 +5095,13 @@ $("rematchButton").onclick=()=>{
 
   if(isHost){
 
-    startHostGame();
+    startHostRematch();
 
   }else{
 
     $("rematchButton").disabled=
       true;
+
 
     $("rematchButton").textContent=
       "WAITING FOR HOST";
@@ -4092,30 +5118,67 @@ $("rematchButton").onclick=()=>{
 
 $("homeButton").onclick=()=>{
 
-  cleanupPeer();
+  cleanup();
 
   location.reload();
 
 };
 
 
-document
-  .querySelectorAll(
-    ".dirButton[data-direction]"
-  )
-  .forEach(
-    button=>{
+/* =========================================================
+   REMATCH
+========================================================= */
 
-      button.onclick=()=>{
+function startHostRematch(){
 
-        attemptDirection(
-          button.dataset.direction
-        );
+  game=
+    createGame();
 
-      };
 
-    }
+  selectedPiece=null;
+
+
+  showScreen(
+    "gameScreen"
   );
+
+
+  $("resultOverlay")
+    .classList.remove(
+      "show"
+    );
+
+
+  $("rematchButton").disabled=
+    false;
+
+
+  $("rematchButton").textContent=
+    "REMATCH";
+
+
+  sendState();
+
+
+  render();
+
+
+  updateControls();
+
+
+  toast(
+    "NEW GAME"
+  );
+
+
+  tone(
+    500,
+    .08,
+    "triangle",
+    .03
+  );
+
+}
 
 
 /* =========================================================
@@ -4124,11 +5187,7 @@ document
 
 document.addEventListener(
   "keydown",
-  e=>{
-
-    /*
-      Don't steal input from room box.
-    */
+  event=>{
 
     if(
       document.activeElement===
@@ -4142,14 +5201,14 @@ document.addEventListener(
     */
 
     if(
-      e.key.toLowerCase()==="e"
+      event.key.toLowerCase()==="e"
     ){
 
       if(
-        !e.repeat
+        !event.repeat
       ){
 
-        performSlam();
+        useSlam();
 
       }
 
@@ -4158,7 +5217,7 @@ document.addEventListener(
     }
 
 
-    const dirs={
+    const map={
 
       ArrowUp:"up",
 
@@ -4183,14 +5242,16 @@ document.addEventListener(
     };
 
 
-    if(
-      dirs[e.key]
-    ){
+    const direction=
+      map[event.key];
 
-      e.preventDefault();
 
-      attemptDirection(
-        dirs[e.key]
+    if(direction){
+
+      event.preventDefault();
+
+      attemptMove(
+        direction
       );
 
     }
@@ -4200,27 +5261,14 @@ document.addEventListener(
 
 
 /* =========================================================
-   BEFORE UNLOAD
-========================================================= */
-
-window.addEventListener(
-  "beforeunload",
-  ()=>{
-    cleanupPeer();
-  }
-);
-
-
-/* =========================================================
-   START
+   INITIALIZE
 ========================================================= */
 
 setStatus(
   "Offline"
 );
 
-$("joinArea").style.display=
-  "none";
+disableControls();
 
 </script>
 
