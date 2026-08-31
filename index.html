@@ -1,0 +1,4228 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PUSHLINE</title>
+
+<script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+
+<style>
+*{box-sizing:border-box}
+
+:root{
+  --bg:#080b11;
+  --panel:#101721;
+  --panel2:#151f2d;
+  --border:#2a394f;
+  --text:#eef4ff;
+  --muted:#8492a9;
+  --blue:#55aaff;
+  --red:#ff5e74;
+  --gold:#ffd65a;
+  --green:#5de38b;
+}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  background:
+    radial-gradient(circle at 50% -15%,#1b2c48 0,#080b11 55%);
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+}
+
+button,input{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+button:disabled{
+  cursor:not-allowed;
+  opacity:.38;
+}
+
+#app{
+  width:min(1120px,100%);
+  padding:18px;
+}
+
+/* ================= HEADER ================= */
+
+header{
+  height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.logo{
+  font-size:26px;
+  font-weight:1000;
+  letter-spacing:6px;
+}
+
+.logo span{
+  color:var(--gold);
+}
+
+.connection{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  color:var(--muted);
+}
+
+.dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#68758a;
+}
+
+.dot.good{
+  background:var(--green);
+  box-shadow:0 0 12px var(--green);
+}
+
+.dot.bad{
+  background:var(--red);
+}
+
+/* ================= SCREENS ================= */
+
+.screen{
+  display:none;
+}
+
+.screen.active{
+  display:block;
+}
+
+/* ================= CARDS ================= */
+
+.card{
+  background:linear-gradient(145deg,#111a26,#0d131c);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:24px;
+  box-shadow:0 25px 80px #0009;
+}
+
+.hero{
+  width:min(650px,100%);
+  margin:10vh auto 0;
+  text-align:center;
+}
+
+.hero h1{
+  font-size:65px;
+  letter-spacing:11px;
+  font-weight:1000;
+  margin:0;
+}
+
+.hero h1 span{
+  color:var(--gold);
+}
+
+.hero p{
+  color:var(--muted);
+  line-height:1.6;
+}
+
+.smallText{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.55;
+}
+
+/* ================= BUTTONS ================= */
+
+.buttons{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:9px;
+  margin:22px 0;
+}
+
+.btn{
+  border:1px solid #35465f;
+  background:#182433;
+  color:white;
+  border-radius:10px;
+  padding:12px 19px;
+  font-weight:850;
+  transition:.12s;
+}
+
+.btn:hover{
+  background:#24344c;
+  transform:translateY(-1px);
+}
+
+.btn.primary{
+  background:#347fc8;
+  border-color:#55aaff;
+}
+
+.btn.primary:hover{
+  background:#4291df;
+}
+
+.btn.danger{
+  background:#4d202b;
+  border-color:#783545;
+}
+
+input{
+  width:100%;
+  max-width:400px;
+  background:#080d14;
+  color:white;
+  border:1px solid #34455e;
+  border-radius:10px;
+  padding:14px;
+  text-align:center;
+  outline:none;
+  font-size:22px;
+  font-weight:950;
+  letter-spacing:7px;
+  text-transform:uppercase;
+}
+
+input:focus{
+  border-color:var(--gold);
+}
+
+/* ================= WAITING ================= */
+
+.roomCode{
+  color:var(--gold);
+  font-size:42px;
+  font-weight:1000;
+  letter-spacing:10px;
+  margin:15px 0 20px;
+}
+
+/* ================= GAME ================= */
+
+#game{
+  display:grid;
+  grid-template-columns:minmax(0,700px) 300px;
+  gap:16px;
+  margin-top:15px;
+  align-items:start;
+}
+
+.boardPanel{
+  background:#0c121a;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:14px;
+}
+
+#board{
+  width:min(100%,650px);
+  aspect-ratio:1;
+  margin:auto;
+
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  grid-template-rows:repeat(7,1fr);
+  gap:5px;
+}
+
+.cell{
+  position:relative;
+  min-width:0;
+  min-height:0;
+  border-radius:9px;
+  background:#172434;
+  border:1px solid #213047;
+  transition:
+    transform .08s ease,
+    background .1s ease,
+    border-color .1s ease;
+}
+
+.cell:hover{
+  background:#1c2c40;
+}
+
+.cell.hole{
+  background:#05080c;
+  border-color:#090d13;
+  box-shadow:inset 0 0 20px #000;
+}
+
+.cell.hole::after{
+  content:"";
+  position:absolute;
+  inset:20%;
+  border-radius:50%;
+  background:#020305;
+  box-shadow:0 0 15px #000 inset;
+}
+
+.cell.selected{
+  border-color:var(--gold);
+  box-shadow:
+    0 0 0 2px #ffd65a55,
+    0 0 18px #ffd65a25;
+}
+
+.cell.reachable{
+  outline:2px solid #ffffff20;
+}
+
+.piece{
+  position:absolute;
+  inset:16%;
+  border-radius:50%;
+  z-index:5;
+  transition:
+    transform .11s ease,
+    box-shadow .11s ease;
+}
+
+.piece.blue{
+  background:var(--blue);
+  box-shadow:
+    0 0 10px #55aaff,
+    0 0 24px #55aaff55;
+}
+
+.piece.red{
+  background:var(--red);
+  box-shadow:
+    0 0 10px #ff5e74,
+    0 0 24px #ff5e7455;
+}
+
+.piece::after{
+  content:"";
+  position:absolute;
+  inset:28%;
+  background:white;
+  border-radius:50%;
+  opacity:.75;
+}
+
+.ghostPiece{
+  position:absolute;
+  inset:9%;
+  border-radius:50%;
+  border:2px solid #ffffff15;
+}
+
+.turnMarker{
+  position:absolute;
+  left:5px;
+  top:5px;
+  font-size:10px;
+  color:white;
+  background:#0008;
+  border-radius:4px;
+  padding:2px 4px;
+  z-index:20;
+}
+
+.legend{
+  margin-top:12px;
+  display:flex;
+  justify-content:space-around;
+  color:var(--muted);
+  font-size:11px;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+  display:flex;
+  flex-direction:column;
+  gap:11px;
+}
+
+.panel{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:14px;
+}
+
+.playerRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+
+.name{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:900;
+}
+
+.miniDot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+}
+
+.blueDot{
+  background:var(--blue);
+}
+
+.redDot{
+  background:var(--red);
+}
+
+.lives{
+  color:#ff5e74;
+  letter-spacing:3px;
+}
+
+#role{
+  color:var(--muted);
+  font-size:13px;
+}
+
+#turnStatus{
+  font-size:18px;
+  font-weight:950;
+  margin-top:4px;
+}
+
+#turnNumber{
+  color:var(--muted);
+  font-size:12px;
+}
+
+#message{
+  min-height:19px;
+  margin-top:6px;
+  color:var(--gold);
+  font-size:13px;
+}
+
+.directionGrid{
+  width:190px;
+  margin:12px auto 5px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+}
+
+.dirButton{
+  height:48px;
+  border-radius:9px;
+  border:1px solid #314159;
+  background:#182434;
+  color:white;
+  font-size:20px;
+  font-weight:950;
+}
+
+.dirButton:hover{
+  background:#27384f;
+}
+
+.empty{
+  visibility:hidden;
+}
+
+.selectedPieceText{
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.slam{
+  width:100%;
+  margin-top:9px;
+}
+
+.help{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.55;
+}
+
+kbd{
+  padding:2px 5px;
+  background:#1d2a3b;
+  border:1px solid #34445e;
+  border-radius:4px;
+  color:white;
+}
+
+/* ================= OVERLAY ================= */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:#02040dcc;
+  backdrop-filter:blur(8px);
+  z-index:100;
+}
+
+.overlay.show{
+  display:flex;
+}
+
+.resultCard{
+  width:min(450px,100%);
+  text-align:center;
+}
+
+.resultCard h2{
+  font-size:48px;
+  margin:5px 0 10px;
+}
+
+.resultCard p{
+  color:var(--muted);
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:860px){
+
+  #game{
+    grid-template-columns:1fr;
+  }
+
+  .sidebar{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+
+  .rules{
+    grid-column:1/-1;
+  }
+}
+
+@media(max-width:560px){
+
+  #app{
+    padding:9px;
+  }
+
+  .hero{
+    margin-top:7vh;
+  }
+
+  .hero h1{
+    font-size:42px;
+    letter-spacing:7px;
+  }
+
+  .sidebar{
+    display:flex;
+  }
+
+  .card{
+    padding:18px;
+  }
+
+  .roomCode{
+    font-size:32px;
+  }
+}
+</style>
+
+</head>
+
+<body>
+
+<div id="app">
+
+<header>
+
+  <div class="logo">
+    PUSH<span>LINE</span>
+  </div>
+
+  <div class="connection">
+
+```
+<span
+  id="connectionDot"
+  class="dot"
+></span>
+
+<span id="connectionText">
+  Offline
+</span>
+```
+
+  </div>
+
+</header>
+
+<!-- =====================================================
+     HOME
+====================================================== -->
+
+<section
+  id="homeScreen"
+  class="screen active"
+>
+
+  <div class="card hero">
+
+```
+<h1>
+  PUSH<span>LINE</span>
+</h1>
+
+<p>
+  Push enemy formations.
+  <br>
+  Knock their pieces into holes.
+  <br>
+  Destroy <b>3</b> enemy pieces to win.
+</p>
+
+
+<div class="buttons">
+
+  <button
+    id="createButton"
+    class="btn primary"
+  >
+    CREATE ROOM
+  </button>
+
+  <button
+    id="joinToggle"
+    class="btn"
+  >
+    JOIN ROOM
+  </button>
+
+</div>
+
+
+<div id="joinArea">
+
+  <input
+    id="roomInput"
+    maxlength="6"
+    placeholder="6-CHAR CODE"
+    autocomplete="off"
+    spellcheck="false"
+  >
+
+  <div class="buttons">
+
+    <button
+      id="joinButton"
+      class="btn primary"
+    >
+      JOIN GAME
+    </button>
+
+  </div>
+
+</div>
+
+
+<div class="smallText">
+
+  2 players · same HTML file · WebRTC P2P
+  · no separate game server
+
+</div>
+```
+
+  </div>
+
+</section>
+
+<!-- =====================================================
+     WAITING
+====================================================== -->
+
+<section
+  id="waitingScreen"
+  class="screen"
+>
+
+  <div class="card hero">
+
+```
+<h2>
+  ROOM CREATED
+</h2>
+
+<p>
+  Give this exact 6-character code to your friend:
+</p>
+
+<div
+  id="roomCode"
+  class="roomCode"
+>
+  ------
+</div>
+
+<button
+  id="copyButton"
+  class="btn"
+>
+  COPY CODE
+</button>
+
+<p id="waitingText">
+  Waiting for player 2...
+</p>
+
+<br>
+
+<button
+  id="cancelButton"
+  class="btn danger"
+>
+  CANCEL
+</button>
+```
+
+  </div>
+
+</section>
+
+<!-- =====================================================
+     GAME
+====================================================== -->
+
+<section
+  id="gameScreen"
+  class="screen"
+>
+
+  <div id="game">
+
+```
+<!-- BOARD -->
+
+<div class="boardPanel">
+
+  <div id="board"></div>
+
+  <div class="legend">
+    <span>● BLUE</span>
+    <span>● RED</span>
+    <span>■ HOLE</span>
+  </div>
+
+</div>
+
+
+<!-- SIDE -->
+
+<div class="sidebar">
+
+
+  <!-- PLAYERS -->
+
+  <div class="panel">
+
+    <div class="playerRow">
+
+      <div class="name">
+        <span class="miniDot blueDot"></span>
+        BLUE
+      </div>
+
+      <div
+        id="blueDestroyed"
+        class="lives"
+      >
+        ○○○
+      </div>
+
+    </div>
+
+
+    <div class="playerRow">
+
+      <div class="name">
+        <span class="miniDot redDot"></span>
+        RED
+      </div>
+
+      <div
+        id="redDestroyed"
+        class="lives"
+      >
+        ○○○
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- STATUS -->
+
+  <div class="panel">
+
+    <div id="role">
+      Connecting...
+    </div>
+
+    <div id="turnStatus">
+      WAITING
+    </div>
+
+    <div id="turnNumber">
+      Turn 0
+    </div>
+
+    <div id="message"></div>
+
+  </div>
+
+
+  <!-- CONTROLS -->
+
+  <div class="panel">
+
+    <b>CONTROLS</b>
+
+    <div
+      id="selectedPieceText"
+      class="selectedPieceText"
+      style="margin-top:7px"
+    >
+      Select one of your pieces
+    </div>
+
+
+    <div class="directionGrid">
+
+      <button class="dirButton empty"></button>
+
+      <button
+        class="dirButton"
+        data-direction="up"
+      >
+        ▲
+      </button>
+
+      <button class="dirButton empty"></button>
+
+
+      <button
+        class="dirButton"
+        data-direction="left"
+      >
+        ◀
+      </button>
+
+      <button
+        class="dirButton"
+        data-direction="down"
+        style="font-size:0"
+      >
+        ×
+      </button>
+
+      <button
+        class="dirButton"
+        data-direction="right"
+      >
+        ▶
+      </button>
+
+
+      <button class="dirButton empty"></button>
+
+      <button
+        class="dirButton"
+        data-direction="down"
+      >
+        ▼
+      </button>
+
+      <button class="dirButton empty"></button>
+
+    </div>
+
+
+    <button
+      id="slamButton"
+      class="btn slam"
+    >
+      SLAM
+    </button>
+
+    <div
+      class="smallText"
+      style="margin-top:7px"
+    >
+      SLAM pushes the selected enemy chain
+      <b>2 squares</b>. Once per game.
+    </div>
+
+  </div>
+
+
+  <!-- RULES -->
+
+  <div class="panel rules">
+
+    <b>HOW TO PLAY</b>
+
+    <div
+      class="help"
+      style="margin-top:8px"
+    >
+
+      Select one of your pieces.
+
+      <br><br>
+
+      Choose a direction.
+
+      <br><br>
+
+      If the square is empty, your piece moves there.
+
+      <br><br>
+
+      If an enemy is there, you <b>push</b> the
+      entire touching enemy chain one square.
+
+      <br><br>
+
+      A piece pushed into a <b>hole</b> is destroyed.
+
+      <br><br>
+
+      Destroy <b>3 enemy pieces</b> to win.
+
+      <br><br>
+
+      Press <kbd>E</kbd> or the
+      <b>SLAM</b> button once per game to
+      push a chain <b>2 squares</b>.
+
+    </div>
+
+  </div>
+
+</div>
+```
+
+  </div>
+
+</section>
+
+</div>
+
+<!-- =====================================================
+     RESULT
+====================================================== -->
+
+<div
+  id="resultOverlay"
+  class="overlay"
+>
+
+  <div class="card resultCard">
+
+```
+<div class="smallText">
+  GAME OVER
+</div>
+
+<h2 id="resultTitle">
+  YOU WIN
+</h2>
+
+<p id="resultReason"></p>
+
+<div class="buttons">
+
+  <button
+    id="rematchButton"
+    class="btn primary"
+  >
+    REMATCH
+  </button>
+
+  <button
+    id="homeButton"
+    class="btn"
+  >
+    HOME
+  </button>
+
+</div>
+```
+
+  </div>
+
+</div>
+
+<script>
+"use strict";
+
+
+/* =========================================================
+   PUSHLINE
+   ---------------------------------------------------------
+   SINGLE HTML FILE
+   IDENTICAL FOR BOTH PLAYERS
+
+   ROOM CODE:
+      Exactly 6 characters for both users.
+
+   INTERNAL PEER ID:
+      pushline-XXXXXX
+
+   BLUE:
+      Host
+
+   RED:
+      Guest
+
+   NETWORK:
+      PeerJS WebRTC DataConnection
+========================================================= */
+
+
+/* =========================================================
+   CONSTANTS
+========================================================= */
+
+const BOARD_SIZE=7;
+
+const PIECES_PER_PLAYER=5;
+
+const WIN_DESTROYED=3;
+
+const ROOM_LENGTH=6;
+
+const PEER_PREFIX="pushline-";
+
+
+/* =========================================================
+   GLOBALS
+========================================================= */
+
+let peer=null;
+
+let connection=null;
+
+let isHost=false;
+
+let myColor=null;
+
+let roomCode="";
+
+let game=null;
+
+let selectedPiece=null;
+
+let slamUsed=false;
+
+let joinedGame=false;
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const $=id=>
+  document.getElementById(id);
+
+
+/* =========================================================
+   UI
+========================================================= */
+
+function showScreen(id){
+
+  document
+    .querySelectorAll(".screen")
+    .forEach(s=>
+      s.classList.remove("active")
+    );
+
+  $(id).classList.add("active");
+
+}
+
+
+function setStatus(
+  text,
+  type=""
+){
+
+  $("connectionText").textContent=text;
+
+  $("connectionDot").className=
+    "dot";
+
+  if(type){
+
+    $("connectionDot")
+      .classList.add(type);
+
+  }
+
+}
+
+
+function setMessage(text){
+
+  $("message").textContent=
+    text||"";
+
+}
+
+
+/* =========================================================
+   ROOM CODE
+========================================================= */
+
+function randomRoomCode(){
+
+  const chars=
+    "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+  let code="";
+
+  for(
+    let i=0;
+    i<ROOM_LENGTH;
+    i++
+  ){
+
+    code+=
+      chars[
+        Math.floor(
+          Math.random()*chars.length
+        )
+      ];
+
+  }
+
+  return code;
+
+}
+
+
+function cleanRoomCode(value){
+
+  return value
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g,"")
+    .slice(0,ROOM_LENGTH);
+
+}
+
+
+/* =========================================================
+   PEER CLEANUP
+========================================================= */
+
+function cleanupPeer(){
+
+  if(connection){
+
+    try{
+      connection.close();
+    }catch(e){}
+
+    connection=null;
+
+  }
+
+
+  if(peer){
+
+    try{
+      peer.destroy();
+    }catch(e){}
+
+    peer=null;
+
+  }
+
+}
+
+
+/* =========================================================
+   CREATE PEER
+========================================================= */
+
+function createPeer(id){
+
+  return new Promise(
+    (resolve,reject)=>{
+
+      const newPeer=
+        new Peer(
+          id,
+          {
+            debug:0
+          }
+        );
+
+
+      let finished=false;
+
+
+      newPeer.on(
+        "open",
+        ()=>{
+      
+          if(finished)
+            return;
+
+
+          finished=true;
+
+          peer=newPeer;
+
+          resolve();
+
+        }
+      );
+
+
+      newPeer.on(
+        "error",
+        error=>{
+
+          console.error(
+            "PeerJS error:",
+            error
+          );
+
+
+          if(!finished){
+
+            finished=true;
+
+
+            try{
+              newPeer.destroy();
+            }catch(e){}
+
+
+            reject(error);
+
+          }
+
+        }
+      );
+
+
+      newPeer.on(
+        "disconnected",
+        ()=>{
+
+          /*
+            Existing P2P connections can remain alive
+            even if the signaling connection drops.
+          */
+
+          if(connection){
+
+            setStatus(
+              "P2P connected",
+              "good"
+            );
+
+          }else{
+
+            setStatus(
+              "Signaling disconnected",
+              "bad"
+            );
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   SEND
+========================================================= */
+
+function send(data){
+
+  if(
+    connection &&
+    connection.open
+  ){
+
+    try{
+
+      connection.send(data);
+
+    }catch(error){
+
+      console.error(
+        "Send error:",
+        error
+      );
+
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   CREATE ROOM
+========================================================= */
+
+async function createRoom(){
+
+  $("createButton").disabled=true;
+
+  setStatus(
+    "Creating room..."
+  );
+
+
+  let createdCode=null;
+
+
+  for(
+    let attempt=0;
+    attempt<10;
+    attempt++
+  ){
+
+    const candidate=
+      randomRoomCode();
+
+
+    try{
+
+      await createPeer(
+        PEER_PREFIX+candidate
+      );
+
+
+      createdCode=
+        candidate;
+
+      break;
+
+
+    }catch(error){
+
+      console.warn(
+        "Room creation retry",
+        error
+      );
+
+
+      cleanupPeer();
+
+    }
+
+  }
+
+
+  if(!createdCode){
+
+    $("createButton").disabled=false;
+
+    setStatus(
+      "Failed",
+      "bad"
+    );
+
+
+    alert(
+      "Could not create a room.\n\n" +
+      "Refresh the page and try again."
+    );
+
+
+    return;
+
+  }
+
+
+  isHost=true;
+
+  myColor="blue";
+
+  roomCode=
+    createdCode;
+
+
+  $("roomCode").textContent=
+    createdCode;
+
+
+  showScreen(
+    "waitingScreen"
+  );
+
+
+  setStatus(
+    "Room ready",
+    "good"
+  );
+
+
+  /*
+    HOST waits for exactly one guest.
+  */
+
+  peer.on(
+    "connection",
+    incoming=>{
+
+      if(connection){
+
+        try{
+          incoming.close();
+        }catch(e){}
+
+        return;
+
+      }
+
+
+      connection=
+        incoming;
+
+
+      setupConnection(
+        true
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   JOIN ROOM
+========================================================= */
+
+async function joinRoom(){
+
+  const code=
+    cleanRoomCode(
+      $("roomInput").value
+    );
+
+
+  $("roomInput").value=
+    code;
+
+
+  if(code.length!==ROOM_LENGTH){
+
+    alert(
+      "The room code must be exactly 6 characters."
+    );
+
+    return;
+
+  }
+
+
+  $("joinButton").disabled=true;
+
+  setStatus(
+    "Connecting..."
+  );
+
+
+  try{
+
+    const guestId=
+      "guest-"+crypto.randomUUID();
+
+
+    await createPeer(
+      guestId
+    );
+
+
+    isHost=false;
+
+    myColor="red";
+
+    roomCode=
+      code;
+
+
+    /*
+      The user only enters:
+          ABC123
+
+      Actual peer target:
+          pushline-ABC123
+    */
+
+    connection=
+      peer.connect(
+        PEER_PREFIX+code,
+        {
+          reliable:true,
+          serialization:"json"
+        }
+      );
+
+
+    setupConnection(
+      false
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+
+    $("joinButton").disabled=false;
+
+
+    setStatus(
+      "Connection failed",
+      "bad"
+    );
+
+
+    alert(
+      "Could not connect.\n\n" +
+      "Check the 6-character code and make sure " +
+      "the host still has the room open."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CONNECTION
+========================================================= */
+
+function setupConnection(hostSide){
+
+  connection.on(
+    "open",
+    ()=>{
+
+      setStatus(
+        "P2P connected",
+        "good"
+      );
+
+
+      joinedGame=true;
+
+
+      if(hostSide){
+
+        $("waitingText").textContent=
+          "Player 2 connected! Starting game...";
+
+
+        setTimeout(
+          startHostGame,
+          350
+        );
+
+      }
+
+    }
+  );
+
+
+  connection.on(
+    "data",
+    data=>{
+
+      handleNetwork(
+        data
+      );
+
+    }
+  );
+
+
+  connection.on(
+    "close",
+    ()=>{
+
+      setStatus(
+        "Opponent disconnected",
+        "bad"
+      );
+
+
+      if(
+        game &&
+        game.phase==="playing"
+      ){
+
+        $("turnStatus").textContent=
+          "OPPONENT LEFT";
+
+        disableControls();
+
+        setMessage(
+          "Your opponent disconnected."
+        );
+
+      }
+
+    }
+  );
+
+
+  connection.on(
+    "error",
+    error=>{
+
+      console.error(
+        "Data connection error:",
+        error
+      );
+
+
+      setStatus(
+        "Connection error",
+        "bad"
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   START HOST GAME
+========================================================= */
+
+function startHostGame(){
+
+  if(!isHost)
+    return;
+
+
+  game=
+    createGame();
+
+
+  selectedPiece=null;
+
+  slamUsed=false;
+
+
+  showScreen(
+    "gameScreen"
+  );
+
+
+  $("role").textContent=
+    "YOU ARE BLUE";
+
+
+  $("turnStatus").textContent=
+    "YOUR TURN";
+
+
+  /*
+    Host sends the complete authoritative state.
+  */
+
+  sendGameState();
+
+
+  render();
+
+
+  updateControls();
+
+}
+
+
+/* =========================================================
+   NEW GAME
+========================================================= */
+
+function createGame(){
+
+  /*
+    7x7 board.
+    false = normal square.
+    true = hole.
+
+    Five starting pieces per side.
+  */
+
+  const holes=
+    generateHoles();
+
+
+  const board=
+    Array.from(
+      {
+        length:BOARD_SIZE
+      },
+      ()=>Array(
+        BOARD_SIZE
+      ).fill(null)
+    );
+
+
+  /*
+    BLUE starts on row 0.
+  */
+
+  const blueSpawns=[
+    {r:0,c:1},
+    {r:0,c:2},
+    {r:0,c:3},
+    {r:0,c:4},
+    {r:0,c:5}
+  ];
+
+
+  /*
+    RED starts on row 6.
+  */
+
+  const redSpawns=[
+    {r:6,c:1},
+    {r:6,c:2},
+    {r:6,c:3},
+    {r:6,c:4},
+    {r:6,c:5}
+  ];
+
+
+  for(
+    const p of blueSpawns
+  ){
+
+    board[p.r][p.c]={
+      color:"blue",
+      id:
+        crypto.randomUUID()
+    };
+
+  }
+
+
+  for(
+    const p of redSpawns
+  ){
+
+    board[p.r][p.c]={
+      color:"red",
+      id:
+        crypto.randomUUID()
+    };
+
+  }
+
+
+  /*
+    Guarantee no hole is placed on spawn rows.
+  */
+
+  return {
+
+    phase:"playing",
+
+    turn:1,
+
+    current:"blue",
+
+    board,
+
+    holes,
+
+    destroyed:{
+      blue:0,
+      red:0
+    },
+
+    slamUsed:{
+      blue:false,
+      red:false
+    }
+
+  };
+
+}
+
+
+/* =========================================================
+   HOLE GENERATOR
+========================================================= */
+
+function generateHoles(){
+
+  const possible=[];
+
+
+  /*
+    Only interior squares.
+
+    Never use the starting rows.
+  */
+
+  for(
+    let r=1;
+    r<BOARD_SIZE-1;
+    r++
+  ){
+
+    for(
+      let c=0;
+      c<BOARD_SIZE;
+      c++
+    ){
+
+      possible.push({
+        r,
+        c
+      });
+
+    }
+
+  }
+
+
+  /*
+    Shuffle.
+  */
+
+  for(
+    let i=possible.length-1;
+    i>0;
+    i--
+  ){
+
+    const j=
+      Math.floor(
+        Math.random()*(i+1)
+      );
+
+
+    [
+      possible[i],
+      possible[j]
+    ]=[
+      possible[j],
+      possible[i]
+    ];
+
+  }
+
+
+  /*
+    Only 5 holes.
+  */
+
+  return possible.slice(
+    0,
+    5
+  );
+
+}
+
+
+/* =========================================================
+   HOLE CHECK
+========================================================= */
+
+function isHole(
+  state,
+  r,
+  c
+){
+
+  return state.holes.some(
+    hole=>
+      hole.r===r &&
+      hole.c===c
+  );
+
+}
+
+
+/* =========================================================
+   BOARD BOUNDS
+========================================================= */
+
+function inside(r,c){
+
+  return(
+    r>=0 &&
+    r<BOARD_SIZE &&
+    c>=0 &&
+    c<BOARD_SIZE
+  );
+
+}
+
+
+/* =========================================================
+   PIECE SEARCH
+========================================================= */
+
+function getPieceAt(
+  state,
+  r,
+  c
+){
+
+  if(!inside(r,c))
+    return null;
+
+
+  return state.board[r][c];
+
+}
+
+
+/* =========================================================
+   MOVE VALIDATION
+========================================================= */
+
+function validDirection(dir){
+
+  return [
+    "up",
+    "down",
+    "left",
+    "right"
+  ].includes(dir);
+
+}
+
+
+/* =========================================================
+   GET DELTA
+========================================================= */
+
+function delta(dir){
+
+  switch(dir){
+
+    case "up":
+      return [-1,0];
+
+    case "down":
+      return [1,0];
+
+    case "left":
+      return [0,-1];
+
+    case "right":
+      return [0,1];
+
+  }
+
+
+  return [0,0];
+
+}
+
+
+/* =========================================================
+   NORMAL MOVE
+========================================================= */
+
+function performMove(
+  state,
+  pieceId,
+  dir,
+  distance=1
+){
+
+  if(
+    state.phase!=="playing"
+  )
+    return {
+      ok:false,
+      reason:"Game is over."
+    };
+
+
+  if(
+    state.current===undefined
+  )
+    return {
+      ok:false,
+      reason:"Invalid turn."
+    };
+
+
+  /*
+    Find selected piece.
+  */
+
+  let source=null;
+
+
+  for(
+    let r=0;
+    r<BOARD_SIZE;
+    r++
+  ){
+
+    for(
+      let c=0;
+      c<BOARD_SIZE;
+      c++
+    ){
+
+      const piece=
+        state.board[r][c];
+
+
+      if(
+        piece &&
+        piece.id===pieceId
+      ){
+
+        source={
+          r,
+          c
+        };
+
+      }
+
+    }
+
+  }
+
+
+  if(!source){
+
+    return{
+      ok:false,
+      reason:"Piece not found."
+    };
+
+  }
+
+
+  const piece=
+    state.board[
+      source.r
+    ][
+      source.c
+    ];
+
+
+  if(
+    piece.color!==state.current
+  ){
+
+    return{
+      ok:false,
+      reason:"That is not your piece."
+    };
+
+  }
+
+
+  if(
+    !validDirection(dir)
+  ){
+
+    return{
+      ok:false,
+      reason:"Invalid direction."
+    };
+
+  }
+
+
+  distance=
+    Math.max(
+      1,
+      Math.min(
+        1,
+        Number(distance)||1
+      )
+    );
+
+
+  const d=
+    delta(dir);
+
+
+  const targetR=
+    source.r+d[0];
+
+
+  const targetC=
+    source.c+d[1];
+
+
+  if(
+    !inside(
+      targetR,
+      targetC
+    )
+  ){
+
+    return{
+      ok:false,
+      reason:"You cannot move outside the board."
+    };
+
+  }
+
+
+  /*
+    A hole is empty for normal movement,
+    but a piece cannot move INTO it by itself.
+
+    Holes are only for destroying pieces
+    when they are PUSHED.
+  */
+
+  if(
+    isHole(
+      state,
+      targetR,
+      targetC
+    )
+  ){
+
+    return{
+      ok:false,
+      reason:"You cannot move directly into a hole."
+    };
+
+  }
+
+
+  const target=
+    state.board[
+      targetR
+    ][
+      targetC
+    ];
+
+
+  /*
+    Empty square:
+    simple movement.
+  */
+
+  if(!target){
+
+    state.board[targetR][targetC]=piece;
+
+    state.board[source.r][source.c]=null;
+
+    finishTurn(state);
+
+    return{
+      ok:true,
+      action:"move"
+    };
+
+  }
+
+
+  /*
+    Friendly piece:
+    cannot move there.
+  */
+
+  if(
+    target.color===piece.color
+  ){
+
+    return{
+      ok:false,
+      reason:"You cannot move into your own piece."
+    };
+
+  }
+
+
+  /*
+    Enemy piece:
+    PUSH.
+  */
+
+  return performPush(
+    state,
+    source,
+    dir,
+    piece.color
+  );
+
+}
+
+
+/* =========================================================
+   PUSH
+========================================================= */
+
+function performPush(
+  state,
+  source,
+  dir,
+  pushingColor,
+  slam=false
+){
+
+  const d=
+    delta(dir);
+
+
+  /*
+    Build contiguous enemy chain.
+
+    Example:
+
+      BLUE RED RED EMPTY
+
+    pushing right causes:
+
+      EMPTY BLUE RED RED
+  */
+
+  const chain=[];
+
+
+  let r=
+    source.r+d[0];
+
+  let c=
+    source.c+d[1];
+
+
+  while(
+    inside(r,c)
+  ){
+
+    const piece=
+      state.board[r][c];
+
+
+    if(
+      !piece ||
+      piece.color===pushingColor
+    )
+      break;
+
+
+    chain.push({
+      r,
+      c,
+      piece
+    });
+
+
+    r+=d[0];
+    c+=d[1];
+
+  }
+
+
+  if(!chain.length){
+
+    return{
+      ok:false,
+      reason:"Nothing to push."
+    };
+
+  }
+
+
+  /*
+    Determine final cells.
+
+    For a normal push:
+      chain moves 1.
+
+    For SLAM:
+      chain attempts to move 2.
+
+    A chain can be destroyed only if its
+    final piece is pushed into a hole.
+  */
+
+  const pushDistance=
+    slam
+      ?2
+      :1;
+
+
+  /*
+    We need to test each step of the chain.
+
+    The easiest safe method:
+    calculate destinations from the back
+    toward the front.
+  */
+
+  const steps=[];
+
+
+  for(
+    let i=0;
+    i<chain.length;
+    i++
+  ){
+
+    const item=chain[i];
+
+
+    steps.push({
+
+      fromR:item.r,
+
+      fromC:item.c,
+
+      piece:item.piece,
+
+      toR:
+        item.r+
+        d[0]*pushDistance,
+
+      toC:
+        item.c+
+        d[1]*pushDistance
+
+    });
+
+  }
+
+
+  /*
+    Validate destinations.
+
+    The front of the chain may:
+      - enter an empty normal square
+      - enter a hole and die
+      - hit board edge => invalid
+
+    Internal chain pieces move into positions
+    vacated by another chain piece.
+  */
+
+  const front=
+    steps[steps.length-1];
+
+
+  if(
+    !inside(
+      front.toR,
+      front.toC
+    )
+  ){
+
+    return{
+      ok:false,
+      reason:
+        "There is not enough space to push the chain."
+    };
+
+  }
+
+
+  /*
+    Check all two-square paths aren't blocked
+    by unrelated pieces.
+
+    For SLAM, movement happens one square at
+    a time; the chain must be able to travel
+    through both spaces.
+  */
+
+  for(
+    let step=1;
+    step<=pushDistance;
+    step++
+  ){
+
+    const frontCheck=
+      chain[chain.length-1];
+
+
+    const checkR=
+      frontCheck.r+
+      d[0]*step;
+
+    const checkC=
+      frontCheck.c+
+      d[1]*step;
+
+
+    if(
+      !inside(
+        checkR,
+        checkC
+      )
+    ){
+
+      return{
+        ok:false,
+        reason:
+          "The chain hits the edge."
+      };
+
+    }
+
+
+    /*
+      A hole is allowed as the final destination,
+      but not an intermediate square in SLAM.
+    */
+
+    if(
+      step<pushDistance &&
+      isHole(
+        state,
+        checkR,
+        checkC
+      )
+    ){
+
+      return{
+        ok:false,
+        reason:
+          "The chain would hit a hole too early."
+      };
+
+    }
+
+
+    const occupant=
+      state.board[
+        checkR
+      ][
+        checkC
+      ];
+
+
+    /*
+      If the destination is outside the moving chain,
+      it must be empty.
+    */
+
+    const belongsToChain=
+      chain.some(
+        item=>
+          item.r===checkR &&
+          item.c===checkC
+      );
+
+
+    if(
+      occupant &&
+      !belongsToChain &&
+      !(
+        step===pushDistance &&
+        isHole(
+          state,
+          checkR,
+          checkC
+        )
+      )
+    ){
+
+      return{
+        ok:false,
+        reason:
+          "The chain is blocked."
+      };
+
+    }
+
+  }
+
+
+  /*
+    Move chain from BACK to FRONT
+    to avoid overwriting pieces.
+  */
+
+  for(
+    let i=chain.length-1;
+    i>=0;
+    i--
+  ){
+
+    const item=
+      chain[i];
+
+
+    /*
+      Clear original first.
+    */
+
+    state.board[
+      item.r
+    ][
+      item.c
+    ]=null;
+
+  }
+
+
+  /*
+    Put chain into destinations.
+
+    A piece entering a hole is destroyed.
+  */
+
+  for(
+    let i=0;
+    i<chain.length;
+    i++
+  ){
+
+    const item=
+      chain[i];
+
+
+    const destinationR=
+      item.r+
+      d[0]*pushDistance;
+
+
+    const destinationC=
+      item.c+
+      d[1]*pushDistance;
+
+
+    if(
+      isHole(
+        state,
+        destinationR,
+        destinationC
+      )
+    ){
+
+      state.destroyed[
+        item.piece.color
+      ]++;
+
+    }else{
+
+      state.board[
+        destinationR
+      ][
+        destinationC
+      ]=
+        item.piece;
+
+    }
+
+  }
+
+
+  /*
+    Move the pushing piece into the square
+    previously occupied by the first enemy.
+  */
+
+  state.board[
+    source.r
+  ][
+    source.c
+  ]=null;
+
+
+  state.board[
+    source.r+d[0]
+  ][
+    source.c+d[1]
+  ]=
+    {
+      color:pushingColor,
+      id:state.board[
+        source.r
+      ][
+        source.c
+      ]?.id
+    };
+
+
+  /*
+    The above cannot retrieve the original piece ID
+    because source was cleared.
+
+    Fix it using sourcePiece argument stored below.
+  */
+
+  return{
+    ok:true,
+    action:slam?"slam":"push"
+  };
+
+}
+
+
+/* =========================================================
+   MOVE SAFE WRAPPER
+   ---------------------------------------------------------
+   We keep the original pushing piece object so its ID
+   never disappears during a push.
+========================================================= */
+
+function performMoveSafe(
+  state,
+  pieceId,
+  dir,
+  slam=false
+){
+
+  /*
+    Find piece.
+  */
+
+  let source=null;
+
+
+  for(
+    let r=0;
+    r<BOARD_SIZE;
+    r++
+  ){
+
+    for(
+      let c=0;
+      c<BOARD_SIZE;
+      c++
+    ){
+
+      const p=
+        state.board[r][c];
+
+
+      if(
+        p &&
+        p.id===pieceId
+      ){
+
+        source={
+          r,
+          c,
+          piece:p
+        };
+
+      }
+
+    }
+
+  }
+
+
+  if(!source){
+
+    return{
+      ok:false,
+      reason:"Piece not found."
+    };
+
+  }
+
+
+  if(
+    source.piece.color!==state.current
+  ){
+
+    return{
+      ok:false,
+      reason:"That piece is not yours."
+    };
+
+  }
+
+
+  const d=
+    delta(dir);
+
+
+  const tr=
+    source.r+d[0];
+
+  const tc=
+    source.c+d[1];
+
+
+  if(!inside(tr,tc)){
+
+    return{
+      ok:false,
+      reason:"That direction hits the edge."
+    };
+
+  }
+
+
+  /*
+    Direct movement into a hole is not allowed.
+  */
+
+  if(
+    isHole(
+      state,
+      tr,
+      tc
+    )
+  ){
+
+    return{
+      ok:false,
+      reason:"You cannot move directly into a hole."
+    };
+
+  }
+
+
+  const target=
+    state.board[tr][tc];
+
+
+  /*
+    Empty = normal move.
+  */
+
+  if(!target){
+
+    state.board[tr][tc]=source.piece;
+
+    state.board[source.r][source.c]=null;
+
+    return finishTurn(state);
+
+  }
+
+
+  /*
+    Friendly = invalid.
+  */
+
+  if(
+    target.color===source.piece.color
+  ){
+
+    return{
+      ok:false,
+      reason:"Your own piece is blocking you."
+    };
+
+  }
+
+
+  /*
+    Enemy = push.
+  */
+
+  return pushSafe(
+    state,
+    source,
+    dir,
+    slam
+  );
+
+}
+
+
+/* =========================================================
+   SAFE PUSH
+========================================================= */
+
+function pushSafe(
+  state,
+  source,
+  dir,
+  slam
+){
+
+  const d=
+    delta(dir);
+
+
+  const chain=[];
+
+
+  let r=
+    source.r+d[0];
+
+  let c=
+    source.c+d[1];
+
+
+  /*
+    Collect contiguous enemy chain.
+  */
+
+  while(
+    inside(r,c)
+  ){
+
+    const p=
+      state.board[r][c];
+
+
+    if(
+      !p ||
+      p.color===source.piece.color
+    )
+      break;
+
+
+    chain.push({
+      r,
+      c,
+      piece:p
+    });
+
+
+    r+=d[0];
+    c+=d[1];
+
+  }
+
+
+  if(!chain.length){
+
+    return{
+      ok:false,
+      reason:"Nothing to push."
+    };
+
+  }
+
+
+  const amount=
+    slam?2:1;
+
+
+  /*
+    Validate each intermediate/final location
+    using front-to-back movement.
+  */
+
+  for(
+    let step=1;
+    step<=amount;
+    step++
+  ){
+
+    const front=
+      chain[
+        chain.length-1
+      ];
+
+
+    const nr=
+      front.r+
+      d[0]*step;
+
+
+    const nc=
+      front.c+
+      d[1]*step;
+
+
+    if(!inside(nr,nc)){
+
+      return{
+        ok:false,
+        reason:"The chain hits the edge."
+      };
+
+    }
+
+
+    /*
+      Hole is only allowed as the FINAL location.
+    */
+
+    if(
+      step<amount &&
+      isHole(
+        state,
+        nr,
+        nc
+      )
+    ){
+
+      return{
+        ok:false,
+        reason:"A hole blocks the push."
+      };
+
+    }
+
+
+    const occupant=
+      state.board[nr][nc];
+
+
+    /*
+      If destination belongs to the chain,
+      it is being vacated.
+    */
+
+    const inChain=
+      chain.some(
+        x=>
+          x.r===nr &&
+          x.c===nc
+      );
+
+
+    if(
+      occupant &&
+      !inChain &&
+      !(
+        step===amount &&
+        isHole(
+          state,
+          nr,
+          nc
+        )
+      )
+    ){
+
+      return{
+        ok:false,
+        reason:"The chain is blocked."
+      };
+
+    }
+
+  }
+
+
+  /*
+    Clear old cells.
+  */
+
+  for(
+    const item of chain
+  ){
+
+    state.board[
+      item.r
+    ][
+      item.c
+    ]=null;
+
+  }
+
+
+  /*
+    Move enemy chain.
+  */
+
+  for(
+    const item of chain
+  ){
+
+    const nr=
+      item.r+
+      d[0]*amount;
+
+
+    const nc=
+      item.c+
+      d[1]*amount;
+
+
+    if(
+      isHole(
+        state,
+        nr,
+        nc
+      )
+    ){
+
+      state.destroyed[
+        item.piece.color
+      ]++;
+
+    }else{
+
+      state.board[nr][nc]=
+        item.piece;
+
+    }
+
+  }
+
+
+  /*
+    Move pushing piece into the first enemy square.
+  */
+
+  state.board[
+    source.r
+  ][
+    source.c
+  ]=null;
+
+
+  state.board[
+    source.r+d[0]
+  ][
+    source.c+d[1]
+  ]=
+    source.piece;
+
+
+  return finishTurn(
+    state,
+    slam?"SLAM!":"PUSH!"
+  );
+
+}
+
+
+/* =========================================================
+   FINISH TURN
+========================================================= */
+
+function finishTurn(
+  state,
+  actionText=""
+){
+
+  /*
+    Check win before changing turn.
+  */
+
+  if(
+    state.destroyed.red>=WIN_DESTROYED
+  ){
+
+    state.phase="finished";
+
+    state.winner="blue";
+
+    return{
+      ok:true,
+      winner:"blue",
+      action:actionText||"MOVE"
+    };
+
+  }
+
+
+  if(
+    state.destroyed.blue>=WIN_DESTROYED
+  ){
+
+    state.phase="finished";
+
+    state.winner="red";
+
+    return{
+      ok:true,
+      winner:"red",
+      action:actionText||"MOVE"
+    };
+
+  }
+
+
+  /*
+    Change turn.
+  */
+
+  state.current=
+    state.current==="blue"
+      ?"red"
+      :"blue";
+
+
+  state.turn++;
+
+
+  return{
+    ok:true,
+    action:
+      actionText||"MOVE"
+  };
+
+}
+
+
+/* =========================================================
+   APPLY HOST MOVE
+========================================================= */
+
+function hostMove(
+  pieceId,
+  dir,
+  slam=false
+){
+
+  if(
+    !isHost ||
+    !game ||
+    game.phase!=="playing"
+  )
+    return;
+
+
+  /*
+    Only host can modify authoritative state.
+  */
+
+  const result=
+    performMoveSafe(
+      game,
+      pieceId,
+      dir,
+      slam
+    );
+
+
+  if(!result.ok){
+
+    setMessage(
+      result.reason
+    );
+
+    return;
+
+  }
+
+
+  if(slam){
+
+    game.slamUsed[
+      myColor
+    ]=true;
+
+  }
+
+
+  selectedPiece=null;
+
+
+  /*
+    Broadcast complete board state.
+  */
+
+  sendGameState();
+
+
+  render();
+
+
+  if(
+    result.winner
+  ){
+
+    showResult(
+      result.winner
+    );
+
+    disableControls();
+
+    return;
+
+  }
+
+
+  updateControls();
+
+
+  setMessage(
+    result.action||
+    "MOVE"
+  );
+
+}
+
+
+/* =========================================================
+   SEND STATE
+========================================================= */
+
+function sendGameState(){
+
+  if(!game)
+    return;
+
+
+  send({
+
+    type:"STATE",
+
+    state:game
+
+  });
+
+}
+
+
+/* =========================================================
+   RECEIVE STATE
+========================================================= */
+
+function receiveState(data){
+
+  if(isHost)
+    return;
+
+
+  /*
+    Guest uses host's authoritative state.
+
+    It includes everything because PUSHLINE
+    has no hidden information.
+  */
+
+  game=
+    data.state;
+
+
+  selectedPiece=null;
+
+
+  slamUsed=
+    game.slamUsed.red;
+
+
+  showScreen(
+    "gameScreen"
+  );
+
+
+  $("role").textContent=
+    "YOU ARE RED";
+
+
+  render();
+
+
+  updateControls();
+
+
+  if(
+    game.phase==="finished"
+  ){
+
+    showResult(
+      game.winner
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   NETWORK ROUTER
+========================================================= */
+
+function handleNetwork(data){
+
+  if(
+    !data ||
+    typeof data.type!=="string"
+  )
+    return;
+
+
+  switch(data.type){
+
+    case "STATE":
+
+      receiveState(
+        data
+      );
+
+      break;
+
+
+    case "MOVE_REQUEST":
+
+      if(
+        isHost &&
+        game &&
+        game.phase==="playing"
+      ){
+
+        /*
+          Verify the request belongs to RED's
+          turn before applying.
+        */
+
+        if(
+          game.current!=="red"
+        )
+          return;
+
+
+        hostMove(
+          data.pieceId,
+          data.direction,
+          Boolean(data.slam)
+        );
+
+      }
+
+      break;
+
+
+    case "REMATCH":
+
+      if(isHost){
+
+        /*
+          Guest confirms it wants another game.
+        */
+
+        startHostGame();
+
+      }
+
+      break;
+
+  }
+
+}
+
+
+/* =========================================================
+   CLICK PIECE
+========================================================= */
+
+function selectPiece(
+  r,
+  c
+){
+
+  if(
+    !game ||
+    game.phase!=="playing"
+  )
+    return;
+
+
+  if(
+    game.current!==myColor
+  ){
+
+    setMessage(
+      "It's not your turn."
+    );
+
+    return;
+
+  }
+
+
+  const piece=
+    game.board[r][c];
+
+
+  if(
+    !piece ||
+    piece.color!==myColor
+  ){
+
+    setMessage(
+      "Select one of your pieces."
+    );
+
+    return;
+
+  }
+
+
+  selectedPiece={
+    r,
+    c,
+    id:piece.id
+  };
+
+
+  setMessage(
+    "Choose a direction."
+  );
+
+
+  render();
+
+
+  updateControls();
+
+}
+
+
+/* =========================================================
+   ATTEMPT MOVE
+========================================================= */
+
+function attemptDirection(
+  direction
+){
+
+  if(
+    !selectedPiece
+  ){
+
+    setMessage(
+      "Select one of your pieces first."
+    );
+
+    return;
+
+  }
+
+
+  if(
+    !game ||
+    game.current!==myColor
+  ){
+
+    setMessage(
+      "Wait for your turn."
+    );
+
+    return;
+
+  }
+
+
+  if(
+    isHost
+  ){
+
+    hostMove(
+      selectedPiece.id,
+      direction,
+      false
+    );
+
+  }else{
+
+    /*
+      Optimistic UI is intentionally NOT used.
+
+      This board is tiny and turn based, so the
+      authoritative host state arrives almost instantly
+      and prevents client desync.
+    */
+
+    disableControls();
+
+
+    send({
+
+      type:"MOVE_REQUEST",
+
+      pieceId:selectedPiece.id,
+
+      direction
+
+    });
+
+  }
+
+}
+
+
+/* =========================================================
+   SLAM
+========================================================= */
+
+function performSlam(){
+
+  if(
+    !selectedPiece
+  ){
+
+    setMessage(
+      "Select one of your pieces first."
+    );
+
+    return;
+
+  }
+
+
+  if(
+    !game ||
+    game.current!==myColor
+  ){
+
+    setMessage(
+      "Wait for your turn."
+    );
+
+    return;
+
+  }
+
+
+  if(
+    game.slamUsed[myColor]
+  ){
+
+    setMessage(
+      "You already used SLAM."
+    );
+
+    return;
+
+  }
+
+
+  const direction=
+    prompt(
+      "SLAM direction:\n\n" +
+      "type: up, down, left, or right"
+    );
+
+
+  if(!direction)
+    return;
+
+
+  const clean=
+    direction
+      .trim()
+      .toLowerCase();
+
+
+  if(
+    !validDirection(clean)
+  ){
+
+    setMessage(
+      "Invalid direction."
+    );
+
+    return;
+
+  }
+
+
+  if(isHost){
+
+    hostMove(
+      selectedPiece.id,
+      clean,
+      true
+    );
+
+  }else{
+
+    disableControls();
+
+
+    send({
+
+      type:"MOVE_REQUEST",
+
+      pieceId:selectedPiece.id,
+
+      direction:clean,
+
+      slam:true
+
+    });
+
+  }
+
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function render(){
+
+  if(!game)
+    return;
+
+
+  const board=
+    $("board");
+
+
+  board.innerHTML="";
+
+
+  for(
+    let r=0;
+    r<BOARD_SIZE;
+    r++
+  ){
+
+    for(
+      let c=0;
+      c<BOARD_SIZE;
+      c++
+    ){
+
+      const cell=
+        document.createElement("div");
+
+
+      cell.className=
+        "cell";
+
+
+      if(
+        isHole(
+          game,
+          r,
+          c
+        )
+      ){
+
+        cell.classList.add(
+          "hole"
+        );
+
+      }
+
+
+      if(
+        selectedPiece &&
+        selectedPiece.r===r &&
+        selectedPiece.c===c
+      ){
+
+        cell.classList.add(
+          "selected"
+        );
+
+      }
+
+
+      /*
+        Show current player's likely reachable
+        destination hints.
+      */
+
+      if(
+        selectedPiece &&
+        game.current===myColor &&
+        !game.board[r][c] &&
+        !isHole(game,r,c)
+      ){
+
+        const dr=
+          Math.abs(
+            selectedPiece.r-r
+          );
+
+        const dc=
+          Math.abs(
+            selectedPiece.c-c
+          );
+
+
+        if(
+          dr+dc===1
+        ){
+
+          cell.classList.add(
+            "reachable"
+          );
+
+        }
+
+      }
+
+
+      cell.onclick=()=>{
+
+        selectPiece(
+          r,
+          c
+        );
+
+      };
+
+
+      /*
+        Render piece.
+      */
+
+      const piece=
+        game.board[r][c];
+
+
+      if(piece){
+
+        const visual=
+          document.createElement("div");
+
+
+        visual.className=
+          "piece "+piece.color;
+
+
+        cell.appendChild(
+          visual
+        );
+
+      }
+
+
+      board.appendChild(
+        cell
+      );
+
+    }
+
+  }
+
+
+  updateHUD();
+
+}
+
+
+/* =========================================================
+   HUD
+========================================================= */
+
+function updateHUD(){
+
+  if(!game)
+    return;
+
+
+  $("blueDestroyed").textContent=
+    destroyedDisplay(
+      game.destroyed.blue
+    );
+
+
+  $("redDestroyed").textContent=
+    destroyedDisplay(
+      game.destroyed.red
+    );
+
+
+  $("turnNumber").textContent=
+    "Turn "+game.turn;
+
+
+  if(
+    game.phase==="finished"
+  ){
+
+    $("turnStatus").textContent=
+      "GAME OVER";
+
+  }else if(
+    game.current===myColor
+  ){
+
+    $("turnStatus").textContent=
+      "YOUR TURN";
+
+  }else{
+
+    $("turnStatus").textContent=
+      "OPPONENT'S TURN";
+
+  }
+
+
+  $("slamButton").textContent=
+    game.slamUsed[myColor]
+      ?"SLAM USED"
+      :"SLAM";
+
+}
+
+
+/* =========================================================
+   DESTROYED DISPLAY
+========================================================= */
+
+function destroyedDisplay(count){
+
+  let result="";
+
+
+  for(
+    let i=0;
+    i<WIN_DESTROYED;
+    i++
+  ){
+
+    result+=
+      i<count
+        ?"✕"
+        :"○";
+
+  }
+
+
+  return result;
+
+}
+
+
+/* =========================================================
+   CONTROLS
+========================================================= */
+
+function updateControls(){
+
+  if(
+    !game ||
+    game.phase!=="playing" ||
+    game.current!==myColor
+  ){
+
+    disableControls();
+
+  }else{
+
+    /*
+      Guest awaiting authoritative result also
+      gets disabled after a request.
+    */
+
+    if(
+      !selectedPiece
+    ){
+
+      /*
+        Direction buttons are disabled until
+        a piece is selected.
+      */
+
+      document
+        .querySelectorAll(
+          ".dirButton[data-direction]"
+        )
+        .forEach(
+          b=>b.disabled=true
+        );
+
+    }else{
+
+      enableDirectionButtons();
+
+    }
+
+  }
+
+
+  $("slamButton").disabled=
+    !(
+      game &&
+      game.phase==="playing" &&
+      game.current===myColor &&
+      selectedPiece &&
+      !game.slamUsed[myColor]
+    );
+
+
+  if(selectedPiece){
+
+    $("selectedPieceText").textContent=
+      "Selected: "+
+      (myColor==="blue"
+        ?"BLUE"
+        :"RED");
+
+  }else{
+
+    $("selectedPieceText").textContent=
+      "Select one of your pieces";
+
+  }
+
+}
+
+
+function enableDirectionButtons(){
+
+  document
+    .querySelectorAll(
+      ".dirButton[data-direction]"
+    )
+    .forEach(
+      b=>b.disabled=false
+    );
+
+}
+
+
+function disableControls(){
+
+  document
+    .querySelectorAll(
+      ".dirButton[data-direction]"
+    )
+    .forEach(
+      b=>b.disabled=true
+    );
+
+
+  $("slamButton").disabled=true;
+
+}
+
+
+/* =========================================================
+   RESULT
+========================================================= */
+
+function showResult(
+  winner
+){
+
+  const won=
+    winner===myColor;
+
+
+  $("resultTitle").textContent=
+    won
+      ?"YOU WIN"
+      :"YOU LOSE";
+
+
+  $("resultReason").textContent=
+    won
+      ?"You destroyed 3 enemy pieces."
+      :"Your opponent destroyed 3 of your pieces.";
+
+
+  $("resultOverlay")
+    .classList.add(
+      "show"
+    );
+
+}
+
+
+/* =========================================================
+   BUTTON EVENTS
+========================================================= */
+
+$("createButton").onclick=
+  createRoom;
+
+
+$("joinToggle").onclick=()=>{
+
+  if(
+    $("joinArea").style.display==="block"
+  ){
+
+    $("joinArea").style.display=
+      "none";
+
+  }else{
+
+    $("joinArea").style.display=
+      "block";
+
+
+    $("roomInput").focus();
+
+  }
+
+};
+
+
+$("joinButton").onclick=
+  joinRoom;
+
+
+$("roomInput").addEventListener(
+  "input",
+  ()=>{
+
+    $("roomInput").value=
+      cleanRoomCode(
+        $("roomInput").value
+      );
+
+  }
+);
+
+
+$("roomInput").addEventListener(
+  "keydown",
+  e=>{
+
+    if(e.key==="Enter"){
+
+      joinRoom();
+
+    }
+
+  }
+);
+
+
+$("copyButton").onclick=
+  async()=>{
+
+    const code=
+      $("roomCode").textContent;
+
+
+    try{
+
+      await navigator.clipboard.writeText(
+        code
+      );
+
+
+      $("copyButton").textContent=
+        "COPIED!";
+
+
+      setTimeout(
+        ()=>{
+          $("copyButton").textContent=
+            "COPY CODE";
+        },
+        1000
+      );
+
+
+    }catch(e){
+
+      alert(
+        "Room code: "+code
+      );
+
+    }
+
+  };
+
+
+$("cancelButton").onclick=()=>{
+
+  cleanupPeer();
+
+  location.reload();
+
+};
+
+
+$("slamButton").onclick=
+  performSlam;
+
+
+$("rematchButton").onclick=()=>{
+
+  $("resultOverlay")
+    .classList.remove(
+      "show"
+    );
+
+
+  if(isHost){
+
+    startHostGame();
+
+  }else{
+
+    $("rematchButton").disabled=
+      true;
+
+    $("rematchButton").textContent=
+      "WAITING FOR HOST";
+
+
+    send({
+      type:"REMATCH"
+    });
+
+  }
+
+};
+
+
+$("homeButton").onclick=()=>{
+
+  cleanupPeer();
+
+  location.reload();
+
+};
+
+
+document
+  .querySelectorAll(
+    ".dirButton[data-direction]"
+  )
+  .forEach(
+    button=>{
+
+      button.onclick=()=>{
+
+        attemptDirection(
+          button.dataset.direction
+        );
+
+      };
+
+    }
+  );
+
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+document.addEventListener(
+  "keydown",
+  e=>{
+
+    /*
+      Don't steal input from room box.
+    */
+
+    if(
+      document.activeElement===
+      $("roomInput")
+    )
+      return;
+
+
+    /*
+      E = SLAM
+    */
+
+    if(
+      e.key.toLowerCase()==="e"
+    ){
+
+      if(
+        !e.repeat
+      ){
+
+        performSlam();
+
+      }
+
+      return;
+
+    }
+
+
+    const dirs={
+
+      ArrowUp:"up",
+
+      ArrowDown:"down",
+
+      ArrowLeft:"left",
+
+      ArrowRight:"right",
+
+      w:"up",
+      W:"up",
+
+      s:"down",
+      S:"down",
+
+      a:"left",
+      A:"left",
+
+      d:"right",
+      D:"right"
+
+    };
+
+
+    if(
+      dirs[e.key]
+    ){
+
+      e.preventDefault();
+
+      attemptDirection(
+        dirs[e.key]
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   BEFORE UNLOAD
+========================================================= */
+
+window.addEventListener(
+  "beforeunload",
+  ()=>{
+    cleanupPeer();
+  }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+setStatus(
+  "Offline"
+);
+
+$("joinArea").style.display=
+  "none";
+
+</script>
+
+</body>
+</html>
