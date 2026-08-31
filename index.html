@@ -736,6 +736,11 @@ input:focus{
   border-color:var(--gold);
 }
 
+.btn.gold.armed{
+  filter:brightness(1.25);
+  box-shadow:0 0 0 2px var(--gold);
+}
+
 .overlay{
   position:fixed;
   inset:0;
@@ -1074,6 +1079,8 @@ input:focus{
 
   <div class="glass panel">
 
+    <b>PIECES LOST</b>
+
     <div class="playerRow">
 
       <div class="playerName">
@@ -1400,6 +1407,30 @@ let connectionReady=false;
 let creating=false;
 
 
+let roomCode=null;
+
+
+let slamArmed=false;
+
+
+let joinTimer=null;
+
+
+let heartbeat=null;
+
+
+let lastSeen=0;
+
+
+/*
+  A closed tab does not always produce a "close"
+  event on the other side, so silence is what
+  actually marks a connection dead.
+*/
+
+const STALE_MS=12000;
+
+
 /* =========================================================
    GAME VARIABLES
 ========================================================= */
@@ -1593,6 +1624,12 @@ function cleanup(){
   connectionReady=false;
 
 
+  clearInterval(heartbeat);
+
+
+  heartbeat=null;
+
+
   try{
 
     if(conn)
@@ -1664,14 +1701,210 @@ function peerErrorText(error){
    HOST CREATE
 ========================================================= */
 
+/* =========================================================
+   PEER OPTIONS
+========================================================= */
+
+function peerOptions(){
+
+  return{
+
+    debug:1,
+
+    config:{
+
+      iceServers:[
+
+        {
+          urls:"stun:stun.l.google.com:19302"
+        },
+
+        {
+          urls:"stun:stun1.l.google.com:19302"
+        }
+
+      ]
+
+    }
+
+  };
+
+}
+
+
+/* =========================================================
+   WAIT FOR A PEER TO OPEN
+========================================================= */
+
+function peerOpen(p){
+
+  return new Promise(
+    (resolve,reject)=>{
+
+      let settled=false;
+
+
+      const timer=
+        setTimeout(
+          ()=>{
+
+            if(settled)
+              return;
+
+
+            settled=true;
+
+
+            reject({
+              type:"network"
+            });
+
+          },
+          15000
+        );
+
+
+      p.on(
+        "open",
+        id=>{
+
+          if(settled)
+            return;
+
+
+          settled=true;
+
+          clearTimeout(timer);
+
+          resolve(id);
+
+        }
+      );
+
+
+      p.on(
+        "error",
+        error=>{
+
+          if(settled)
+            return;
+
+
+          settled=true;
+
+          clearTimeout(timer);
+
+          reject(error);
+
+        }
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   LONG LIVED PEER WATCH
+   ---------------------------------------------------------
+   Errors raised after the peer is open were swallowed by
+   the one-shot handler above, and the signaling server
+   drops idle peers, which quietly closed the room.
+========================================================= */
+
+function watchPeer(p){
+
+  p.on(
+    "error",
+    error=>{
+
+      console.error(
+        "[PUSHLINE] Peer error:",
+        error
+      );
+
+
+      /*
+        A guest that asked for a room nobody hosts.
+      */
+
+      if(
+        error &&
+        error.type==="peer-unavailable"
+      ){
+
+        failJoin(
+          peerErrorText(error)
+        );
+
+
+        return;
+
+      }
+
+
+      if(!connectionReady){
+
+        status(
+          "Connection error",
+          "bad"
+        );
+
+
+        toast(
+          peerErrorText(error)
+        );
+
+      }
+
+    }
+  );
+
+
+  p.on(
+    "disconnected",
+    ()=>{
+
+      console.warn(
+        "[PUSHLINE] Peer dropped by the signaling server."
+      );
+
+
+      if(p.destroyed)
+        return;
+
+
+      try{
+        p.reconnect();
+      }catch(e){}
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   HOST CREATE
+========================================================= */
+
 async function createRoom(){
 
   if(creating)
     return;
 
 
-  if(peer)
+  if(peer){
+
+    toast(
+      "A connection is already open."
+    );
+
+
     return;
+
+  }
 
 
   creating=true;
@@ -1686,16 +1919,22 @@ async function createRoom(){
   );
 
 
-  /*
-    Try up to 12 room IDs.
+  let lastError=null;
 
-    A manual PeerJS ID can theoretically collide,
-    so an unavailable ID is simply discarded.
+
+  /*
+    A manual PeerJS ID can collide with a room that is
+    already open, so a taken code is discarded and
+    another one is generated.
+
+    Anything else means the signaling server is not
+    usable, and eleven more attempts only make the
+    failure slower.
   */
 
   for(
     let attempt=0;
-    attempt<12;
+    attempt<6;
     attempt++
   ){
 
@@ -1709,6 +1948,9 @@ async function createRoom(){
     );
 
 
+    let p=null;
+
+
     try{
 
       /*
@@ -1717,20 +1959,33 @@ async function createRoom(){
         The room code IS the PeerJS ID.
       */
 
-      const p=
+      p=
         new Peer(
           code,
-          {
-            debug:1
-          }
+          peerOptions()
         );
 
 
-      peer=p;
+      const opened=
+        await peerOpen(p);
 
 
       /*
-        Register CONNECTION immediately.
+        SUCCESS.
+      */
+
+      peer=p;
+
+      roomCode=opened;
+
+      isHost=true;
+
+      myColor="blue";
+
+
+      /*
+        One guest at a time, but a guest that left
+        must not block the next one.
       */
 
       p.on(
@@ -1743,23 +1998,32 @@ async function createRoom(){
           );
 
 
-          /*
-            Only one guest.
-          */
-
-          if(conn){
+          if(connectionAlive()){
 
             try{
               incoming.close();
             }catch(e){}
+
 
             return;
 
           }
 
 
-          conn=
-            incoming;
+          /*
+            Whatever is left is dead or gone.
+          */
+
+          if(conn){
+
+            try{
+              conn.close();
+            }catch(e){}
+
+          }
+
+
+          conn=incoming;
 
 
           setupConnection(
@@ -1770,59 +2034,7 @@ async function createRoom(){
       );
 
 
-      const opened=
-        await new Promise(
-          (resolve,reject)=>{
-
-            let settled=false;
-
-
-            p.on(
-              "open",
-              id=>{
-
-                if(settled)
-                  return;
-
-
-                settled=true;
-
-                resolve(id);
-
-              }
-            );
-
-
-            p.on(
-              "error",
-              err=>{
-
-                if(settled)
-                  return;
-
-
-                settled=true;
-
-                reject(err);
-
-              }
-            );
-
-          }
-        );
-
-
-      /*
-        SUCCESS.
-      */
-
-      roomCode=
-        opened;
-
-
-      isHost=true;
-
-      myColor="blue";
+      watchPeer(p);
 
 
       $("roomCode").textContent=
@@ -1851,6 +2063,9 @@ async function createRoom(){
 
     }catch(error){
 
+      lastError=error;
+
+
       console.warn(
         "[PUSHLINE] Room attempt failed:",
         peerErrorText(error)
@@ -1859,21 +2074,40 @@ async function createRoom(){
 
       try{
 
-        if(peer)
-          peer.destroy();
+        if(p)
+          p.destroy();
 
       }catch(e){}
 
 
-      peer=null;
+      /*
+        Only a clashing code deserves another try.
+      */
 
+      if(
+        !error ||
+        (
+          error.type!=="unavailable-id" &&
+          error.type!=="invalid-id"
+        )
+      ){
 
-      conn=null;
+        break;
+
+      }
 
     }
 
   }
 
+
+  peer=null;
+
+  conn=null;
+
+  isHost=false;
+
+  myColor=null;
 
   creating=false;
 
@@ -1888,9 +2122,8 @@ async function createRoom(){
   );
 
 
-  alert(
-    "Could not create a PeerJS room.\n\n" +
-    "Refresh the page and try again."
+  toast(
+    peerErrorText(lastError)
   );
 
 }
@@ -1902,8 +2135,16 @@ async function createRoom(){
 
 async function joinRoom(){
 
-  if(peer)
+  if(peer){
+
+    toast(
+      "A connection is already open."
+    );
+
+
     return;
+
+  }
 
 
   const code=
@@ -1920,7 +2161,7 @@ async function joinRoom(){
     code.length!==ROOM_LENGTH
   ){
 
-    alert(
+    toast(
       "The room code must be exactly 6 characters."
     );
 
@@ -1950,13 +2191,15 @@ async function joinRoom(){
     const p=
       new Peer(
         undefined,
-        {
-          debug:1
-        }
+        peerOptions()
       );
 
 
     peer=p;
+
+    isHost=false;
+
+    myColor="red";
 
 
     /*
@@ -1966,52 +2209,28 @@ async function joinRoom(){
       This is important.
     */
 
-    await new Promise(
-      (resolve,reject)=>{
-
-        let done=false;
+    await peerOpen(p);
 
 
-        p.on(
-          "open",
-          ()=>{
-          
-            if(done)
-              return;
-
-
-            done=true;
-
-            resolve();
-
-          }
-        );
-
-
-        p.on(
-          "error",
-          error=>{
-
-            if(done)
-              return;
-
-
-            done=true;
-
-            reject(
-              error
-            );
-
-          }
-        );
-
-      }
-    );
+    watchPeer(p);
 
 
     console.log(
       "[PUSHLINE] Guest peer:",
-      peer.id
+      p.id
+    );
+
+
+    $("roomCode").textContent=
+      code;
+
+
+    $("waitingText").textContent=
+      "Connecting to "+code+"...";
+
+
+    showScreen(
+      "waitingScreen"
     );
 
 
@@ -2021,7 +2240,7 @@ async function joinRoom(){
     */
 
     conn=
-      peer.connect(
+      p.connect(
         code,
         {
           reliable:true,
@@ -2030,9 +2249,39 @@ async function joinRoom(){
       );
 
 
+    if(!conn){
+
+      throw{
+        type:"peer-unavailable"
+      };
+
+    }
+
+
     setupConnection(
       false
     );
+
+
+    /*
+      connect() never reports a dead room on its own,
+      so the handshake gets a deadline.
+    */
+
+    clearTimeout(joinTimer);
+
+
+    joinTimer=
+      setTimeout(
+        ()=>{
+
+          failJoin(
+            "That room did not answer. Check the code."
+          );
+
+        },
+        20000
+      );
 
 
   }catch(error){
@@ -2043,26 +2292,60 @@ async function joinRoom(){
     );
 
 
-    cleanup();
-
-
-    $("joinButton").disabled=
-      false;
-
-
-    status(
-      "Join failed",
-      "bad"
-    );
-
-
-    alert(
-      peerErrorText(
-        error
-      )
+    failJoin(
+      peerErrorText(error)
     );
 
   }
+
+}
+
+
+/* =========================================================
+   JOIN FAILURE
+========================================================= */
+
+function failJoin(reason){
+
+  if(
+    isHost ||
+    connectionReady
+  )
+    return;
+
+
+  clearTimeout(joinTimer);
+
+
+  joinTimer=null;
+
+
+  cleanup();
+
+
+  myColor=null;
+
+
+  $("joinButton").disabled=
+    false;
+
+
+  showScreen(
+    "homeScreen"
+  );
+
+
+  $("joinArea").style.display=
+    "block";
+
+
+  status(
+    "Join failed",
+    "bad"
+  );
+
+
+  toast(reason);
 
 }
 
@@ -2080,13 +2363,21 @@ function setupConnection(
 
 
   /*
+    Handlers must only ever speak for the connection
+    they were attached to.
+  */
+
+  const active=conn;
+
+
+  /*
     OPEN
 
     This is the ONLY event that means
     the P2P data connection is ready.
   */
 
-  conn.on(
+  active.on(
     "open",
     ()=>{
 
@@ -2095,7 +2386,16 @@ function setupConnection(
       );
 
 
+      clearTimeout(joinTimer);
+
+
+      joinTimer=null;
+
+
       connectionReady=true;
+
+
+      startHeartbeat();
 
 
       status(
@@ -2116,6 +2416,12 @@ function setupConnection(
 
         startHostGame();
 
+
+      }else{
+
+        $("waitingText").textContent=
+          "Connected. Waiting for the board...";
+
       }
 
     }
@@ -2126,14 +2432,22 @@ function setupConnection(
     DATA
   */
 
-  conn.on(
+  active.on(
     "data",
     data=>{
 
-      console.log(
-        "[PUSHLINE] received:",
-        data
-      );
+      if(
+        data &&
+        data.type!=="PING" &&
+        data.type!=="PONG"
+      ){
+
+        console.log(
+          "[PUSHLINE] received:",
+          data
+        );
+
+      }
 
 
       receiveData(
@@ -2148,7 +2462,7 @@ function setupConnection(
     ERROR
   */
 
-  conn.on(
+  active.on(
     "error",
     error=>{
 
@@ -2156,6 +2470,22 @@ function setupConnection(
         "[PUSHLINE] DataConnection error:",
         error
       );
+
+
+      if(!connectionReady){
+
+        if(!hostSide){
+
+          failJoin(
+            peerErrorText(error)
+          );
+
+        }
+
+
+        return;
+
+      }
 
 
       status(
@@ -2171,39 +2501,166 @@ function setupConnection(
     CLOSE
   */
 
-  conn.on(
+  active.on(
     "close",
     ()=>{
 
-      connectionReady=false;
+      if(conn!==active)
+        return;
 
 
-      status(
-        "Opponent disconnected",
-        "bad"
+      dropConnection(
+        hostSide
       );
-
-
-      if(
-        game &&
-        game.phase==="playing"
-      ){
-
-        $("turnStatus").textContent=
-          "OPPONENT LEFT";
-
-
-        disableControls();
-
-
-        message(
-          "Your opponent disconnected."
-        );
-
-      }
 
     }
   );
+
+}
+
+
+/* =========================================================
+   HEARTBEAT
+   ---------------------------------------------------------
+   PeerJS reports a closed tab late, or never. A quiet
+   connection is therefore treated as gone, which is also
+   what frees the room for the next guest.
+========================================================= */
+
+function startHeartbeat(){
+
+  clearInterval(heartbeat);
+
+
+  lastSeen=Date.now();
+
+
+  heartbeat=
+    setInterval(
+      ()=>{
+
+        if(
+          !conn ||
+          !conn.open
+        ){
+
+          return;
+
+        }
+
+
+        if(
+          Date.now()-lastSeen>STALE_MS
+        ){
+
+          dropConnection(
+            isHost
+          );
+
+
+          return;
+
+        }
+
+
+        send({
+          type:"PING"
+        });
+
+      },
+      4000
+    );
+
+}
+
+
+function connectionAlive(){
+
+  return Boolean(
+    conn &&
+    conn.open &&
+    Date.now()-lastSeen<STALE_MS
+  );
+
+}
+
+
+function dropConnection(
+  hostSide
+){
+
+  clearInterval(heartbeat);
+
+
+  heartbeat=null;
+
+
+  connectionReady=false;
+
+
+  if(conn){
+
+    try{
+      conn.close();
+    }catch(e){}
+
+  }
+
+
+  /*
+    Clearing this is what lets the host accept
+    another guest afterwards.
+  */
+
+  conn=null;
+
+
+  selectedId=null;
+
+  slamArmed=false;
+
+
+  status(
+    "Opponent disconnected",
+    "bad"
+  );
+
+
+  disableControls();
+
+
+  if(
+    game &&
+    game.phase==="playing"
+  ){
+
+    $("turnStatus").textContent=
+      "OPPONENT LEFT";
+
+
+    message(
+      "Your opponent disconnected."
+    );
+
+  }
+
+
+  if(hostSide){
+
+    toast(
+      "Player 2 left. Room "+
+      roomCode+
+      " is open again."
+    );
+
+
+  }else{
+
+    toast(
+      "The host disconnected."
+    );
+
+  }
 
 }
 
@@ -2215,21 +2672,21 @@ function setupConnection(
 function startHostGame(){
 
   /*
-    Prevent duplicate start.
+    A fresh board whenever a guest connects or a
+    rematch is agreed. Guarding on phase left a
+    reconnecting guest with no state at all.
   */
-
-  if(
-    game &&
-    game.phase==="playing"
-  )
-    return;
-
 
   game=
     createGame();
 
 
   selectedId=null;
+
+  slamArmed=false;
+
+
+  hideResult();
 
 
   /*
@@ -2249,10 +2706,6 @@ function startHostGame(){
 
   $("role").innerHTML=
     '<span class="mini blueDot"></span> YOU ARE BLUE';
-
-
-  $("turnStatus").textContent=
-    "YOUR TURN";
 
 
   $("turnNumber").textContent=
@@ -3063,27 +3516,57 @@ function endTurn(
 
 function sendState(){
 
+  if(!game)
+    return;
+
+
+  send({
+    type:"STATE",
+    state:cloneState(game)
+  });
+
+}
+
+
+/* =========================================================
+   RAW SEND
+========================================================= */
+
+function send(payload){
+
   if(
     !conn ||
-    !conn.open ||
-    !game
-  )
-    return;
+    !conn.open
+  ){
+
+    console.warn(
+      "[PUSHLINE] Dropped, no open connection:",
+      payload
+    );
+
+
+    return false;
+
+  }
 
 
   try{
 
-    conn.send({
-      type:"STATE",
-      state:cloneState(game)
-    });
+    conn.send(payload);
+
+
+    return true;
+
 
   }catch(error){
 
     console.error(
-      "State send failed:",
+      "[PUSHLINE] Send failed:",
       error
     );
+
+
+    return false;
 
   }
 
@@ -3117,6 +3600,8 @@ function receiveState(
 
   selectedId=null;
 
+  slamArmed=false;
+
 
   /*
     Guest finally switches to the game ONLY
@@ -3146,7 +3631,25 @@ function receiveState(
       game.winner
     );
 
+
+    return;
+
   }
+
+
+  /*
+    A rematch arrives as an ordinary state, so the
+    result overlay has to come down here.
+  */
+
+  hideResult();
+
+
+  message(
+    game.current===myColor
+      ?"Your turn."
+      :"Opponent's turn."
+  );
 
 }
 
@@ -3166,13 +3669,16 @@ function receiveData(
     return;
 
 
+  lastSeen=Date.now();
+
+
   if(
-    data.type==="GAME"
+    data.type==="PING"
   ){
 
-    receiveState(
-      data
-    );
+    send({
+      type:"PONG"
+    });
 
 
     return;
@@ -3181,6 +3687,16 @@ function receiveData(
 
 
   if(
+    data.type==="PONG"
+  ){
+
+    return;
+
+  }
+
+
+  if(
+    data.type==="GAME" ||
     data.type==="STATE"
   ){
 
@@ -3198,15 +3714,36 @@ function receiveData(
     data.type==="MOVE"
   ){
 
-    if(
-      isHost &&
-      game &&
-      game.phase==="playing"
-    ){
+    if(isHost){
 
       receiveMove(
         data
       );
+
+    }
+
+
+    return;
+
+  }
+
+
+  if(
+    data.type==="REJECT"
+  ){
+
+    if(!isHost){
+
+      toast(
+        data.reason ||
+        "That move was rejected."
+      );
+
+
+      updateControls();
+
+
+      updateHUD();
 
     }
 
@@ -3244,9 +3781,18 @@ function receiveMove(
 
   if(
     !game ||
-    game.current!=="red"
-  )
+    game.phase!=="playing"
+  ){
+
+    send({
+      type:"REJECT",
+      reason:"The game is not running."
+    });
+
+
     return;
+
+  }
 
 
   const before=
@@ -3270,6 +3816,17 @@ function receiveMove(
     game=before;
 
 
+    /*
+      The guest is waiting on this. With no reply it
+      sits on disabled controls forever.
+    */
+
+    send({
+      type:"REJECT",
+      reason:result.reason
+    });
+
+
     sendState();
 
 
@@ -3282,6 +3839,9 @@ function receiveMove(
 
 
   render();
+
+
+  updateControls();
 
 
   if(
@@ -3310,7 +3870,17 @@ function receiveMove(
       game.winner
     );
 
+
+    return;
+
   }
+
+
+  message(
+    game.current===myColor
+      ?"Your turn."
+      :"Opponent's turn."
+  );
 
 }
 
@@ -3459,8 +4029,13 @@ function attemptMove(
 ){
 
   if(
-    !selectedId
-  ){
+    !game ||
+    game.phase!=="playing"
+  )
+    return;
+
+
+  if(!selectedId){
 
     toast(
       "Select a piece first."
@@ -3473,7 +4048,6 @@ function attemptMove(
 
 
   if(
-    !game ||
     game.current!==myColor
   ){
 
@@ -3487,25 +4061,55 @@ function attemptMove(
   }
 
 
+  const slam=
+    slamArmed;
+
+
+  if(
+    slam &&
+    game.slamUsed[myColor]
+  ){
+
+    slamArmed=false;
+
+
+    updateSlamButton();
+
+
+    toast(
+      "SLAM already used."
+    );
+
+
+    return;
+
+  }
+
+
   if(isHost){
+
+    slamArmed=false;
+
 
     hostMove(
       selectedId,
       direction,
-      false
+      slam
     );
 
-  }else{
 
-    /*
-      Guest sends request.
+    return;
 
-      Host performs the actual move.
-    */
-
-    disableControls();
+  }
 
 
+  /*
+    Guest sends request.
+
+    Host performs the actual move.
+  */
+
+  const sent=
     send({
 
       type:"MOVE",
@@ -3514,15 +4118,31 @@ function attemptMove(
 
       direction,
 
-      slam:false
+      slam
 
     });
 
 
-    $("turnStatus").textContent=
-      "WAITING FOR HOST...";
+  if(!sent){
+
+    toast(
+      "Not connected to the host."
+    );
+
+
+    return;
 
   }
+
+
+  slamArmed=false;
+
+
+  disableControls();
+
+
+  $("turnStatus").textContent=
+    "WAITING FOR HOST...";
 
 }
 
@@ -3637,11 +4257,18 @@ function hostMove(
 function useSlam(){
 
   if(
-    !selectedId
+    !game ||
+    game.phase!=="playing"
+  )
+    return;
+
+
+  if(
+    game.current!==myColor
   ){
 
     toast(
-      "Select a piece first."
+      "Wait for your turn."
     );
 
 
@@ -3650,13 +4277,10 @@ function useSlam(){
   }
 
 
-  if(
-    !game ||
-    game.current!==myColor
-  ){
+  if(!selectedId){
 
     toast(
-      "Wait for your turn."
+      "Select a piece first."
     );
 
 
@@ -3679,135 +4303,34 @@ function useSlam(){
   }
 
 
-  const source=
-    findPiece(
-      game,
-      selectedId
-    );
-
-
-  if(!source)
-    return;
-
-
   /*
-    Automatically choose a direction if
-    exactly one enemy is adjacent.
+    SLAM is a modifier on the next direction now,
+    instead of a prompt() box that browsers are
+    free to refuse to show.
   */
 
-  const possible=[];
+  slamArmed=
+    !slamArmed;
 
 
-  for(
-    const direction of [
-      "up",
-      "down",
-      "left",
-      "right"
-    ]
-  ){
-
-    const d=
-      delta(direction);
+  message(
+    slamArmed
+      ?"SLAM armed. Choose a direction."
+      :"Choose a direction."
+  );
 
 
-    const r=
-      source.r+d[0];
+  updateSlamButton();
 
 
-    const c=
-      source.c+d[1];
-
-
-    if(
-      inside(r,c) &&
-      game.board[r][c] &&
-      game.board[r][c].color!==myColor
-    ){
-
-      possible.push(
-        direction
-      );
-
-    }
-
-  }
-
-
-  let direction=
-    possible.length===1
-      ?possible[0]
-      :prompt(
-        "SLAM direction:\n\n" +
-        "up\n" +
-        "down\n" +
-        "left\n" +
-        "right"
-      );
-
-
-  if(!direction)
-    return;
-
-
-  direction=
-    direction
-      .trim()
-      .toLowerCase();
-
-
-  if(
-    ![
-      "up",
-      "down",
-      "left",
-      "right"
-    ].includes(direction)
-  ){
-
-    toast(
-      "Invalid direction."
-    );
-
-
-    return;
-
-  }
-
-
-  shake();
-
-
-  if(isHost){
-
-    hostMove(
-      selectedId,
-      direction,
-      true
-    );
-
-  }else{
-
-    disableControls();
-
-
-    send({
-
-      type:"MOVE",
-
-      pieceId:selectedId,
-
-      direction,
-
-      slam:true
-
-    });
-
-
-    $("turnStatus").textContent=
-      "WAITING FOR HOST...";
-
-  }
+  tone(
+    slamArmed
+      ?320
+      :240,
+    .08,
+    "sawtooth",
+    .035
+  );
 
 }
 
@@ -4047,13 +4570,7 @@ function updateHUD(){
         :"OPPONENT'S TURN";
 
 
-  $("slamButton").disabled=
-    !(
-      game.phase==="playing" &&
-      game.current===myColor &&
-      selectedId &&
-      !game.slamUsed[myColor]
-    );
+  updateSlamButton();
 
 
   $("selectedText").textContent=
@@ -4142,8 +4659,7 @@ function updateControls(){
     );
 
 
-  $("slamButton").disabled=
-    game.slamUsed[myColor];
+  updateSlamButton();
 
 }
 
@@ -4161,7 +4677,56 @@ function disableControls(){
     );
 
 
+  slamArmed=false;
+
+
   $("slamButton").disabled=true;
+
+
+  $("slamButton").textContent=
+    "⚡ SLAM";
+
+}
+
+
+/* =========================================================
+   SLAM BUTTON STATE
+========================================================= */
+
+function updateSlamButton(){
+
+  const button=
+    $("slamButton");
+
+
+  const usable=
+    Boolean(
+      game &&
+      game.phase==="playing" &&
+      game.current===myColor &&
+      selectedId &&
+      !game.slamUsed[myColor]
+    );
+
+
+  if(!usable)
+    slamArmed=false;
+
+
+  button.disabled=
+    !usable;
+
+
+  button.textContent=
+    slamArmed
+      ?"⚡ SLAM ARMED"
+      :"⚡ SLAM";
+
+
+  button.classList.toggle(
+    "armed",
+    slamArmed
+  );
 
 }
 
@@ -4209,22 +4774,37 @@ function showResult(
   winner
 ){
 
+  const won=
+    winner===myColor;
+
+
   $("resultTitle").textContent=
-    winner===myColor
+    won
       ?"YOU WIN"
       :"YOU LOSE";
 
 
   $("resultReason").textContent=
-    winner===myColor
+    won
       ?"You destroyed three enemy pieces."
       :"Your opponent destroyed three of your pieces.";
 
 
   $("resultIcon").textContent=
-    winner===myColor
+    won
       ?"◆"
       :"×";
+
+
+  $("rematchButton").disabled=
+    false;
+
+
+  $("rematchButton").textContent=
+    "REMATCH";
+
+
+  disableControls();
 
 
   $("resultOverlay")
@@ -4238,16 +4818,43 @@ function showResult(
 }
 
 
+function hideResult(){
+
+  $("resultOverlay")
+    .classList.remove(
+      "show"
+    );
+
+
+  $("rematchButton").disabled=
+    false;
+
+
+  $("rematchButton").textContent=
+    "REMATCH";
+
+}
+
+
 /* =========================================================
    REMATCH
 ========================================================= */
 
 $("rematchButton").onclick=()=>{
 
-  $("resultOverlay")
-    .classList.remove(
-      "show"
+  if(
+    !conn ||
+    !conn.open
+  ){
+
+    toast(
+      "No opponent is connected."
     );
+
+
+    return;
+
+  }
 
 
   if(isHost){
@@ -4256,23 +4863,10 @@ $("rematchButton").onclick=()=>{
       Keep the same WebRTC connection.
     */
 
-    game=
-      createGame();
+    hideResult();
 
 
-    selectedId=null;
-
-
-    render();
-
-
-    updateControls();
-
-
-    sendState();
-
-
-    soundStart();
+    startHostGame();
 
 
   }else{
@@ -4285,11 +4879,41 @@ $("rematchButton").onclick=()=>{
       "WAITING FOR HOST";
 
 
-    send({
-      type:"REMATCH"
-    });
+    if(
+      !send({
+        type:"REMATCH"
+      })
+    ){
+
+      $("rematchButton").disabled=
+        false;
+
+
+      $("rematchButton").textContent=
+        "REMATCH";
+
+
+      toast(
+        "Not connected to the host."
+      );
+
+    }
 
   }
+
+};
+
+
+/* =========================================================
+   HOME BUTTON
+========================================================= */
+
+$("homeButton").onclick=()=>{
+
+  cleanup();
+
+
+  location.reload();
 
 };
 
@@ -4829,6 +5453,18 @@ document.addEventListener(
     if(
       document.activeElement===
       $("roomInput")
+    )
+      return;
+
+
+    /*
+      Only while a board is on screen.
+    */
+
+    if(
+      !$("gameScreen")
+        .classList
+        .contains("active")
     )
       return;
 
