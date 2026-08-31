@@ -4,7 +4,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-
 <title>PUSHLINE</title>
 
 <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
@@ -16,47 +15,44 @@
 }
 
 :root{
-  --bg:#05070c;
+  --bg:#060910;
   --bg2:#0b111b;
-  --panel:rgba(15,22,33,.92);
-  --border:#2a3a52;
-  --text:#f2f6ff;
-  --muted:#8997ac;
+  --panel:rgba(14,21,32,.94);
+  --border:#29394f;
 
-  --blue:#55adff;
-  --blue2:#176fc0;
+  --text:#f1f5ff;
+  --muted:#8996ab;
+
+  --blue:#58adff;
+  --blueDark:#176fbf;
 
   --red:#ff6079;
-  --red2:#c82d48;
+  --redDark:#c82d48;
 
-  --gold:#ffd75a;
+  --gold:#ffd658;
 
-  --tile1:#1d2d40;
+  --tile1:#1c2c3f;
   --tile2:#142333;
 }
 
 body.royal{
-  --bg:#08060d;
-  --bg2:#110b17;
-  --panel:rgba(25,15,32,.93);
-  --border:#453354;
-
-  --blue:#958dff;
-  --blue2:#5d51d5;
-
+  --bg:#09070e;
+  --bg2:#120b18;
+  --panel:rgba(25,15,31,.94);
+  --border:#463351;
+  --blue:#968fff;
+  --blueDark:#5c52d7;
   --tile1:#30213f;
-  --tile2:#25172f;
+  --tile2:#24162f;
 }
 
 body.ice{
-  --bg:#041016;
+  --bg:#041015;
   --bg2:#091c24;
-  --panel:rgba(8,22,29,.93);
-  --border:#294955;
-
-  --blue:#6bdfff;
-  --blue2:#287f9e;
-
+  --panel:rgba(8,22,29,.94);
+  --border:#294952;
+  --blue:#6de0ff;
+  --blueDark:#287f9d;
   --tile1:#193640;
   --tile2:#112830;
 }
@@ -80,14 +76,14 @@ body{
 
   background:
     radial-gradient(
-      circle at 50% -12%,
-      #1f3555,
+      circle at 50% -15%,
+      #203754,
       transparent 40%
     ),
     radial-gradient(
       circle at 10% 90%,
-      #12233a,
-      transparent 35%
+      #13243a,
+      transparent 30%
     ),
     linear-gradient(
       180deg,
@@ -108,8 +104,8 @@ button{
 }
 
 button:disabled{
-  opacity:.35;
   cursor:not-allowed;
+  opacity:.4;
 }
 
 #app{
@@ -118,22 +114,17 @@ button:disabled{
   padding:18px 22px 30px;
 }
 
-/* =========================================================
-HEADER
-========================================================= */
-
 header{
   height:50px;
   display:flex;
-  align-items:center;
   justify-content:space-between;
+  align-items:center;
 }
 
 .logo{
   display:flex;
   align-items:center;
   gap:8px;
-
   font-size:25px;
   font-weight:1000;
   letter-spacing:5px;
@@ -142,26 +133,18 @@ header{
 .logoIcon{
   width:30px;
   height:30px;
-
   display:grid;
   place-items:center;
-
   border-radius:8px;
-  border:1px solid #ffffff12;
-
   color:var(--gold);
-
+  border:1px solid #ffffff15;
   background:#ffffff06;
-
-  box-shadow:
-    0 0 25px #55adff12;
 }
 
 .connection{
   display:flex;
   align-items:center;
   gap:8px;
-
   font-size:12px;
   color:var(--muted);
 }
@@ -170,22 +153,18 @@ header{
   width:9px;
   height:9px;
   border-radius:50%;
-  background:#6a7689;
+  background:#66748a;
 }
 
 .dot.good{
-  background:#5de28a;
-  box-shadow:0 0 14px #5de28a;
+  background:#5de38a;
+  box-shadow:0 0 14px #5de38a;
 }
 
 .dot.bad{
   background:var(--red);
   box-shadow:0 0 14px var(--red);
 }
-
-/* =========================================================
-SCREENS
-========================================================= */
 
 .screen{
   display:none;
@@ -195,109 +174,31 @@ SCREENS
   display:block;
 }
 
-/* =========================================================
-COMMON
-========================================================= */
-
 .glass{
   background:
     linear-gradient(
       145deg,
       #ffffff08,
-      #ffffff01
+      #ffffff02
     ),
     var(--panel);
 
   border:1px solid var(--border);
 
+  border-radius:20px;
+
   box-shadow:
     0 25px 80px #0009,
-    inset 0 1px 0 #ffffff05;
+    inset 0 1px #ffffff05;
 
-  backdrop-filter:blur(16px);
+  backdrop-filter:blur(15px);
 }
-
-.btn{
-  border:1px solid #35465f;
-
-  background:
-    linear-gradient(
-      180deg,
-      #1d2c3e,
-      #152131
-    );
-
-  color:white;
-
-  padding:12px 19px;
-
-  border-radius:11px;
-
-  font-weight:900;
-
-  transition:
-    transform .12s,
-    background .12s,
-    box-shadow .12s;
-}
-
-.btn:hover{
-  transform:translateY(-2px);
-  background:#27394f;
-  box-shadow:0 9px 25px #0005;
-}
-
-.btn.primary{
-  background:
-    linear-gradient(
-      180deg,
-      #3d94e2,
-      #2877bb
-    );
-
-  border-color:#67b8ff;
-}
-
-.btn.gold{
-  background:
-    linear-gradient(
-      180deg,
-      #efd45d,
-      #b98c1e
-    );
-
-  border-color:#ffe99a;
-
-  color:#191309;
-}
-
-.btn.danger{
-  background:
-    linear-gradient(
-      180deg,
-      #682638,
-      #491925
-    );
-
-  border-color:#923d55;
-}
-
-.small{
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.6;
-}
-
-/* =========================================================
-HOME
-========================================================= */
 
 .hero{
-  width:min(730px,100%);
+  width:min(720px,100%);
   margin:9vh auto 0;
-  padding:45px;
+  padding:44px;
   text-align:center;
-  border-radius:25px;
 }
 
 .heroTitle{
@@ -311,9 +212,6 @@ HOME
   font-weight:1000;
 
   letter-spacing:10px;
-
-  text-shadow:
-    0 0 35px #55adff18;
 }
 
 .heroTitle span{
@@ -337,26 +235,89 @@ HOME
   margin:30px 0 18px;
 }
 
+.btn{
+  border:1px solid #35465d;
+
+  background:
+    linear-gradient(
+      180deg,
+      #1d2c3e,
+      #152131
+    );
+
+  color:white;
+
+  border-radius:11px;
+
+  padding:12px 19px;
+
+  font-weight:900;
+
+  transition:
+    transform .12s,
+    background .12s;
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+  background:#26384f;
+}
+
+.btn.primary{
+  background:
+    linear-gradient(
+      180deg,
+      #3d94df,
+      #2877ba
+    );
+
+  border-color:#6ab8ff;
+}
+
+.btn.gold{
+  color:#1a1308;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f0d45d,
+      #ba8e1e
+    );
+
+  border-color:#ffe99a;
+}
+
+.btn.danger{
+  background:
+    linear-gradient(
+      180deg,
+      #682538,
+      #491925
+    );
+
+  border-color:#933c53;
+}
+
 #joinArea{
   display:none;
 }
 
 input{
-  width:min(420px,100%);
+  width:min(410px,100%);
 
   padding:15px;
+
+  border-radius:12px;
+
+  border:1px solid #35465e;
 
   background:#080d14;
 
   color:white;
 
-  border:1px solid #35465e;
-
-  border-radius:12px;
+  text-align:center;
 
   outline:none;
-
-  text-align:center;
 
   font-size:22px;
 
@@ -369,46 +330,34 @@ input{
 
 input:focus{
   border-color:var(--gold);
-
-  box-shadow:
-    0 0 0 3px #ffd75a10;
 }
 
-/* =========================================================
-WAITING
-========================================================= */
+.small{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+}
 
 .waiting{
   width:min(650px,100%);
   margin:12vh auto;
   padding:42px;
-
-  border-radius:24px;
-
   text-align:center;
 }
 
 .roomCode{
   margin:18px 0;
-
   color:var(--gold);
-
   font-size:52px;
-
   font-weight:1000;
-
   letter-spacing:12px;
-
-  text-shadow:
-    0 0 30px #ffd75a35;
+  text-shadow:0 0 30px #ffd65833;
 }
 
-.waitingStatus{
+.waitingText{
   margin:20px 0;
-
+  min-height:22px;
   color:var(--muted);
-
-  min-height:24px;
 }
 
 .waitDots{
@@ -423,9 +372,7 @@ WAITING
   height:7px;
   border-radius:50%;
   background:var(--blue);
-
-  animation:
-    waitingDot 1.2s infinite;
+  animation:waitingDot 1.2s infinite;
 }
 
 .waitDots i:nth-child(2){
@@ -438,19 +385,17 @@ WAITING
 
 @keyframes waitingDot{
   0%,80%,100%{
-    transform:translateY(0);
     opacity:.25;
+    transform:translateY(0);
   }
 
   40%{
-    transform:translateY(-7px);
     opacity:1;
+    transform:translateY(-7px);
   }
 }
 
-/* =========================================================
-GAME
-========================================================= */
+/* GAME */
 
 #game{
   display:grid;
@@ -480,7 +425,7 @@ GAME
   width:
     min(
       80vh,
-      800px,
+      810px,
       calc(100vw - 390px)
     );
 
@@ -498,20 +443,17 @@ GAME
       #ffffff09,
       #ffffff02
     ),
-    #080d14e8;
+    #080d14e9;
 
   border:1px solid var(--border);
 
   box-shadow:
     0 30px 100px #000a,
-    0 0 65px #55adff06;
-
-  transition:transform .15s;
+    0 0 70px #55adff06;
 }
 
 .boardFrame.shake{
-  animation:
-    shake .23s;
+  animation:shake .24s;
 }
 
 @keyframes shake{
@@ -540,13 +482,12 @@ GAME
 .cell{
   position:relative;
 
-  display:flex;
-
-  align-items:center;
-  justify-content:center;
-
   min-width:0;
   min-height:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
 
   border-radius:10px;
 
@@ -557,7 +498,7 @@ GAME
       var(--tile2)
     );
 
-  border:1px solid #ffffff08;
+  border:1px solid #ffffff09;
 
   transition:
     transform .1s,
@@ -569,8 +510,8 @@ GAME
   background:
     linear-gradient(
       145deg,
-      #263a52,
-      #1a2a3c
+      #263a51,
+      #192a3d
     );
 }
 
@@ -578,9 +519,9 @@ GAME
   background:
     radial-gradient(
       circle,
-      #000 0%,
-      #03070b 48%,
-      #0b121b 100%
+      #000 0,
+      #020508 48%,
+      #0a111a 100%
     );
 
   border-color:#000;
@@ -593,15 +534,15 @@ GAME
   border-color:var(--gold);
 
   box-shadow:
-    0 0 0 2px #ffd75a44,
-    0 0 30px #ffd75a18;
+    0 0 0 2px #ffd65842,
+    0 0 30px #ffd65818;
 
   transform:scale(.965);
 }
 
 .cell.reachable{
   box-shadow:
-    inset 0 0 0 2px #ffffff18;
+    inset 0 0 0 2px #ffffff19;
 }
 
 .cell.homeBlue{
@@ -632,25 +573,21 @@ GAME
     );
 }
 
-/* =========================================================
-PIECES
-========================================================= */
-
 .piece{
   width:67%;
   height:67%;
 
   position:relative;
 
-  z-index:10;
+  z-index:5;
 
   border-radius:50%;
 
   animation:
-    pieceAppear .16s ease-out;
+    pieceIn .14s ease-out;
 }
 
-@keyframes pieceAppear{
+@keyframes pieceIn{
   from{
     transform:scale(.5);
     opacity:0;
@@ -667,15 +604,15 @@ PIECES
     radial-gradient(
       circle at 32% 27%,
       #fff 0 7%,
-      #79c6ff 10% 20%,
+      #7ac6ff 10% 20%,
       var(--blue) 47%,
-      var(--blue2) 100%
+      var(--blueDark)
     );
 
   box-shadow:
     0 0 12px var(--blue),
-    0 0 28px #55adff50,
-    inset 2px 2px 5px #fff9;
+    0 0 27px #55adff50,
+    inset 2px 2px 5px #fff8;
 }
 
 .piece.red{
@@ -683,35 +620,28 @@ PIECES
     radial-gradient(
       circle at 32% 27%,
       #fff 0 7%,
-      #ff9aaa 10% 20%,
+      #ff99aa 10% 20%,
       var(--red) 47%,
-      var(--red2) 100%
+      var(--redDark)
     );
 
   box-shadow:
     0 0 12px var(--red),
-    0 0 28px #ff607950,
-    inset 2px 2px 5px #fff9;
+    0 0 27px #ff607950,
+    inset 2px 2px 5px #fff8;
 }
 
 .piece.selectedPiece{
   animation:
-    piecePulse 1s infinite;
+    selectedPulse 1s infinite;
 }
 
-@keyframes piecePulse{
-  0%,100%{
-    transform:scale(1);
-  }
-
-  50%{
-    transform:scale(1.08);
-  }
+@keyframes selectedPulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.08)}
 }
 
-/* =========================================================
-SIDEBAR
-========================================================= */
+/* SIDEBAR */
 
 .sidebar{
   display:flex;
@@ -727,7 +657,6 @@ SIDEBAR
   display:flex;
   justify-content:space-between;
   align-items:center;
-
   margin-bottom:10px;
 }
 
@@ -735,14 +664,12 @@ SIDEBAR
   display:flex;
   align-items:center;
   gap:8px;
-
   font-weight:950;
 }
 
 .mini{
   width:10px;
   height:10px;
-
   border-radius:50%;
 }
 
@@ -770,26 +697,22 @@ SIDEBAR
 
   border-radius:50%;
 
-  border:1px solid #ffffff20;
+  border:1px solid #ffffff22;
 
-  color:#748197;
+  color:#718097;
 
   font-size:10px;
 }
 
 .destroyed span.dead{
   color:var(--red);
-
   background:#ff607918;
-
   border-color:#ff607855;
 }
 
 .role{
   display:inline-flex;
-
   align-items:center;
-
   gap:7px;
 
   padding:6px 9px;
@@ -815,42 +738,29 @@ SIDEBAR
 
 #turnNumber{
   margin-top:3px;
-
   color:var(--muted);
-
   font-size:12px;
 }
 
 #message{
   min-height:20px;
-
-  color:var(--gold);
-
   margin-top:8px;
-
+  color:var(--gold);
   font-size:13px;
 }
 
 #selectedText{
-  text-align:center;
-
   color:var(--muted);
-
+  text-align:center;
   font-size:12px;
-
-  margin-top:8px;
+  margin-top:7px;
 }
 
 .directionGrid{
   width:205px;
-
   margin:14px auto;
-
   display:grid;
-
-  grid-template-columns:
-    repeat(3,1fr);
-
+  grid-template-columns:repeat(3,1fr);
   gap:7px;
 }
 
@@ -859,12 +769,12 @@ SIDEBAR
 
   border-radius:11px;
 
-  border:1px solid #34455f;
+  border:1px solid #34455e;
 
   background:
     linear-gradient(
       180deg,
-      #1d2c3e,
+      #1e2d3f,
       #152131
     );
 
@@ -876,35 +786,26 @@ SIDEBAR
 }
 
 .dir:hover{
-  background:#283a51;
+  background:#27394f;
 }
 
 .empty{
   visibility:hidden;
 }
 
-.slamReady{
-  box-shadow:
-    0 0 25px #ffd75a17;
-}
-
-.settingsGrid{
+.settingsButtons{
   display:grid;
-
-  grid-template-columns:
-    repeat(3,1fr);
-
+  grid-template-columns:repeat(3,1fr);
   gap:6px;
-
   margin-top:10px;
 }
 
 .themeButton{
-  height:34px;
+  height:35px;
 
   border-radius:8px;
 
-  border:1px solid #34455d;
+  border:1px solid #34455e;
 
   background:#172333;
 
@@ -917,29 +818,20 @@ SIDEBAR
 
 .themeButton.active{
   border-color:var(--gold);
-
-  box-shadow:
-    0 0 0 1px #ffd75a22;
 }
-
-/* =========================================================
-RESULT
-========================================================= */
 
 .overlay{
   position:fixed;
-
   inset:0;
 
   display:none;
 
   align-items:center;
-
   justify-content:center;
 
   padding:20px;
 
-  background:#02040ccc;
+  background:#02040ccd;
 
   backdrop-filter:blur(10px);
 
@@ -959,28 +851,20 @@ RESULT
 }
 
 .resultIcon{
+  font-size:45px;
   color:var(--gold);
-
-  font-size:46px;
 }
 
 .result h2{
-  margin:7px 0;
-
   font-size:52px;
-
+  margin:8px 0;
   font-weight:1000;
 }
 
 .result p{
   color:var(--muted);
-
   line-height:1.6;
 }
-
-/* =========================================================
-TOAST
-========================================================= */
 
 #toast{
   position:fixed;
@@ -995,7 +879,7 @@ TOAST
 
   border-radius:12px;
 
-  background:#101923f5;
+  background:#111a25f5;
 
   border:1px solid #35465d;
 
@@ -1006,21 +890,13 @@ TOAST
   transition:.2s;
 
   z-index:300;
-
-  box-shadow:
-    0 15px 40px #0008;
 }
 
 #toast.show{
+  opacity:1;
   transform:
     translate(-50%,0);
-
-  opacity:1;
 }
-
-/* =========================================================
-RESPONSIVE
-========================================================= */
 
 @media(max-width:1050px){
 
@@ -1033,7 +909,7 @@ RESPONSIVE
   .boardFrame{
     width:
       min(
-        75vh,
+        76vh,
         calc(100vw - 325px)
       );
   }
@@ -1107,9 +983,7 @@ RESPONSIVE
   <div class="logo">
 
 
-<div class="logoIcon">
-  ◆
-</div>
+<div class="logoIcon">◆</div>
 
 PUSHLINE
 
@@ -1134,7 +1008,7 @@ PUSHLINE
 </header>
 
 <!-- =====================================================
-     HOME
+HOME
 ====================================================== -->
 
 <section
@@ -1159,6 +1033,9 @@ PUSHLINE
   Destroy three enemy pieces.
 
   <br>
+
+  <b>Simple rules. Brutal strategy.</b>
+
 </p>
 
 
@@ -1209,7 +1086,8 @@ PUSHLINE
 
 <div class="small">
 
-  2 players · P2P WebRTC · 6-character rooms
+  Same HTML file for both players ·
+  WebRTC P2P · 6-character room codes
 
 </div>
 
@@ -1219,7 +1097,7 @@ PUSHLINE
 </section>
 
 <!-- =====================================================
-     WAITING
+WAITING
 ====================================================== -->
 
 <section
@@ -1231,7 +1109,7 @@ PUSHLINE
 
 
 <div class="small">
-  GIVE THIS CODE TO YOUR FRIEND
+  ROOM CODE
 </div>
 
 
@@ -1260,7 +1138,7 @@ PUSHLINE
 
 <div
   id="waitingText"
-  class="waitingStatus"
+  class="waitingText"
 >
   Waiting for player 2...
 </div>
@@ -1279,7 +1157,7 @@ PUSHLINE
 </section>
 
 <!-- =====================================================
-     GAME
+GAME
 ====================================================== -->
 
 <section
@@ -1289,8 +1167,6 @@ PUSHLINE
 
   <div id="game">
 
-
-<!-- BOARD -->
 
 <div class="boardArea">
 
@@ -1306,8 +1182,6 @@ PUSHLINE
 </div>
 
 
-<!-- SIDEBAR -->
-
 <aside class="sidebar">
 
 
@@ -1318,13 +1192,9 @@ PUSHLINE
     <div class="playerRow">
 
       <div class="playerName">
-
         <span class="mini blueDot"></span>
-
         BLUE
-
       </div>
-
 
       <div
         id="blueDestroyed"
@@ -1337,13 +1207,9 @@ PUSHLINE
     <div class="playerRow">
 
       <div class="playerName">
-
         <span class="mini redDot"></span>
-
         RED
-
       </div>
-
 
       <div
         id="redDestroyed"
@@ -1435,9 +1301,7 @@ PUSHLINE
 
 
       <button class="dir empty"></button>
-
       <button class="dir empty"></button>
-
       <button class="dir empty"></button>
 
     </div>
@@ -1456,8 +1320,8 @@ PUSHLINE
       class="small"
       style="margin-top:7px"
     >
-      Push the entire enemy chain
-      two squares. One use per game.
+      Push the enemy chain two squares.
+      One use per game.
     </div>
 
   </div>
@@ -1470,7 +1334,7 @@ PUSHLINE
     <b>THEME</b>
 
 
-    <div class="settingsGrid">
+    <div class="settingsButtons">
 
       <button
         class="themeButton active"
@@ -1529,16 +1393,16 @@ PUSHLINE
 
       <br><br>
 
-      Empty square → move there.
+      Empty square → move.
 
       <br><br>
 
-      Enemy → push the entire connected
+      Enemy piece → push the connected
       enemy chain.
 
       <br><br>
 
-      Push a piece into a black hole →
+      Push a piece into a hole →
       it is destroyed.
 
       <br><br>
@@ -1559,7 +1423,7 @@ PUSHLINE
 </div>
 
 <!-- =====================================================
-     RESULT
+RESULT
 ====================================================== -->
 
 <div
@@ -1613,26 +1477,32 @@ PUSHLINE
 <div id="toast"></div>
 
 <script>
+"use strict";
+
 
 /* =========================================================
-   PUSHLINE
+   PUSHLINE NETWORK
 
-   VERY SIMPLE NETWORK MODEL
+   HOST ID = displayed 6-character room code.
 
-   HOST:
-      creates a 6-character PeerJS ID
+   Example:
 
-   GUEST:
-      connects directly to that 6-character PeerJS ID
+       Host Peer ID:
+           A7K3XM
 
-   Once DataConnection.open fires on either side,
-   the connection is ready for send/data.
+       Displayed code:
+           A7K3XM
 
-   Host is authoritative.
+       Guest enters:
+           A7K3XM
 
+       Guest connects:
+           peer.connect("A7K3XM")
+
+   NO PREFIX.
+   NO SECOND ROOM ID.
+   NO HANDSHAKE.
 ========================================================= */
-
-"use strict";
 
 
 /* =========================================================
@@ -1643,11 +1513,11 @@ const SIZE=7;
 
 const ROOM_LENGTH=6;
 
-const WIN=3;
+const WIN_DESTROYED=3;
 
 
 /* =========================================================
-   GLOBALS
+   NETWORK STATE
 ========================================================= */
 
 let peer=null;
@@ -1660,11 +1530,16 @@ let myColor=null;
 
 let roomCode="";
 
+let connectionOpen=false;
+
+
+/* =========================================================
+   GAME STATE
+========================================================= */
+
 let game=null;
 
-let selectedId=null;
-
-let soundEnabled=true;
+let selectedPieceId=null;
 
 
 /* =========================================================
@@ -1676,26 +1551,8 @@ const $=
 
 
 /* =========================================================
-   UI
+   STATUS
 ========================================================= */
-
-function showScreen(id){
-
-  document
-    .querySelectorAll(".screen")
-    .forEach(
-      x=>x.classList.remove(
-        "active"
-      )
-    );
-
-
-  $(id).classList.add(
-    "active"
-  );
-
-}
-
 
 function setStatus(
   text,
@@ -1720,7 +1577,9 @@ function setStatus(
 }
 
 
-function say(text){
+function setMessage(
+  text
+){
 
   $("message").textContent=
     text||"";
@@ -1731,17 +1590,19 @@ function say(text){
 let toastTimer=null;
 
 
-function toast(text){
+function toast(
+  text
+){
 
-  const box=
+  const element=
     $("toast");
 
 
-  box.textContent=
+  element.textContent=
     text;
 
 
-  box.classList.add(
+  element.classList.add(
     "show"
   );
 
@@ -1754,11 +1615,11 @@ function toast(text){
   toastTimer=
     setTimeout(
       ()=>{
-        box.classList.remove(
+        element.classList.remove(
           "show"
         );
       },
-      1300
+      1400
     );
 
 }
@@ -1768,9 +1629,9 @@ function toast(text){
    ROOM CODE
 ========================================================= */
 
-function makeRoomCode(){
+function randomCode(){
 
-  const chars=
+  const characters=
     "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
 
@@ -1784,9 +1645,10 @@ function makeRoomCode(){
   ){
 
     code +=
-      chars[
+      characters[
         Math.floor(
-          Math.random()*chars.length
+          Math.random()*
+          characters.length
         )
       ];
 
@@ -1798,7 +1660,9 @@ function makeRoomCode(){
 }
 
 
-function cleanCode(value){
+function cleanCode(
+  value
+){
 
   return value
     .toUpperCase()
@@ -1815,110 +1679,54 @@ function cleanCode(value){
 
 
 /* =========================================================
-   CLONE
+   PEER CREATION
 ========================================================= */
 
-function copyState(value){
-
-  if(
-    typeof structuredClone===
-    "function"
-  ){
-
-    return structuredClone(
-      value
-    );
-
-  }
-
-
-  return JSON.parse(
-    JSON.stringify(value)
-  );
-
-}
-
-
-/* =========================================================
-   PEER CLEANUP
-========================================================= */
-
-function cleanup(){
-
-  try{
-
-    if(conn)
-      conn.close();
-
-  }catch(e){}
-
-
-  try{
-
-    if(peer)
-      peer.destroy();
-
-  }catch(e){}
-
-
-  conn=null;
-
-  peer=null;
-
-}
-
-
-/* =========================================================
-   OPEN PEER
-========================================================= */
-
-function openPeer(
-  requestedId
+function createPeer(
+  id
 ){
 
   return new Promise(
     (resolve,reject)=>{
 
       /*
-        requestedId is optional.
+        IMPORTANT:
 
-        HOST supplies 6-character code.
-
-        GUEST gets a random PeerJS ID.
+        Attach listeners immediately.
       */
 
       const p=
-        requestedId
-          ?new Peer(
-            requestedId
-          )
+        id
+          ?new Peer(id)
           :new Peer();
 
 
-      let finished=false;
+      let resolved=false;
 
 
       p.on(
         "open",
-        id=>{
+        openedId=>{
 
-          if(finished)
+          if(resolved)
             return;
 
 
-          finished=true;
+          resolved=true;
 
 
           peer=p;
 
 
           console.log(
-            "[PUSHLINE] Peer OPEN:",
-            id
+            "[PUSHLINE] Peer ready:",
+            openedId
           );
 
 
-          resolve(id);
+          resolve(
+            openedId
+          );
 
         }
       );
@@ -1929,14 +1737,14 @@ function openPeer(
         error=>{
 
           console.error(
-            "[PUSHLINE] PEER ERROR:",
+            "[PUSHLINE] Peer error:",
             error
           );
 
 
-          if(!finished){
+          if(!resolved){
 
-            finished=true;
+            resolved=true;
 
 
             try{
@@ -1959,8 +1767,14 @@ function openPeer(
         ()=>{
 
           console.warn(
-            "[PUSHLINE] Signaling disconnected"
+            "[PUSHLINE] PeerServer disconnected"
           );
+
+
+          /*
+            Existing WebRTC connections can remain
+            alive after signaling disconnect.
+          */
 
         }
       );
@@ -1977,6 +1791,10 @@ function openPeer(
 
 async function createRoom(){
 
+  if(peer)
+    return;
+
+
   $("createButton").disabled=
     true;
 
@@ -1986,38 +1804,49 @@ async function createRoom(){
   );
 
 
-  /*
-    Try several room IDs in case one is already occupied.
-  */
-
   let code=null;
 
 
   for(
     let attempt=0;
-    attempt<8;
+    attempt<12;
     attempt++
   ){
 
     const candidate=
-      makeRoomCode();
+      randomCode();
 
 
     try{
 
-      await openPeer(
+      await createPeer(
         candidate
       );
 
 
-      code=candidate;
+      code=
+        candidate;
 
 
       break;
 
     }catch(error){
 
-      cleanup();
+      console.warn(
+        "[PUSHLINE] Room ID unavailable:",
+        candidate
+      );
+
+
+      try{
+
+        if(peer)
+          peer.destroy();
+
+      }catch(e){}
+
+
+      peer=null;
 
     }
 
@@ -2037,7 +1866,8 @@ async function createRoom(){
 
 
     alert(
-      "Could not create a room. Refresh and try again."
+      "Could not create a room.\n\n" +
+      "Refresh the page and try again."
     );
 
 
@@ -2072,9 +1902,16 @@ async function createRoom(){
   );
 
 
+  console.log(
+    "[PUSHLINE] HOST ID:",
+    peer.id
+  );
+
+
   /*
-    THIS listener is registered immediately after
-    the host Peer opens.
+    THIS is the host's connection listener.
+
+    It is attached immediately after the Peer exists.
   */
 
   peer.on(
@@ -2082,12 +1919,13 @@ async function createRoom(){
     incoming=>{
 
       console.log(
-        "[PUSHLINE] Guest connection received."
+        "[PUSHLINE] Incoming connection from:",
+        incoming.peer
       );
 
 
       /*
-        Ignore extra players.
+        Only accept one player.
       */
 
       if(conn){
@@ -2101,11 +1939,12 @@ async function createRoom(){
       }
 
 
-      conn=
-        incoming;
+      conn=incoming;
 
 
-      setupConnection();
+      setupConnection(
+        true
+      );
 
     }
   );
@@ -2129,12 +1968,10 @@ async function joinRoom(){
     code;
 
 
-  if(
-    code.length!==ROOM_LENGTH
-  ){
+  if(code.length!==ROOM_LENGTH){
 
     alert(
-      "The room code must be exactly 6 characters."
+      "Enter exactly 6 characters."
     );
 
 
@@ -2155,27 +1992,29 @@ async function joinRoom(){
   try{
 
     /*
-      IMPORTANT:
-
-      Guest gets a server-generated random ID.
-
-      They connect DIRECTLY to the 6-character
-      host room ID.
+      Guest gets a completely random PeerJS ID.
     */
 
-    await openPeer();
+    const guestId=
+      await createPeer();
+
+
+    console.log(
+      "[PUSHLINE] Guest ID:",
+      guestId
+    );
 
 
     isHost=false;
 
     myColor="red";
 
+    roomCode=code;
 
-    console.log(
-      "[PUSHLINE] Connecting to:",
-      code
-    );
 
+    /*
+      DIRECT connection to the exact code.
+    */
 
     conn=
       peer.connect(
@@ -2187,17 +2026,43 @@ async function joinRoom(){
       );
 
 
+    setupConnection(
+      false
+    );
+
+
     /*
-      Add listeners immediately.
+      Give the connection time to establish.
+
+      PeerJS documents peer-unavailable when the target
+      doesn't exist.
     */
 
-    setupConnection();
+    setTimeout(
+      ()=>{
+
+        if(
+          !connectionOpen &&
+          conn &&
+          !conn.open
+        ){
+
+          console.warn(
+            "[PUSHLINE] Connection timeout"
+          );
+
+
+        }
+
+      },
+      12000
+    );
 
 
   }catch(error){
 
     console.error(
-      "[PUSHLINE] JOIN ERROR:",
+      "[PUSHLINE] JOIN FAILED:",
       error
     );
 
@@ -2212,28 +2077,23 @@ async function joinRoom(){
     );
 
 
-    let detail=
-      "Could not connect to room.";
-
-
     if(
       error &&
-      error.type===
-      "peer-unavailable"
+      error.type==="peer-unavailable"
     ){
 
-      detail=
-        "That room does not currently exist.";
+      alert(
+        "That room does not exist anymore."
+      );
+
+    }else{
+
+      alert(
+        "Could not connect to the room.\n\n" +
+        "Make sure the host is still on the room screen."
+      );
 
     }
-
-
-    alert(
-      detail+
-      "\n\n" +
-      "Check that the host still has the room open " +
-      "and that the code is correct."
-    );
 
   }
 
@@ -2241,23 +2101,26 @@ async function joinRoom(){
 
 
 /* =========================================================
-   CONNECTION SETUP
+   DATA CONNECTION
 ========================================================= */
 
-function setupConnection(){
+function setupConnection(
+  hostSide
+){
 
   if(!conn)
     return;
 
 
-  let announced=false;
+  console.log(
+    "[PUSHLINE] Setting up DataConnection"
+  );
 
 
   /*
-    DATA CONNECTION OPEN
+    OPEN
 
-    This is the ONLY connection synchronization
-    event required.
+    This is the actual WebRTC data connection.
   */
 
   conn.on(
@@ -2265,12 +2128,11 @@ function setupConnection(){
     ()=>{
 
       console.log(
-        "[PUSHLINE] DATA CONNECTION OPEN",
-        conn.peer
+        "[PUSHLINE] DATA CONNECTION OPEN"
       );
 
 
-      announced=true;
+      connectionOpen=true;
 
 
       setStatus(
@@ -2279,12 +2141,14 @@ function setupConnection(){
       );
 
 
-      /*
-        HOST:
-        Start immediately when connection is ready.
-      */
+      if(hostSide){
 
-      if(isHost){
+        /*
+          THIS is the only place where the host
+          starts the game.
+
+          The board is created locally FIRST.
+        */
 
         startHostGame();
 
@@ -2295,7 +2159,7 @@ function setupConnection(){
 
 
   /*
-    RECEIVE DATA
+    DATA
   */
 
   conn.on(
@@ -2303,7 +2167,7 @@ function setupConnection(){
     data=>{
 
       console.log(
-        "[PUSHLINE] DATA",
+        "[PUSHLINE] DATA RECEIVED:",
         data
       );
 
@@ -2325,7 +2189,7 @@ function setupConnection(){
     error=>{
 
       console.error(
-        "[PUSHLINE] DATA ERROR",
+        "[PUSHLINE] DATA CONNECTION ERROR:",
         error
       );
 
@@ -2348,8 +2212,11 @@ function setupConnection(){
     ()=>{
 
       console.warn(
-        "[PUSHLINE] DATA CLOSED"
+        "[PUSHLINE] DATA CONNECTION CLOSED"
       );
+
+
+      connectionOpen=false;
 
 
       setStatus(
@@ -2370,14 +2237,13 @@ function setupConnection(){
         disableControls();
 
 
-        say(
+        setMessage(
           "Your opponent disconnected."
         );
 
       }
 
-    }
-  );
+    });
 
 }
 
@@ -2386,7 +2252,9 @@ function setupConnection(){
    SEND
 ========================================================= */
 
-function send(data){
+function send(
+  data
+){
 
   if(
     !conn ||
@@ -2394,8 +2262,7 @@ function send(data){
   ){
 
     console.warn(
-      "[PUSHLINE] send() before connection open",
-      data
+      "[PUSHLINE] Cannot send; connection isn't open."
     );
 
 
@@ -2416,6 +2283,7 @@ function send(data){
   }catch(error){
 
     console.error(
+      "[PUSHLINE] Send error:",
       error
     );
 
@@ -2433,9 +2301,12 @@ function send(data){
 
 function startHostGame(){
 
+  if(!isHost)
+    return;
+
+
   /*
-    Prevent accidentally creating two games if
-    the open event somehow fires more than once.
+    Prevent duplicate start.
   */
 
   if(
@@ -2449,8 +2320,12 @@ function startHostGame(){
     createGame();
 
 
-  selectedId=null;
+  selectedPieceId=null;
 
+
+  /*
+    HOST immediately changes to game screen.
+  */
 
   showScreen(
     "gameScreen"
@@ -2461,30 +2336,116 @@ function startHostGame(){
     '<span class="mini blueDot"></span> YOU ARE BLUE';
 
 
-  $("waitingText").textContent=
-    "Game started!";
-
-
   $("turnStatus").textContent=
     "YOUR TURN";
 
 
-  say(
+  $("turnNumber").textContent=
+    "Turn 1";
+
+
+  setMessage(
     "Select one of your pieces."
   );
 
 
   /*
-    Send authoritative state.
+    RENDER FIRST.
 
-    Guest receives this and switches to
-    game screen.
+    Therefore the host cannot have a blank map
+    even if networking has a problem.
   */
 
-  sendState();
+  render();
+
+
+  updateControls();
+
+
+  /*
+    Then send the exact same authoritative state
+    to the guest.
+  */
+
+  if(
+    connectionOpen
+  ){
+
+    send({
+      type:"GAME",
+      state:copy(game)
+    });
+
+  }
+
+
+  soundStart();
+
+}
+
+
+/* =========================================================
+   RECEIVE GAME
+========================================================= */
+
+function receiveGame(
+  data
+){
+
+  if(isHost)
+    return;
+
+
+  if(
+    !data.state
+  )
+    return;
+
+
+  /*
+    Copy host's authoritative game state.
+  */
+
+  game=
+    copy(
+      data.state
+    );
+
+
+  selectedPieceId=null;
+
+
+  /*
+    THIS is the first moment the guest leaves
+    the join screen.
+  */
+
+  showScreen(
+    "gameScreen"
+  );
+
+
+  $("role").innerHTML=
+    '<span class="mini redDot"></span> YOU ARE RED';
+
+
+  $("turnStatus").textContent=
+    game.current==="red"
+      ?"YOUR TURN"
+      :"OPPONENT'S TURN";
+
+
+  $("turnNumber").textContent=
+    "Turn "+game.turn;
+
+
+  setMessage(
+    "Select one of your pieces."
+  );
 
 
   render();
+
 
   updateControls();
 
@@ -2495,14 +2456,125 @@ function startHostGame(){
 
 
 /* =========================================================
-   CREATE GAME
+   SEND/RECEIVE STATE
+========================================================= */
+
+function receiveState(
+  data
+){
+
+  if(isHost)
+    return;
+
+
+  if(!data.state)
+    return;
+
+
+  game=
+    copy(
+      data.state
+    );
+
+
+  selectedPieceId=null;
+
+
+  render();
+
+
+  updateControls();
+
+
+  if(
+    game.phase==="finished"
+  ){
+
+    showResult(
+      game.winner
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   NETWORK DATA
+========================================================= */
+
+function receiveData(
+  data
+){
+
+  if(
+    !data ||
+    !data.type
+  )
+    return;
+
+
+  switch(
+    data.type
+  ){
+
+    case "GAME":
+
+      receiveGame(
+        data
+      );
+
+      break;
+
+
+    case "STATE":
+
+      receiveState(
+        data
+      );
+
+      break;
+
+
+    case "MOVE":
+
+      if(isHost){
+
+        receiveGuestMove(
+          data
+        );
+
+      }
+
+      break;
+
+
+    case "REMATCH":
+
+      if(isHost){
+
+        startHostGame();
+
+      }
+
+      break;
+
+  }
+
+}
+
+
+/* =========================================================
+   GAME CREATION
 ========================================================= */
 
 function createGame(){
 
   const board=
     Array.from(
-      {length:SIZE},
+      {
+        length:SIZE
+      },
       ()=>Array(
         SIZE
       ).fill(null)
@@ -2510,10 +2582,10 @@ function createGame(){
 
 
   /*
-    BLUE TOP
+    BLUE formation.
   */
 
-  const blueSpawn=[
+  const blue=[
     [0,1],
     [0,2],
     [0,3],
@@ -2523,10 +2595,10 @@ function createGame(){
 
 
   /*
-    RED BOTTOM
+    RED formation.
   */
 
-  const redSpawn=[
+  const red=[
     [6,1],
     [6,2],
     [6,3],
@@ -2537,7 +2609,7 @@ function createGame(){
 
   for(
     const [r,c]
-    of blueSpawn
+    of blue
   ){
 
     board[r][c]={
@@ -2550,7 +2622,7 @@ function createGame(){
 
   for(
     const [r,c]
-    of redSpawn
+    of red
   ){
 
     board[r][c]={
@@ -2591,12 +2663,12 @@ function createGame(){
 
 
 /* =========================================================
-   HOLE PATTERNS
+   HOLES
 ========================================================= */
 
 function createHoles(){
 
-  const patterns=[
+  const layouts=[
 
     [
       {r:2,c:1},
@@ -2627,11 +2699,11 @@ function createHoles(){
   ];
 
 
-  return copyState(
-    patterns[
+  return copy(
+    layouts[
       Math.floor(
         Math.random()*
-        patterns.length
+        layouts.length
       )
     ]
   );
@@ -2640,7 +2712,7 @@ function createHoles(){
 
 
 /* =========================================================
-   BASICS
+   BASIC BOARD
 ========================================================= */
 
 function inside(r,c){
@@ -2655,38 +2727,43 @@ function inside(r,c){
 }
 
 
-function hole(
+function isHole(
   state,
   r,
   c
 ){
 
   return state.holes.some(
-    h=>
-      h.r===r &&
-      h.c===c
+    hole=>
+      hole.r===r &&
+      hole.c===c
   );
 
 }
 
 
-function directionDelta(
+function getDelta(
   dir
 ){
 
-  if(dir==="up")
-    return[-1,0];
+  switch(dir){
 
-  if(dir==="down")
-    return[1,0];
+    case "up":
+      return[-1,0];
 
-  if(dir==="left")
-    return[0,-1];
+    case "down":
+      return[1,0];
 
-  if(dir==="right")
-    return[0,1];
+    case "left":
+      return[0,-1];
 
-  return[0,0];
+    case "right":
+      return[0,1];
+
+    default:
+      return[0,0];
+
+  }
 
 }
 
@@ -2708,19 +2785,19 @@ function findPiece(
       c++
     ){
 
-      const piece=
+      const p=
         state.board[r][c];
 
 
       if(
-        piece &&
-        piece.id===id
+        p &&
+        p.id===id
       ){
 
         return{
           r,
           c,
-          piece
+          piece:p
         };
 
       }
@@ -2741,9 +2818,9 @@ function findPiece(
 
 function executeMove(
   state,
-  player,
+  color,
   pieceId,
-  dir,
+  direction,
   slam
 ){
 
@@ -2753,19 +2830,36 @@ function executeMove(
 
     return{
       ok:false,
-      reason:"Game over."
+      reason:"Game is over."
     };
 
   }
 
 
   if(
-    state.current!==player
+    state.current!==color
   ){
 
     return{
       ok:false,
       reason:"Not your turn."
+    };
+
+  }
+
+
+  if(
+    ![
+      "up",
+      "down",
+      "left",
+      "right"
+    ].includes(direction)
+  ){
+
+    return{
+      ok:false,
+      reason:"Invalid direction."
     };
 
   }
@@ -2782,26 +2876,41 @@ function executeMove(
 
     return{
       ok:false,
-      reason:"That piece no longer exists."
+      reason:"That piece doesn't exist."
     };
 
   }
 
 
   if(
-    source.piece.color!==player
+    source.piece.color!==color
   ){
 
     return{
       ok:false,
-      reason:"That is not your piece."
+      reason:"That isn't your piece."
+    };
+
+  }
+
+
+  if(
+    slam &&
+    state.slamUsed[color]
+  ){
+
+    return{
+      ok:false,
+      reason:"SLAM already used."
     };
 
   }
 
 
   const d=
-    directionDelta(dir);
+    getDelta(
+      direction
+    );
 
 
   const targetR=
@@ -2821,18 +2930,18 @@ function executeMove(
 
     return{
       ok:false,
-      reason:"You cannot move outside the board."
+      reason:"The board edge is there."
     };
 
   }
 
 
   /*
-    You cannot intentionally step into a hole.
+    You cannot simply walk into a hole.
   */
 
   if(
-    hole(
+    isHole(
       state,
       targetR,
       targetC
@@ -2841,22 +2950,18 @@ function executeMove(
 
     return{
       ok:false,
-      reason:"You cannot move directly into a hole."
+      reason:"You cannot directly enter a hole."
     };
 
   }
 
 
   const target=
-    state.board[
-      targetR
-    ][
-      targetC
-    ];
+    state.board[targetR][targetC];
 
 
   /*
-    Empty square.
+    Empty = normal movement.
   */
 
   if(!target){
@@ -2891,11 +2996,11 @@ function executeMove(
 
 
   /*
-    Friendly blocker.
+    Friendly = blocked.
   */
 
   if(
-    target.color===player
+    target.color===color
   ){
 
     return{
@@ -2907,13 +3012,13 @@ function executeMove(
 
 
   /*
-    Enemy: push.
+    Enemy = push.
   */
 
-  return push(
+  return pushChain(
     state,
     source,
-    dir,
+    direction,
     slam
   );
 
@@ -2921,33 +3026,20 @@ function executeMove(
 
 
 /* =========================================================
-   PUSH
+   PUSH CHAIN
 ========================================================= */
 
-function push(
+function pushChain(
   state,
   source,
-  dir,
+  direction,
   slam
 ){
 
-  if(
-    slam &&
-    state.slamUsed[
-      source.piece.color
-    ]
-  ){
-
-    return{
-      ok:false,
-      reason:"You already used SLAM."
-    };
-
-  }
-
-
   const d=
-    directionDelta(dir);
+    getDelta(
+      direction
+    );
 
 
   const chain=[];
@@ -2961,21 +3053,20 @@ function push(
 
 
   /*
-    Find the complete enemy chain.
+    Collect contiguous enemies.
   */
 
   while(
     inside(r,c)
   ){
 
-    const p=
+    const piece=
       state.board[r][c];
 
 
     if(
-      !p ||
-      p.color===
-      source.piece.color
+      !piece ||
+      piece.color===source.piece.color
     )
       break;
 
@@ -2983,18 +3074,19 @@ function push(
     chain.push({
       r,
       c,
-      piece:p
+      piece
     });
 
 
     r+=d[0];
-
     c+=d[1];
 
   }
 
 
-  if(!chain.length){
+  if(
+    chain.length===0
+  ){
 
     return{
       ok:false,
@@ -3005,12 +3097,13 @@ function push(
 
 
   const amount=
-    slam?2:1;
+    slam
+      ?2
+      :1;
 
 
   /*
-    Validate the front destination
-    for each step.
+    Validate the front.
   */
 
   for(
@@ -3026,13 +3119,11 @@ function push(
 
 
     const nr=
-      front.r+
-      d[0]*step;
+      front.r+d[0]*step;
 
 
     const nc=
-      front.c+
-      d[1]*step;
+      front.c+d[1]*step;
 
 
     if(
@@ -3041,19 +3132,15 @@ function push(
 
       return{
         ok:false,
-        reason:"The chain hits the edge."
+        reason:"Not enough room to push."
       };
 
     }
 
 
-    /*
-      Hole is allowed at the final location.
-    */
-
     if(
       step<amount &&
-      hole(
+      isHole(
         state,
         nr,
         nc
@@ -3072,7 +3159,7 @@ function push(
       state.board[nr][nc];
 
 
-    const partOfChain=
+    const belongsToChain=
       chain.some(
         item=>
           item.r===nr &&
@@ -3082,8 +3169,8 @@ function push(
 
     if(
       occupant &&
-      !partOfChain &&
-      !hole(
+      !belongsToChain &&
+      !isHole(
         state,
         nr,
         nc
@@ -3101,7 +3188,7 @@ function push(
 
 
   /*
-    Remove chain.
+    Clear chain first.
   */
 
   for(
@@ -3129,17 +3216,15 @@ function push(
   ){
 
     const nr=
-      item.r+
-      d[0]*amount;
+      item.r+d[0]*amount;
 
 
     const nc=
-      item.c+
-      d[1]*amount;
+      item.c+d[1]*amount;
 
 
     if(
-      hole(
+      isHole(
         state,
         nr,
         nc
@@ -3155,11 +3240,7 @@ function push(
 
     }else{
 
-      state.board[
-        nr
-      ][
-        nc
-      ]=
+      state.board[nr][nc]=
         item.piece;
 
     }
@@ -3168,7 +3249,7 @@ function push(
 
 
   /*
-    Pusher takes the first enemy square.
+    Pushing piece enters the first enemy square.
   */
 
   state.board[
@@ -3202,10 +3283,7 @@ function push(
 
   return{
     ok:true,
-    type:
-      slam
-        ?"slam"
-        :"push",
+    type:slam?"slam":"push",
     destroyed
   };
 
@@ -3216,14 +3294,13 @@ function push(
    NEXT TURN
 ========================================================= */
 
-function nextTurn(state){
-
-  /*
-    If RED lost 3, BLUE wins.
-  */
+function nextTurn(
+  state
+){
 
   if(
-    state.destroyed.red>=WIN
+    state.destroyed.red>=
+    WIN_DESTROYED
   ){
 
     state.phase="finished";
@@ -3235,12 +3312,9 @@ function nextTurn(state){
   }
 
 
-  /*
-    If BLUE lost 3, RED wins.
-  */
-
   if(
-    state.destroyed.blue>=WIN
+    state.destroyed.blue>=
+    WIN_DESTROYED
   ){
 
     state.phase="finished";
@@ -3267,16 +3341,14 @@ function nextTurn(state){
    HOST MOVE
 ========================================================= */
 
-function hostMove(
+function hostOwnMove(
   pieceId,
-  dir,
+  direction,
   slam
 ){
 
   const before=
-    copyState(
-      game
-    );
+    copy(game);
 
 
   const result=
@@ -3284,7 +3356,7 @@ function hostMove(
       game,
       "blue",
       pieceId,
-      dir,
+      direction,
       slam
     );
 
@@ -3299,17 +3371,12 @@ function hostMove(
     );
 
 
-    say(
-      result.reason
-    );
-
-
     return;
 
   }
 
 
-  selectedId=null;
+  selectedPieceId=null;
 
 
   sendState();
@@ -3323,7 +3390,8 @@ function hostMove(
     result.type==="slam"
   ){
 
-    shake();
+    shakeBoard();
+
 
     soundPush(
       result.destroyed
@@ -3347,6 +3415,14 @@ function hostMove(
       game.winner
     );
 
+  }else{
+
+    setMessage(
+      game.current==="blue"
+        ?"Your turn."
+        :"Opponent's turn."
+    );
+
   }
 
 }
@@ -3358,7 +3434,7 @@ function hostMove(
 
 function guestMove(
   pieceId,
-  dir,
+  direction,
   slam
 ){
 
@@ -3368,7 +3444,7 @@ function guestMove(
   ){
 
     toast(
-      "Not connected."
+      "P2P connection is not open."
     );
 
 
@@ -3377,17 +3453,7 @@ function guestMove(
   }
 
 
-  /*
-    The guest does NOT alter the authoritative state.
-
-    It simply asks the host to make the move.
-  */
-
   disableControls();
-
-
-  $("turnStatus").textContent=
-    "WAITING FOR HOST...";
 
 
   send({
@@ -3396,137 +3462,22 @@ function guestMove(
 
     pieceId,
 
-    direction:dir,
+    direction,
 
     slam:Boolean(slam)
 
   });
 
-}
 
-
-/* =========================================================
-   RECEIVE STATE
-========================================================= */
-
-function receiveState(data){
-
-  if(isHost)
-    return;
-
-
-  if(!data.state)
-    return;
-
-
-  game=
-    copyState(
-      data.state
-    );
-
-
-  selectedId=null;
-
-
-  showScreen(
-    "gameScreen"
-  );
-
-
-  $("role").innerHTML=
-    '<span class="mini redDot"></span> YOU ARE RED';
-
-
-  render();
-
-
-  updateControls();
-
-
-  if(
-    game.phase==="finished"
-  ){
-
-    showResult(
-      game.winner
-    );
-
-  }
-
-
-  if(
-    game.current===
-    myColor
-  ){
-
-    say(
-      "Select one of your pieces."
-    );
-
-  }
+  $("turnStatus").textContent=
+    "WAITING FOR HOST...";
 
 }
 
 
-/* =========================================================
-   RECEIVE DATA
-========================================================= */
-
-function receiveData(data){
-
-  if(
-    !data ||
-    !data.type
-  )
-    return;
-
-
-  switch(
-    data.type
-  ){
-
-    case "STATE":
-
-      receiveState(
-        data
-      );
-
-      break;
-
-
-    case "MOVE":
-
-      if(isHost){
-
-        receiveGuestMove(
-          data
-        );
-
-      }
-
-      break;
-
-
-    case "REMATCH":
-
-      if(isHost){
-
-        startHostRematch();
-
-      }
-
-      break;
-
-  }
-
-}
-
-
-/* =========================================================
-   RECEIVE GUEST MOVE
-========================================================= */
-
-function receiveGuestMove(data){
+function receiveGuestMove(
+  data
+){
 
   if(
     !game ||
@@ -3541,6 +3492,10 @@ function receiveGuestMove(data){
     return;
 
 
+  const before=
+    copy(game);
+
+
   const result=
     executeMove(
       game,
@@ -3551,12 +3506,9 @@ function receiveGuestMove(data){
     );
 
 
-  /*
-    Bad request:
-    simply resend correct state.
-  */
-
   if(!result.ok){
+
+    game=before;
 
     sendState();
 
@@ -3568,10 +3520,15 @@ function receiveGuestMove(data){
   sendState();
 
 
+  render();
+
+
   if(
     result.type==="push" ||
     result.type==="slam"
   ){
+
+    shakeBoard();
 
     soundPush(
       result.destroyed
@@ -3582,9 +3539,6 @@ function receiveGuestMove(data){
     soundMove();
 
   }
-
-
-  render();
 
 
   if(
@@ -3601,7 +3555,394 @@ function receiveGuestMove(data){
 
 
 /* =========================================================
-   RENDER
+   SEND STATE
+========================================================= */
+
+function sendState(){
+
+  if(
+    conn &&
+    conn.open &&
+    game
+  ){
+
+    send({
+      type:"STATE",
+      state:copy(game)
+    });
+
+  }
+
+}
+
+
+/* =========================================================
+   SELECT PIECE
+========================================================= */
+
+function selectPiece(
+  r,
+  c
+){
+
+  if(
+    !game ||
+    game.phase!=="playing"
+  )
+    return;
+
+
+  if(
+    game.current!==myColor
+  ){
+
+    toast(
+      "Wait for your turn."
+    );
+
+
+    return;
+
+  }
+
+
+  const piece=
+    game.board[r][c];
+
+
+  if(
+    piece &&
+    piece.color===myColor
+  ){
+
+    selectedPieceId=
+      piece.id;
+
+
+    soundSelect();
+
+
+    setMessage(
+      "Choose a direction."
+    );
+
+
+    render();
+
+
+    updateControls();
+
+
+    return;
+
+  }
+
+
+  /*
+    Click adjacent empty square to move.
+  */
+
+  if(
+    selectedPieceId &&
+    !piece &&
+    !isHole(game,r,c)
+  ){
+
+    const selected=
+      findPiece(
+        game,
+        selectedPieceId
+      );
+
+
+    if(selected){
+
+      const dr=
+        r-selected.r;
+
+
+      const dc=
+        c-selected.c;
+
+
+      if(
+        Math.abs(dr)+
+        Math.abs(dc)===1
+      ){
+
+        let direction="";
+
+
+        if(dr===-1)
+          direction="up";
+
+        else if(dr===1)
+          direction="down";
+
+        else if(dc===-1)
+          direction="left";
+
+        else
+          direction="right";
+
+
+        attemptDirection(
+          direction
+        );
+
+
+        return;
+
+      }
+
+    }
+
+  }
+
+
+  selectedPieceId=null;
+
+
+  render();
+
+
+  updateControls();
+
+}
+
+
+/* =========================================================
+   ATTEMPT DIRECTION
+========================================================= */
+
+function attemptDirection(
+  direction
+){
+
+  if(
+    !selectedPieceId
+  ){
+
+    toast(
+      "Select a piece first."
+    );
+
+
+    return;
+
+  }
+
+
+  if(
+    !game ||
+    game.phase!=="playing"
+  )
+    return;
+
+
+  if(
+    game.current!==myColor
+  ){
+
+    toast(
+      "Wait for your turn."
+    );
+
+
+    return;
+
+  }
+
+
+  if(isHost){
+
+    hostOwnMove(
+      selectedPieceId,
+      direction,
+      false
+    );
+
+  }else{
+
+    guestMove(
+      selectedPieceId,
+      direction,
+      false
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   SLAM
+========================================================= */
+
+function useSlam(){
+
+  if(
+    !selectedPieceId
+  ){
+
+    toast(
+      "Select a piece first."
+    );
+
+
+    return;
+
+  }
+
+
+  if(
+    !game ||
+    game.current!==myColor
+  ){
+
+    toast(
+      "Wait for your turn."
+    );
+
+
+    return;
+
+  }
+
+
+  if(
+    game.slamUsed[myColor]
+  ){
+
+    toast(
+      "SLAM already used."
+    );
+
+
+    return;
+
+  }
+
+
+  const source=
+    findPiece(
+      game,
+      selectedPieceId
+    );
+
+
+  if(!source)
+    return;
+
+
+  const possible=[];
+
+
+  for(
+    const direction of [
+      "up",
+      "down",
+      "left",
+      "right"
+    ]
+  ){
+
+    const d=
+      getDelta(
+        direction
+      );
+
+
+    const r=
+      source.r+d[0];
+
+
+    const c=
+      source.c+d[1];
+
+
+    if(
+      inside(r,c) &&
+      game.board[r][c] &&
+      game.board[r][c].color!==myColor
+    ){
+
+      possible.push(
+        direction
+      );
+
+    }
+
+  }
+
+
+  let direction=
+    possible.length===1
+      ?possible[0]
+      :prompt(
+        "SLAM direction:\n\n" +
+        "up\n" +
+        "down\n" +
+        "left\n" +
+        "right"
+      );
+
+
+  if(!direction)
+    return;
+
+
+  direction=
+    direction
+      .trim()
+      .toLowerCase();
+
+
+  if(
+    ![
+      "up",
+      "down",
+      "left",
+      "right"
+    ].includes(direction)
+  ){
+
+    toast(
+      "Invalid direction."
+    );
+
+
+    return;
+
+  }
+
+
+  shakeBoard();
+
+
+  if(isHost){
+
+    hostOwnMove(
+      selectedPieceId,
+      direction,
+      true
+    );
+
+  }else{
+
+    guestMove(
+      selectedPieceId,
+      direction,
+      true
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   RENDER BOARD
 ========================================================= */
 
 function render(){
@@ -3635,12 +3976,11 @@ function render(){
         );
 
 
-      cell.className=
-        "cell";
+      cell.className="cell";
 
 
       if(
-        hole(
+        isHole(
           game,
           r,
           c
@@ -3687,7 +4027,7 @@ function render(){
       if(
         piece &&
         piece.id===
-        selectedId
+        selectedPieceId
       ){
 
         cell.classList.add(
@@ -3698,176 +4038,20 @@ function render(){
 
 
       /*
-        Click own piece.
-      */
-
-      cell.onclick=()=>{
-
-        if(
-          !game ||
-          game.phase!=="playing"
-        )
-          return;
-
-
-        if(
-          game.current!==myColor
-        ){
-
-          toast(
-            "Wait for your turn."
-          );
-
-
-          return;
-
-        }
-
-
-        if(
-          piece &&
-          piece.color===myColor
-        ){
-
-          selectedId=
-            piece.id;
-
-
-          soundSelect();
-
-
-          say(
-            "Choose a direction."
-          );
-
-
-          render();
-
-          updateControls();
-
-        }else{
-
-          /*
-            Click adjacent empty space to move.
-          */
-
-          if(
-            selectedId &&
-            !piece &&
-            !hole(game,r,c)
-          ){
-
-            const selected=
-              findPiece(
-                game,
-                selectedId
-              );
-
-
-            if(selected){
-
-              const dr=
-                r-selected.r;
-
-              const dc=
-                c-selected.c;
-
-
-              if(
-                Math.abs(dr)+
-                Math.abs(dc)===1
-              ){
-
-                let dir="";
-
-
-                if(dr===-1)
-                  dir="up";
-
-                else if(dr===1)
-                  dir="down";
-
-                else if(dc===-1)
-                  dir="left";
-
-                else
-                  dir="right";
-
-
-                attemptDirection(
-                  dir
-                );
-
-                return;
-
-              }
-
-            }
-
-          }
-
-
-          selectedId=null;
-
-
-          render();
-
-          updateControls();
-
-        }
-
-      };
-
-
-      /*
-        Piece.
-      */
-
-      if(piece){
-
-        const visual=
-          document.createElement(
-            "div"
-          );
-
-
-        visual.className=
-          "piece "+piece.color;
-
-
-        if(
-          piece.id===
-          selectedId
-        ){
-
-          visual.classList.add(
-            "selectedPiece"
-          );
-
-        }
-
-
-        cell.appendChild(
-          visual
-        );
-
-      }
-
-
-      /*
-        Reachable hint.
+        Make adjacent empty squares visibly
+        clickable when a piece is selected.
       */
 
       if(
-        selectedId &&
+        selectedPieceId &&
         !piece &&
-        !hole(game,r,c)
+        !isHole(game,r,c)
       ){
 
         const selected=
           findPiece(
             game,
-            selectedId
+            selectedPieceId
           );
 
 
@@ -3891,6 +4075,48 @@ function render(){
           }
 
         }
+
+      }
+
+
+      cell.onclick=()=>{
+
+        selectPiece(
+          r,
+          c
+        );
+
+      };
+
+
+      if(piece){
+
+        const visual=
+          document.createElement(
+            "div"
+          );
+
+
+        visual.className=
+          "piece "+
+          piece.color;
+
+
+        if(
+          piece.id===
+          selectedPieceId
+        ){
+
+          visual.classList.add(
+            "selectedPiece"
+          );
+
+        }
+
+
+        cell.appendChild(
+          visual
+        );
 
       }
 
@@ -3952,80 +4178,76 @@ function updateHUD(){
   }
 
 
-  $("turnStatus").classList.toggle(
-    "ready",
-    game.current===myColor
-  );
-
-
   $("slamButton").disabled=
     !(
       game.phase==="playing" &&
       game.current===myColor &&
-      selectedId &&
+      selectedPieceId &&
       !game.slamUsed[myColor]
     );
 
 
-  $("slamButton").classList.toggle(
-    "slamReady",
-    Boolean(
-      game.phase==="playing" &&
-      game.current===myColor &&
-      selectedId &&
-      !game.slamUsed[myColor]
-    )
-  );
+  if(
+    selectedPieceId
+  ){
 
+    $("selectedText").textContent=
+      "Piece selected • choose direction";
 
-  $("selectedText").textContent=
-    selectedId
-      ?"Piece selected • choose direction"
-      :"Select one of your pieces";
+  }else{
+
+    $("selectedText").textContent=
+      "Select one of your pieces";
+
+  }
 
 }
 
 
+/* =========================================================
+   DESTROYED UI
+========================================================= */
+
 function renderDestroyed(
-  container,
-  amount
+  element,
+  count
 ){
 
-  container.innerHTML="";
+  element.innerHTML="";
 
 
   for(
     let i=0;
-    i<WIN;
+    i<WIN_DESTROYED;
     i++
   ){
 
-    const x=
+    const circle=
       document.createElement(
         "span"
       );
 
 
     if(
-      i<amount
+      i<count
     ){
 
-      x.textContent=
+      circle.textContent=
         "✕";
 
-      x.className=
+      circle.className=
         "dead";
 
     }else{
 
-      x.textContent=
+      circle.textContent=
         "○";
 
     }
 
 
-    container.appendChild(
-      x
+    element.appendChild(
+      circle
     );
 
   }
@@ -4043,7 +4265,7 @@ function updateControls(){
     !game ||
     game.phase!=="playing" ||
     game.current!==myColor ||
-    !selectedId
+    !selectedPieceId
   ){
 
     disableControls();
@@ -4058,8 +4280,9 @@ function updateControls(){
       ".dir[data-direction]"
     )
     .forEach(
-      b=>
-        b.disabled=false
+      b=>{
+        b.disabled=false;
+      }
     );
 
 
@@ -4076,8 +4299,9 @@ function disableControls(){
       ".dir[data-direction]"
     )
     .forEach(
-      b=>
-        b.disabled=true
+      b=>{
+        b.disabled=true;
+      }
     );
 
 
@@ -4087,259 +4311,31 @@ function disableControls(){
 
 
 /* =========================================================
-   DIRECTION
-========================================================= */
-
-function attemptDirection(
-  dir
-){
-
-  if(
-    !selectedId
-  ){
-
-    toast(
-      "Select a piece first."
-    );
-
-
-    return;
-
-  }
-
-
-  if(
-    !game ||
-    game.current!==myColor
-  ){
-
-    toast(
-      "Wait for your turn."
-    );
-
-
-    return;
-
-  }
-
-
-  if(isHost){
-
-    hostMove(
-      selectedId,
-      dir,
-      false
-    );
-
-  }else{
-
-    guestMove(
-      selectedId,
-      dir,
-      false
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   SLAM
-========================================================= */
-
-function useSlam(){
-
-  if(
-    !selectedId
-  ){
-
-    toast(
-      "Select a piece first."
-    );
-
-
-    return;
-
-  }
-
-
-  if(
-    !game ||
-    game.current!==myColor
-  ){
-
-    toast(
-      "Wait for your turn."
-    );
-
-
-    return;
-
-  }
-
-
-  if(
-    game.slamUsed[myColor]
-  ){
-
-    toast(
-      "SLAM already used."
-    );
-
-
-    return;
-
-  }
-
-
-  const source=
-    findPiece(
-      game,
-      selectedId
-    );
-
-
-  if(!source)
-    return;
-
-
-  const possible=[];
-
-
-  for(
-    const dir of [
-      "up",
-      "down",
-      "left",
-      "right"
-    ]
-  ){
-
-    const d=
-      directionDelta(
-        dir
-      );
-
-
-    const r=
-      source.r+d[0];
-
-    const c=
-      source.c+d[1];
-
-
-    if(
-      inside(r,c) &&
-      game.board[r][c] &&
-      game.board[r][c].color!==myColor
-    ){
-
-      possible.push(
-        dir
-      );
-
-    }
-
-  }
-
-
-  /*
-    If exactly one possible push direction,
-    use it automatically.
-
-    Otherwise ask for direction.
-  */
-
-  let dir=
-    possible.length===1
-      ?possible[0]
-      :prompt(
-        "SLAM direction:\n\n" +
-        "up\n" +
-        "down\n" +
-        "left\n" +
-        "right"
-      );
-
-
-  if(!dir)
-    return;
-
-
-  dir=
-    dir.trim().toLowerCase();
-
-
-  if(
-    ![
-      "up",
-      "down",
-      "left",
-      "right"
-    ].includes(dir)
-  ){
-
-    toast(
-      "Invalid direction."
-    );
-
-
-    return;
-
-  }
-
-
-  shake();
-
-
-  if(isHost){
-
-    hostMove(
-      selectedId,
-      dir,
-      true
-    );
-
-  }else{
-
-    guestMove(
-      selectedId,
-      dir,
-      true
-    );
-
-  }
-
-}
-
-
-/* =========================================================
    SHAKE
 ========================================================= */
 
-function shake(){
+function shakeBoard(){
 
-  const el=
+  const board=
     $("boardFrame");
 
 
-  el.classList.remove(
+  board.classList.remove(
     "shake"
   );
 
 
-  void el.offsetWidth;
+  void board.offsetWidth;
 
 
-  el.classList.add(
+  board.classList.add(
     "shake"
   );
 
 
   setTimeout(
     ()=>{
-      el.classList.remove(
+      board.classList.remove(
         "shake"
       );
     },
@@ -4387,167 +4383,23 @@ function showResult(
 
 
 /* =========================================================
-   REMATCH
+   AUDIO
 ========================================================= */
 
-$("rematchButton").onclick=()=>{
+let audioContext=null;
 
-  $("resultOverlay")
-    .classList.remove(
-      "show"
-    );
+let soundEnabled=true;
 
 
-  if(isHost){
-
-    startHostGame();
-
-  }else{
-
-    $("rematchButton").disabled=
-      true;
-
-
-    $("rematchButton").textContent=
-      "WAITING FOR HOST";
-
-
-    send({
-      type:"REMATCH"
-    });
-
-  }
-
-};
-
-
-/* =========================================================
-   HOME
-========================================================= */
-
-$("homeButton").onclick=()=>{
-
-  cleanup();
-
-  location.reload();
-
-};
-
-
-/* =========================================================
-   THEME
-========================================================= */
-
-document
-  .querySelectorAll(
-    ".themeButton"
-  )
-  .forEach(
-    button=>{
-
-      button.onclick=()=>{
-
-        const theme=
-          button.dataset.theme;
-
-
-        if(
-          theme==="neon"
-        ){
-
-          document.body.className="";
-
-        }else{
-
-          document.body.className=
-            theme;
-
-        }
-
-
-        document
-          .querySelectorAll(
-            ".themeButton"
-          )
-          .forEach(
-            b=>
-              b.classList.toggle(
-                "active",
-                b===button
-              )
-          );
-
-
-        localStorage.setItem(
-          "pushline-theme",
-          theme
-        );
-
-
-        audio();
-
-        tone(
-          580,
-          .06,
-          "sine",
-          .025
-        );
-
-      };
-
-    }
-  );
-
-
-const savedTheme=
-  localStorage.getItem(
-    "pushline-theme"
-  );
-
-
-if(
-  ["royal","ice"]
-    .includes(
-      savedTheme
-    )
-){
-
-  document.body.className=
-    savedTheme;
-
-
-  document
-    .querySelectorAll(
-      ".themeButton"
-    )
-    .forEach(
-      b=>
-        b.classList.toggle(
-          "active",
-          b.dataset.theme===
-          savedTheme
-        )
-    );
-
-}
-
-
-/* =========================================================
-   SOUND
-========================================================= */
-
-let audioCtx=null;
-
-
-function audio(){
+function startAudio(){
 
   if(!soundEnabled)
     return;
 
 
-  if(!audioCtx){
+  if(!audioContext){
 
-    audioCtx=
+    audioContext=
       new(
         window.AudioContext ||
         window.webkitAudioContext
@@ -4557,10 +4409,10 @@ function audio(){
 
 
   if(
-    audioCtx.state==="suspended"
+    audioContext.state==="suspended"
   ){
 
-    audioCtx.resume();
+    audioContext.resume();
 
   }
 
@@ -4578,57 +4430,57 @@ function tone(
     return;
 
 
-  audio();
+  startAudio();
 
 
-  if(!audioCtx)
+  if(!audioContext)
     return;
 
 
-  const osc=
-    audioCtx.createOscillator();
+  const oscillator=
+    audioContext.createOscillator();
 
 
   const gain=
-    audioCtx.createGain();
+    audioContext.createGain();
 
 
-  osc.type=
+  oscillator.type=
     type;
 
 
-  osc.frequency.value=
+  oscillator.frequency.value=
     frequency;
 
 
   gain.gain.setValueAtTime(
     volume,
-    audioCtx.currentTime
+    audioContext.currentTime
   );
 
 
   gain.gain.exponentialRampToValueAtTime(
     .001,
-    audioCtx.currentTime+
+    audioContext.currentTime+
     duration
   );
 
 
-  osc.connect(
+  oscillator.connect(
     gain
   );
 
 
   gain.connect(
-    audioCtx.destination
+    audioContext.destination
   );
 
 
-  osc.start();
+  oscillator.start();
 
 
-  osc.stop(
-    audioCtx.currentTime+
+  oscillator.stop(
+    audioContext.currentTime+
     duration
   );
 
@@ -4650,7 +4502,7 @@ function soundSelect(){
 function soundMove(){
 
   tone(
-    390,
+    400,
     .07,
     "triangle",
     .03
@@ -4675,7 +4527,7 @@ function soundPush(
     ()=>{
       tone(
         190,
-        .12,
+        .13,
         "triangle",
         .04
       );
@@ -4766,6 +4618,10 @@ function soundWin(){
 }
 
 
+/* =========================================================
+   SOUND UI
+========================================================= */
+
 $("soundButton").onclick=()=>{
 
   soundEnabled=
@@ -4780,7 +4636,7 @@ $("soundButton").onclick=()=>{
 
   if(soundEnabled){
 
-    audio();
+    startAudio();
 
 
     tone(
@@ -4793,6 +4649,103 @@ $("soundButton").onclick=()=>{
   }
 
 };
+
+
+/* =========================================================
+   THEME UI
+========================================================= */
+
+document
+  .querySelectorAll(
+    ".themeButton"
+  )
+  .forEach(
+    button=>{
+
+      button.onclick=()=>{
+
+        const theme=
+          button.dataset.theme;
+
+
+        if(theme==="neon"){
+
+          document.body.className="";
+
+        }else{
+
+          document.body.className=
+            theme;
+
+        }
+
+
+        document
+          .querySelectorAll(
+            ".themeButton"
+          )
+          .forEach(
+            b=>
+              b.classList.toggle(
+                "active",
+                b===button
+              )
+          );
+
+
+        localStorage.setItem(
+          "pushline-theme",
+          theme
+        );
+
+
+        startAudio();
+
+
+        tone(
+          560,
+          .06,
+          "sine",
+          .025
+        );
+
+      };
+
+    }
+  );
+
+
+const savedTheme=
+  localStorage.getItem(
+    "pushline-theme"
+  );
+
+
+if(
+  ["royal","ice"]
+    .includes(
+      savedTheme
+    )
+){
+
+  document.body.className=
+    savedTheme;
+
+
+  document
+    .querySelectorAll(
+      ".themeButton"
+    )
+    .forEach(
+      button=>
+        button.classList.toggle(
+          "active",
+          button.dataset.theme===
+          savedTheme
+        )
+    );
+
+}
 
 
 /* =========================================================
@@ -4830,23 +4783,29 @@ $("joinButton").onclick=
   joinRoom;
 
 
+/* =========================================================
+   ROOM INPUT
+========================================================= */
+
 $("roomInput").addEventListener(
   "input",
   ()=>{
+
     $("roomInput").value=
       cleanCode(
         $("roomInput").value
       );
+
   }
 );
 
 
 $("roomInput").addEventListener(
   "keydown",
-  e=>{
+  event=>{
 
     if(
-      e.key==="Enter"
+      event.key==="Enter"
     ){
 
       joinRoom();
@@ -4858,7 +4817,7 @@ $("roomInput").addEventListener(
 
 
 /* =========================================================
-   COPY CODE
+   COPY
 ========================================================= */
 
 $("copyButton").onclick=
@@ -4876,7 +4835,7 @@ $("copyButton").onclick=
 
 
       $("copyButton").textContent=
-        "COPIED!";
+        "COPIED";
 
 
       setTimeout(
@@ -4888,7 +4847,7 @@ $("copyButton").onclick=
       );
 
 
-    }catch(e){
+    }catch(error){
 
       alert(
         "Room code: "+code
@@ -4913,12 +4872,87 @@ $("cancelButton").onclick=()=>{
 
 
 /* =========================================================
+   DIRECTIONS
+========================================================= */
+
+document
+  .querySelectorAll(
+    ".dir[data-direction]"
+  )
+  .forEach(
+    button=>{
+
+      button.onclick=()=>{
+
+        attemptDirection(
+          button.dataset.direction
+        );
+
+      };
+
+    }
+  );
+
+
+/* =========================================================
+   REMATCH
+========================================================= */
+
+$("rematchButton").onclick=()=>{
+
+  $("resultOverlay")
+    .classList.remove(
+      "show"
+    );
+
+
+  if(isHost){
+
+    /*
+      Host simply creates a new game and sends it.
+    */
+
+    startHostGame();
+
+  }else{
+
+    $("rematchButton").disabled=
+      true;
+
+
+    $("rematchButton").textContent=
+      "WAITING FOR HOST";
+
+
+    send({
+      type:"REMATCH"
+    });
+
+  }
+
+};
+
+
+/* =========================================================
+   HOME
+========================================================= */
+
+$("homeButton").onclick=()=>{
+
+  cleanup();
+
+  location.reload();
+
+};
+
+
+/* =========================================================
    KEYBOARD
 ========================================================= */
 
 document.addEventListener(
   "keydown",
-  e=>{
+  event=>{
 
     if(
       document.activeElement===
@@ -4927,16 +4961,17 @@ document.addEventListener(
       return;
 
 
-    /*
-      E = SLAM
-    */
-
     if(
-      e.key.toLowerCase()==="e"
+      event.key.toLowerCase()==="e"
     ){
 
-      if(!e.repeat)
+      if(
+        !event.repeat
+      ){
+
         useSlam();
+
+      }
 
       return;
 
@@ -4953,11 +4988,11 @@ document.addEventListener(
       w:"up",
       W:"up",
 
-      a:"left",
-      A:"left",
-
       s:"down",
       S:"down",
+
+      a:"left",
+      A:"left",
 
       d:"right",
       D:"right"
@@ -4966,14 +5001,14 @@ document.addEventListener(
 
 
     if(
-      keys[e.key]
+      keys[event.key]
     ){
 
-      e.preventDefault();
+      event.preventDefault();
 
 
       attemptDirection(
-        keys[e.key]
+        keys[event.key]
       );
 
     }
@@ -4982,17 +5017,37 @@ document.addEventListener(
 
 
 /* =========================================================
-   BEFORE UNLOAD
+   CLEANUP
 ========================================================= */
 
-window.addEventListener(
-  "beforeunload",
-  cleanup
-);
+function cleanup(){
+
+  try{
+
+    if(conn)
+      conn.close();
+
+  }catch(e){}
+
+
+  try{
+
+    if(peer)
+      peer.destroy();
+
+  }catch(e){}
+
+
+  conn=null;
+  peer=null;
+
+  connectionOpen=false;
+
+}
 
 
 /* =========================================================
-   INITIAL
+   INITIALIZE
 ========================================================= */
 
 setStatus(
