@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PUSHLINE</title>
+<link rel="stylesheet" href="/styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>%F0%9F%94%B6</text></svg>">
+</head>
+<body>
+
+<header id="topbar">
+  <div class="brand"><span class="mark">◆</span> PUSHLINE</div>
+
+  <div class="topRight">
+    <button class="linkBtn" id="navShop">SHOP</button>
+    <button class="linkBtn" id="navLocker">LOCKER</button>
+    <div class="wallet" id="wallet" hidden>
+      <span class="bolt">⚡</span><span id="walletBolts">0</span>
+    </div>
+    <div class="who" id="who" hidden>
+      <span id="whoName">—</span>
+      <span class="lvl" id="whoLevel">1</span>
+    </div>
+    <span class="conn" id="connDot" title="Connecting"></span>
+  </div>
+</header>
+
+<main>
+
+<!-- ------------------------------------------------------------- HOME -->
+<section class="screen" id="screen-home">
+  <div class="hero">
+    <h1>PUSH<span>LINE</span></h1>
+    <p class="tag">Shove the enemy into the holes. Destroy three. The board closes on turn 24.</p>
+
+    <div class="modePick" id="modePick">
+      <button class="mode active" data-mode="classic">
+        <b>CLASSIC</b><small>Five identical pieces</small>
+      </button>
+      <button class="mode" data-mode="roles">
+        <b>ROLES</b><small>Runner · Bruiser · Anchor</small>
+      </button>
+    </div>
+
+    <div class="playGrid">
+      <button class="big primary" id="btnQuick">
+        <b>QUICK MATCH</b><small>Find an opponent</small>
+      </button>
+      <button class="big" id="btnBot">
+        <b>PRACTICE</b><small>Play the bot</small>
+      </button>
+      <button class="big" id="btnCreate">
+        <b>PRIVATE ROOM</b><small>Get a code</small>
+      </button>
+      <button class="big" id="btnPuzzle">
+        <b>DAILY PUZZLE</b><small id="puzzleState">One position, one par</small>
+      </button>
+    </div>
+
+    <div class="joinRow">
+      <input id="roomInput" maxlength="6" placeholder="ROOM CODE" autocomplete="off" spellcheck="false">
+      <button class="btn" id="btnJoin">JOIN</button>
+      <select id="botLevel" title="Bot difficulty">
+        <option value="easy">Bot: easy</option>
+        <option value="normal" selected>Bot: normal</option>
+        <option value="hard">Bot: hard</option>
+      </select>
+    </div>
+  </div>
+
+  <aside class="side">
+    <div class="panel">
+      <h3>YOU</h3>
+      <div class="nameRow">
+        <input id="nameInput" maxlength="16" placeholder="Your name">
+        <button class="btn small" id="btnName">SAVE</button>
+      </div>
+      <div class="statRow" id="homeStats"></div>
+      <div class="xpBar"><i id="xpFill"></i></div>
+      <div class="small" id="xpText">Level 1</div>
+    </div>
+
+    <div class="panel">
+      <h3>TODAY</h3>
+      <div id="questList" class="quests"></div>
+    </div>
+
+    <div class="panel">
+      <h3>MOST WINS</h3>
+      <ol class="board" id="leaderList"></ol>
+    </div>
+  </aside>
+</section>
+
+<!-- ------------------------------------------------------------ QUEUE -->
+<section class="screen" id="screen-wait">
+  <div class="centre panel wide">
+    <div class="eyebrow" id="waitEyebrow">SEARCHING</div>
+    <div class="bigCode" id="roomCode">— — — — — —</div>
+    <p class="small" id="waitNote">Looking for an opponent...</p>
+    <div class="dots"><i></i><i></i><i></i></div>
+    <div class="row">
+      <button class="btn" id="btnCopy" hidden>COPY CODE</button>
+      <button class="btn danger" id="btnCancelWait">CANCEL</button>
+    </div>
+  </div>
+</section>
+
+<!-- -------------------------------------------------------------- BAN -->
+<section class="screen" id="screen-ban">
+  <div class="centre panel wide">
+    <div class="eyebrow">MAP BAN</div>
+    <h2 id="banTitle">Ban one map</h2>
+    <p class="small" id="banNote">The board is drawn from whatever survives.</p>
+    <div class="mapGrid" id="mapGrid"></div>
+    <div class="small" id="banClock"></div>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------------- GAME -->
+<section class="screen" id="screen-game">
+  <div class="boardWrap">
+    <div class="playerStrip" id="stripTop"></div>
+    <div class="boardFrame" id="boardFrame">
+      <div id="board" class="board7"></div>
+      <div class="overlayMsg" id="boardMsg" hidden></div>
+    </div>
+    <div class="playerStrip" id="stripBottom"></div>
+  </div>
+
+  <aside class="side">
+    <div class="panel">
+      <div class="turnLine">
+        <span id="turnLabel">—</span>
+        <span class="apPips" id="apPips"></span>
+      </div>
+      <div class="small" id="turnHint">—</div>
+      <div class="small" id="mapLine"></div>
+    </div>
+
+    <div class="panel">
+      <h3>YOUR MOVE</h3>
+      <div class="dirGrid">
+        <span></span>
+        <button class="dir" data-dir="up">▲</button>
+        <span></span>
+        <button class="dir" data-dir="left">◀</button>
+        <button class="dir" data-dir="end" id="btnEndTurn" title="End turn">■</button>
+        <button class="dir" data-dir="right">▶</button>
+        <span></span>
+        <button class="dir" data-dir="down">▼</button>
+        <span></span>
+      </div>
+      <button class="btn gold wide" id="btnSlam">⚡ SLAM</button>
+      <button class="btn wide" id="btnSwap" hidden>⇄ TAKE BLUE INSTEAD</button>
+      <div class="small" id="slamNote">Two squares, once per game.</div>
+    </div>
+
+    <div class="panel">
+      <h3>SHRINK</h3>
+      <div class="shrink" id="shrinkInfo">—</div>
+    </div>
+
+    <div class="row">
+      <button class="btn danger wide" id="btnResign">RESIGN</button>
+    </div>
+  </aside>
+</section>
+
+<!-- ----------------------------------------------------------- PUZZLE -->
+<section class="screen" id="screen-puzzle">
+  <div class="boardWrap">
+    <div class="playerStrip"><div class="pill" id="puzzleGoal">—</div></div>
+    <div class="boardFrame">
+      <div id="puzzleBoard" class="board7"></div>
+    </div>
+    <div class="playerStrip"><div class="pill" id="puzzleUsed">—</div></div>
+  </div>
+
+  <aside class="side">
+    <div class="panel">
+      <h3>DAILY PUZZLE</h3>
+      <p class="small" id="puzzleBlurb">
+        Red never moves. Find the line.
+      </p>
+      <div class="small" id="puzzleFeedback"></div>
+    </div>
+    <div class="panel">
+      <div class="dirGrid">
+        <span></span>
+        <button class="dir pz" data-dir="up">▲</button>
+        <span></span>
+        <button class="dir pz" data-dir="left">◀</button>
+        <span></span>
+        <button class="dir pz" data-dir="right">▶</button>
+        <span></span>
+        <button class="dir pz" data-dir="down">▼</button>
+        <span></span>
+      </div>
+      <button class="btn gold wide" id="btnPuzzleSlam">⚡ SLAM</button>
+    </div>
+    <div class="row">
+      <button class="btn wide" id="btnPuzzleReset">RESET</button>
+      <button class="btn wide" id="btnPuzzleHome">HOME</button>
+    </div>
+  </aside>
+</section>
+
+<!-- ------------------------------------------------------------- SHOP -->
+<section class="screen" id="screen-shop">
+  <div class="shopHead">
+    <h2 id="shopTitle">SHOP</h2>
+    <p class="small">Paint only. Nothing here changes a rule.</p>
+    <div class="tabs" id="shopTabs"></div>
+  </div>
+  <div class="itemGrid" id="itemGrid"></div>
+  <div class="row"><button class="btn" id="btnShopHome">BACK</button></div>
+</section>
+
+</main>
+
+<!-- ------------------------------------------------------------ RESULT -->
+<div class="overlay" id="resultOverlay">
+  <div class="panel result">
+    <div class="resultIcon" id="resultIcon">◆</div>
+    <h2 id="resultTitle">YOU WIN</h2>
+    <p class="small" id="resultReason"></p>
+    <div class="rewards" id="rewardList"></div>
+    <div class="row">
+      <button class="btn primary" id="btnRematch">REMATCH</button>
+      <button class="btn" id="btnHome">HOME</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module" src="/app.js"></script>
+</body>
+</html>

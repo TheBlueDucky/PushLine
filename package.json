@@ -1,0 +1,19 @@
+{
+  "name": "pushline",
+  "private": true,
+  "type": "module",
+  "version": "0.2.0",
+  "description": "Turn-based push strategy. Authoritative server, shared rules engine, bot, daily puzzle, cosmetics.",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node server/server.js --port 8080",
+    "test": "node --test test/",
+    "balance": "node tools/balance.js 60 easy classic"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
