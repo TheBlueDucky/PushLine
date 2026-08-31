@@ -20,8 +20,9 @@ second browser or a private window — `localhost` and `127.0.0.1` count as
 different origins, so two tabs on different origins also work.
 
 ```bash
-npm test        # 34 rules tests, including a fuzz over 40 full games
-npm run balance # bot vs bot, reports the first-player win rate
+npm test         # 34 rules tests, including a fuzz over 40 full games
+npm run balance  # bot vs bot, reports the first-player win rate
+npm run pages    # build the static client into docs/
 ```
 
 ## Layout
@@ -126,16 +127,90 @@ Generation takes a couple of seconds, so it happens once per day and is cached.
 
 ## Deploying
 
-One small VPS is enough — turn-based multiplayer is a handful of small JSON
-messages per match.
+**GitHub Pages cannot host this game.** Pages serves files; it does not run
+processes. The board, the clock, the matchmaking and the currency all live in
+a Node process, so something has to run that process somewhere.
+
+There are two shapes that work.
+
+### One host does everything (recommended)
+
+The Node server already serves the client, so a single deploy is the whole
+game. Pages is not involved.
 
 ```bash
 PORT=8080 node server/server.js --data /var/lib/pushline/data.json
 ```
 
-Put it behind a reverse proxy that upgrades WebSockets, and back up the data
-file. Swap `store.js` for SQLite when a JSON file stops being enough; nothing
-outside that module knows how the data is stored.
+Anything that runs a container and speaks WebSockets will do. A `Dockerfile`
+and a `fly.toml` are included because fly.io hands out an `https://` address
+with a working certificate, which saves buying a domain just to get TLS:
+
+```bash
+fly launch --no-deploy --copy-config
+fly volumes create pushline_data --size 1   # or every deploy wipes progress
+fly deploy
+```
+
+On a plain VPS, put it behind Caddy — two lines of config gets a certificate:
+
+```
+pushline.example.com {
+    reverse_proxy localhost:8080
+}
+```
+
+Caddy passes WebSocket upgrades through without extra configuration.
+
+### Pages for the client, a server elsewhere
+
+Useful if you want the free CDN, or want the page to stay up while the server
+is down. `tools/build-pages.js` copies the client, the `shared/` modules it
+imports and the peer-to-peer original into `docs/`, and stamps in the address
+of the server:
+
+```bash
+node tools/build-pages.js --server https://pushline.fly.dev
+```
+
+Two ways to publish it:
+
+- **Actions** (what `.github/workflows/pages.yml` does). Set Settings → Pages
+  → Source to *GitHub Actions*, and add a repository **variable** named
+  `PUSHLINE_SERVER` holding your server's `https://` address. Every push to
+  `main` runs the tests, rebuilds and publishes.
+- **By hand.** Run the build, commit `docs/`, and set Settings → Pages →
+  Source to *Deploy from a branch*, folder `/docs`. `docs/` is gitignored by
+  default, so remove that line first.
+
+Then tell the server which origin may connect to it:
+
+```bash
+node server/server.js --origin https://theblueducky.github.io
+```
+
+Three things bite in this setup:
+
+1. **A page on https can only open a `wss://` socket.** Browsers block `ws://`
+   from an https page as mixed content, and to the player it just looks
+   broken. The server needs a real certificate.
+2. **The URL is `https://<user>.github.io/<repo>/`,** not the root. That is
+   why every path in the client is relative — leave them that way.
+3. **The server address is baked in at build time.** Change servers, rebuild.
+
+### The peer-to-peer original
+
+`legacy/index.html` is the one thing here Pages hosts perfectly: one file, no
+server, no build. The Pages build copies it to `/legacy/`. It is a decent
+fallback while the server is down, but the host runs the rules there, so it
+can never carry accounts or currency.
+
+### Data
+
+Profiles, puzzles and purchases are one JSON file. Back it up, and put it on a
+volume if the host has an ephemeral filesystem — a container redeploy
+otherwise resets everyone to zero. Swap `store.js` for SQLite when a JSON file
+stops being enough; nothing outside that module knows how the data is stored.
 
 ## The original game
 

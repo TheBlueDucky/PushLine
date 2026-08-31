@@ -1,0 +1,61 @@
+# Publishes the static half of the game to GitHub Pages.
+#
+# Pages cannot run the Node server, so what goes up here is the client, the
+# shared rules modules it imports, and the peer-to-peer original. The client
+# is told where the real server lives through the PUSHLINE_SERVER repository
+# variable (Settings -> Secrets and variables -> Actions -> Variables).
+#
+# Set PUSHLINE_SERVER to an https:// address. A page served from github.io is
+# https, and browsers refuse to open a ws:// socket from an https page, so a
+# plain http server will not work no matter what else is right.
+#
+# Before this runs: Settings -> Pages -> Source: GitHub Actions.
+
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # No dependencies are needed to build the static half, but the rules
+      # tests should pass before anything is published.
+      - run: npm ci
+      - run: npm test
+
+      - name: Build docs/
+        run: node tools/build-pages.js --server "${{ vars.PUSHLINE_SERVER }}"
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

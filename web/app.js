@@ -8,10 +8,10 @@
 import {
   SIZE, AP_PER_TURN, WIN_KILLS, SHRINK_FIRST_TURN, SHRINK_EVERY,
   legalActions, findPiece, isHole, delta, inside, ROLE, nextShrinkTurn
-} from "/shared/rules.js";
+} from "./shared/rules.js";
 
-import { puzzleState, puzzleApply } from "/shared/puzzle.js";
-import { itemById } from "/shared/catalog.js";
+import { puzzleState, puzzleApply } from "./shared/puzzle.js";
+import { itemById } from "./shared/catalog.js";
 
 const $ = id => document.getElementById(id);
 const el = (tag, className, text) => {
@@ -46,9 +46,31 @@ const app = {
 
 /* ------------------------------------------------------------- connection */
 
-function connect() {
+/**
+ * Where the game server lives.
+ *
+ * Same origin by default, which is what happens when the Node server is
+ * serving this page itself. When the client is hosted somewhere static --
+ * GitHub Pages, a CDN -- point it at the server with the meta tag in
+ * index.html, or set window.PUSHLINE_SERVER before this script runs.
+ *
+ * A page served over https can only open a wss:// socket, so a remote
+ * server has to have TLS. Browsers block the mixed-content case outright.
+ */
+export function serverUrl() {
+  const meta = document.querySelector('meta[name="pushline-server"]');
+  const configured = (window.PUSHLINE_SERVER || (meta && meta.content) || "").trim();
+
+  if (configured) {
+    return configured.replace(/^http:/, "ws:").replace(/^https:/, "wss:").replace(/\/+$/, "");
+  }
+
   const protocol = location.protocol === "https:" ? "wss:" : "ws:";
-  const socket = new WebSocket(protocol + "//" + location.host);
+  return protocol + "//" + location.host;
+}
+
+function connect() {
+  const socket = new WebSocket(serverUrl());
   app.socket = socket;
 
   socket.onopen = () => {

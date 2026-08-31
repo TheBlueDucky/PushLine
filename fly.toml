@@ -1,0 +1,29 @@
+# fly.io: gives the server a public https address with a certificate, which
+# is what a page served from github.io needs to open a wss:// socket to.
+#
+#   fly launch --no-deploy --copy-config
+#   fly volumes create pushline_data --size 1
+#   fly deploy
+
+app = "pushline"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8080"
+  PUSHLINE_DATA = "/data/pushline.json"
+  # Uncomment once the client is hosted on Pages rather than by this server.
+  # ALLOWED_ORIGINS = "https://theblueducky.github.io"
+
+[[mounts]]
+  source = "pushline_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "suspend"
+  auto_start_machines = true
+  min_machines_running = 0

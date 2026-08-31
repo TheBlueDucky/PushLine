@@ -11,7 +11,8 @@
     "start": "node server/server.js",
     "dev": "node server/server.js --port 8080",
     "test": "node --test test/",
-    "balance": "node tools/balance.js 60 easy classic"
+    "balance": "node tools/balance.js 60 easy classic",
+    "pages": "node tools/build-pages.js"
   },
   "dependencies": {
     "ws": "^8.18.0"

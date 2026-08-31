@@ -41,6 +41,24 @@ const argValue = (flag, fallback) => {
 const PORT = Number(argValue("--port", process.env.PORT || 8080));
 const DATA_FILE = path.resolve(ROOT, argValue("--data", "data/pushline.json"));
 
+/* Origins allowed to open a socket. Empty means "anyone", which is right for
+ * local development and for the case where this server also serves the page.
+ * Set it once the client is hosted somewhere else (GitHub Pages, a CDN):
+ *
+ *   --origin https://theblueducky.github.io
+ *   ALLOWED_ORIGINS=https://a.example,https://b.example
+ */
+const ALLOWED_ORIGINS = (argValue("--origin", process.env.ALLOWED_ORIGINS || ""))
+  .split(",")
+  .map(value => value.trim().replace(/\/+$/, ""))
+  .filter(Boolean);
+
+function originAllowed(origin) {
+  if (!ALLOWED_ORIGINS.length) return true;
+  if (!origin) return true; /* non-browser clients send no Origin */
+  return ALLOWED_ORIGINS.includes(String(origin).replace(/\/+$/, ""));
+}
+
 const store = new Store(DATA_FILE);
 
 /* -------------------------------------------------------- static serving */
@@ -91,7 +109,14 @@ const httpServer = http.createServer((request, response) => {
 
 /* ------------------------------------------------------------- the world */
 
-const wss = new WebSocketServer({ server: httpServer });
+const wss = new WebSocketServer({
+  server: httpServer,
+  verifyClient: info => {
+    const ok = originAllowed(info.origin);
+    if (!ok) console.warn("[ws] refused origin " + info.origin);
+    return ok;
+  }
+});
 
 let connectionCounter = 0;
 const connections = new Map();   /* connId -> conn */
@@ -619,7 +644,8 @@ wss.on("connection", socket => {
 
 httpServer.listen(PORT, () => {
   console.log("PUSHLINE listening on http://localhost:" + PORT);
-  console.log("  data: " + DATA_FILE);
+  console.log("  data:    " + DATA_FILE);
+  console.log("  origins: " + (ALLOWED_ORIGINS.length ? ALLOWED_ORIGINS.join(", ") : "any"));
 
   /* Warm today's puzzle off the critical path -- generating one takes a
    * couple of seconds and nobody should wait for it mid-request. */

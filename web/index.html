@@ -4,7 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>PUSHLINE</title>
-<link rel="stylesheet" href="/styles.css">
+<!-- Leave empty when the Node server serves this page. Set it to your
+     server when hosting this folder statically, e.g.
+     content="https://pushline.fly.dev" -->
+<meta name="pushline-server" content="">
+<link rel="stylesheet" href="styles.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>%F0%9F%94%B6</text></svg>">
 </head>
 <body>
@@ -236,6 +240,6 @@
 
 <div id="toast"></div>
 
-<script type="module" src="/app.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
